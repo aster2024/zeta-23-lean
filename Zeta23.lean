@@ -16,3 +16,6 @@ import Zeta23.ZeroSide.TightMult
 import Zeta23.XiPrime.Final
 import Zeta23.PairCeiling.CeilingLaw256
 import Zeta23.PairCeiling.Signed
+import Zeta23.StrictImprovement.ZetaEndpointPassage
+import Zeta23.StrictImprovement.ZetaWiderEndpointPassage
+import Zeta23.StrictImprovement.WiderFixedInterfaceCeiling

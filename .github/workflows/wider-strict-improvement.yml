@@ -1,0 +1,115 @@
+name: Wider strict improvement
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "lean-toolchain"
+      - "lakefile.toml"
+      - "lake-manifest.json"
+      - "Zeta23.lean"
+      - "Zeta23/StrictImprovement/**"
+      - "comparator/PrintAxioms/StrictImprovement.lean"
+      - "comparator/PrintAxioms/WiderStrictImprovement.lean"
+      - ".github/workflows/wider-strict-improvement.yml"
+  pull_request:
+    paths:
+      - "lean-toolchain"
+      - "lakefile.toml"
+      - "lake-manifest.json"
+      - "Zeta23.lean"
+      - "Zeta23/StrictImprovement/**"
+      - "comparator/PrintAxioms/StrictImprovement.lean"
+      - "comparator/PrintAxioms/WiderStrictImprovement.lean"
+      - ".github/workflows/wider-strict-improvement.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Check out the frozen source tree
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Install the pinned Lean toolchain and Mathlib cache
+        uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9 # v1
+        with:
+          auto-config: false
+          build: false
+          test: false
+          lint: false
+          use-mathlib-cache: true
+
+      - name: Record the exact build identity
+        run: |
+          set -euo pipefail
+          git rev-parse HEAD | tee build-commit.txt
+          lean --version | tee lean-version.txt
+          lake --version | tee lake-version.txt
+          git -C .lake/packages/mathlib rev-parse HEAD | tee mathlib-commit.txt
+          printf '%s\n' \
+            lean-toolchain \
+            lakefile.toml \
+            lake-manifest.json \
+            Zeta23.lean \
+            .github/workflows/wider-strict-improvement.yml \
+            comparator/PrintAxioms/StrictImprovement.lean \
+            comparator/PrintAxioms/WiderStrictImprovement.lean \
+            $(git ls-files 'Zeta23/StrictImprovement/*.lean') |
+            LC_ALL=C sort -u |
+            xargs sha256sum > build-inputs.sha256
+
+      - name: Build the default root including the wider endpoint
+        run: |
+          set -euo pipefail
+          lake build --wfail 2>&1 | tee wider-build.log
+
+      - name: Compare baseline and wider axiom sets
+        run: |
+          set -euo pipefail
+          lake env lean comparator/PrintAxioms/StrictImprovement.lean \
+            2>&1 | tee baseline-axioms.txt
+          lake env lean comparator/PrintAxioms/WiderStrictImprovement.lean \
+            2>&1 | tee wider-axioms.txt
+
+          if grep -Eq 'sorryAx|unsafeAx' wider-axioms.txt; then
+            printf 'forbidden axiom in wider endpoint\n' >&2
+            exit 1
+          fi
+
+          extract_axiom_union() {
+            sed -n 's/.*depends on axioms: \[\(.*\)\]$/\1/p' "$1" |
+              tr ',' '\n' |
+              sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' -e '/^$/d' |
+              LC_ALL=C sort -u
+          }
+
+          extract_axiom_union baseline-axioms.txt > baseline-axiom-set.txt
+          extract_axiom_union wider-axioms.txt > wider-axiom-set.txt
+
+          test -s baseline-axiom-set.txt
+          test -s wider-axiom-set.txt
+          cmp baseline-axiom-set.txt wider-axiom-set.txt
+
+      - name: Preserve build and axiom receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: wider-strict-improvement-receipts
+          path: |
+            wider-build.log
+            build-commit.txt
+            lean-version.txt
+            lake-version.txt
+            mathlib-commit.txt
+            build-inputs.sha256
+            baseline-axioms.txt
+            wider-axioms.txt
+            baseline-axiom-set.txt
+            wider-axiom-set.txt
+          if-no-files-found: warn
+          retention-days: 90
