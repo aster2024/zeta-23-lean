@@ -36,6 +36,20 @@ jobs:
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Install the pinned Lean toolchain and Mathlib cache
+        id: lean_setup_primary
+        continue-on-error: true
+        uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9 # v1
+        with:
+          auto-config: false
+          build: false
+          test: false
+          lint: false
+          use-mathlib-cache: true
+
+      # The public cache endpoint occasionally fails before Lean is invoked.
+      # Retry the identical pinned action once; a second failure remains fatal.
+      - name: Retry the pinned Lean toolchain and Mathlib cache
+        if: steps.lean_setup_primary.outcome == 'failure'
         uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9 # v1
         with:
           auto-config: false
