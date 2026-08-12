@@ -105,8 +105,7 @@ lemma four_trace_zero_l1_sq
                 2 * scalarPositivePart a * scalarNegativePart a +
                   scalarNegativePart a ^ 2 := by ring
           _ = scalarPositivePart a ^ 2 + scalarNegativePart a ^ 2 := by
-            rw [ha.2.2.1]
-            ring
+            nlinarith only [ha.2.2.1]
   have hbSq : b ^ 2 =
       scalarPositivePart b ^ 2 + scalarNegativePart b ^ 2 := by
     calc
@@ -119,8 +118,7 @@ lemma four_trace_zero_l1_sq
                 2 * scalarPositivePart b * scalarNegativePart b +
                   scalarNegativePart b ^ 2 := by ring
           _ = scalarPositivePart b ^ 2 + scalarNegativePart b ^ 2 := by
-            rw [hb.2.2.1]
-            ring
+            nlinarith only [hb.2.2.1]
   have hcSq : c ^ 2 =
       scalarPositivePart c ^ 2 + scalarNegativePart c ^ 2 := by
     calc
@@ -133,8 +131,7 @@ lemma four_trace_zero_l1_sq
                 2 * scalarPositivePart c * scalarNegativePart c +
                   scalarNegativePart c ^ 2 := by ring
           _ = scalarPositivePart c ^ 2 + scalarNegativePart c ^ 2 := by
-            rw [hc.2.2.1]
-            ring
+            nlinarith only [hc.2.2.1]
   have hdSq : d ^ 2 =
       scalarPositivePart d ^ 2 + scalarNegativePart d ^ 2 := by
     calc
@@ -147,8 +144,7 @@ lemma four_trace_zero_l1_sq
                 2 * scalarPositivePart d * scalarNegativePart d +
                   scalarNegativePart d ^ 2 := by ring
           _ = scalarPositivePart d ^ 2 + scalarNegativePart d ^ 2 := by
-            rw [hd.2.2.1]
-            ring
+            nlinarith only [hd.2.2.1]
   have hSq : a ^ 2 + b ^ 2 + c ^ 2 + d ^ 2 ≤
       2 * (scalarPositivePart a + scalarPositivePart b +
         scalarPositivePart c + scalarPositivePart d) ^ 2 := by
