@@ -79,9 +79,23 @@ theorem packedCoreFour_local_energy
     intro r t
     have hfin := finiteNormalizedCoreCorrelation_close_full
       Z T P hconj hreal hF hT hc hbudget (idx r) (idx t)
+    change |finiteNormalizedCoreCorrelation Z T P hconj (idx r) (idx t) -
+        fullCoreCorrelation Z T P (idx r) (idx t)| ≤ epsFin at hfin
     have hlim := hfull (idx r) (idx t)
     dsimp [corr, coord, eps, epsFin]
-    exact (abs_sub_le _ _ _).trans (add_le_add hfin hlim)
+    calc
+      |finiteNormalizedCoreCorrelation Z T P hconj (idx r) (idx t) -
+          endpointR (coreScaledOrdinate Z T 3 P (idx r) -
+            coreScaledOrdinate Z T 3 P (idx t))|
+        ≤ |finiteNormalizedCoreCorrelation Z T P hconj (idx r) (idx t) -
+            fullCoreCorrelation Z T P (idx r) (idx t)| +
+          |fullCoreCorrelation Z T P (idx r) (idx t) -
+            endpointR (coreScaledOrdinate Z T 3 P (idx r) -
+              coreScaledOrdinate Z T 3 P (idx t))| := abs_sub_le _ _ _
+      _ ≤ epsFin + epsFull := add_le_add hfin hlim
+      _ = _ := by
+        dsimp [epsFin]
+        ring
   have h012 := wider_threeCoordinateEnergy_stable heps
     (hdist 0 1) (hdist 0 2) (hdist 1 2)
     (habs 0 1) (habs 0 2) (habs 1 2)
@@ -99,7 +113,7 @@ theorem packedCoreFour_local_energy
     (habs 1 2) (habs 1 3) (habs 2 3)
     (hclose 1 2) (hclose 1 3) (hclose 2 3)
   unfold threeCoordinateEnergy at h012 h013 h023 h123
-  dsimp [corr, coord] at h012 h013 h023 h123
+  dsimp [corr, coord, eps, epsFin] at h012 h013 h023 h123
   unfold fourCorrelationEnergy
   rw [gramMatrix_normalizedCoreVec_eq_finiteCorrelation
       Z T P hconj hreal hc hpos (idx 0) (idx 1),
@@ -115,7 +129,6 @@ theorem packedCoreFour_local_energy
       Z T P hconj hreal hc hpos (idx 2) (idx 3)]
   simp only [Complex.norm_real, Real.norm_eq_abs, sq_abs]
   unfold localCorrelationError
-  dsimp [eps, epsFin]
   nlinarith
 
 end StrictImprovement

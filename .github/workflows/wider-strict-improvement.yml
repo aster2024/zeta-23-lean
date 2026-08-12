@@ -210,6 +210,15 @@ jobs:
           run_preflight Zeta23.StrictImprovement.ZetaAtDCorrelation \
             zeta-at-d-correlation-build.log \
             "Zeta at-D correlation preflight failure"
+          run_preflight Zeta23.StrictImprovement.CoreFourEnergy \
+            core-four-energy-build.log \
+            "Core four energy preflight failure"
+          run_preflight Zeta23.StrictImprovement.ZetaLocalDefect \
+            zeta-local-defect-build.log \
+            "Zeta local defect preflight failure"
+          run_preflight Zeta23.StrictImprovement.ZetaLocalDeltaLimit \
+            zeta-local-delta-limit-build.log \
+            "Zeta local delta limit preflight failure"
           run_preflight Zeta23.StrictImprovement.IntervalBinning \
             interval-binning-build.log "Interval binning preflight failure"
           run_preflight Zeta23.StrictImprovement.ZetaCoreBinning \
@@ -301,6 +310,9 @@ jobs:
             wider-fixed-interface-ceiling-build.log
             wider-three-coordinate-energy-build.log
             zeta-at-d-correlation-build.log
+            core-four-energy-build.log
+            zeta-local-defect-build.log
+            zeta-local-delta-limit-build.log
             interval-binning-build.log
             zeta-core-binning-build.log
             four-block-defect-build.log

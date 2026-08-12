@@ -123,22 +123,22 @@ theorem eventually_atDTailRatio_bounds
 /-- The explicit rational upper envelope tends to zero. -/
 theorem tendsto_atDTailRatioUpper_zero
     {P : Params} (hP : P.Valid) :
-    Tendsto (fun T => atDTailRatioUpper T P) atTop (𝒩 0) := by
+    Tendsto (fun T => atDTailRatioUpper T P) atTop (𝓝 0) := by
   have hL : Tendsto P.L atTop atTop := ThmD.tendsto_L hP
   have hL2 : Tendsto (fun T => P.L T ^ 2) atTop atTop :=
     (tendsto_pow_atTop two_ne_zero).comp hL
   have h1 : Tendsto
       (fun T => (4 * (ThmD.cDT P.ϱ P.lam) ^ 2 / 81) / P.L T)
-      atTop (𝒩 0) := tendsto_const_nhds.div_atTop hL
+      atTop (𝓝 0) := tendsto_const_nhds.div_atTop hL
   have h2 : Tendsto
       (fun T => (113 * (ThmD.cDT P.ϱ P.lam) ^ 2 / 648) / P.L T ^ 2)
-      atTop (𝒩 0) := tendsto_const_nhds.div_atTop hL2
+      atTop (𝓝 0) := tendsto_const_nhds.div_atTop hL2
   simpa [atDTailRatioUpper] using h1.add h2
 
 /-- The finite-grid normalization tail vanishes at fixed `lam`. -/
 theorem tendsto_atDTailRatio_zero
     {P : Params} (hP : P.Valid) :
-    Tendsto (fun T => atDTailRatio T P) atTop (𝒩 0) := by
+    Tendsto (fun T => atDTailRatio T P) atTop (𝓝 0) := by
   have hb := eventually_atDTailRatio_bounds hP
   exact squeeze_zero' (hb.mono fun T h => h.1)
     (hb.mono fun T h => h.2) (tendsto_atDTailRatioUpper_zero hP)
@@ -148,8 +148,8 @@ theorem tendsto_atDTailRatio_zero
 theorem tendsto_atDEpsFull
     {P : Params} (hP : P.Valid) :
     Tendsto (fun T => 12 * P.w / P.L T + 3 * (1 - P.lam))
-      atTop (𝒩 (3 * (1 - P.lam))) := by
-  have hzero : Tendsto (fun T => 12 * P.w / P.L T) atTop (𝒩 0) :=
+      atTop (𝓝 (3 * (1 - P.lam))) := by
+  have hzero : Tendsto (fun T => 12 * P.w / P.L T) atTop (𝓝 0) :=
     tendsto_const_nhds.div_atTop (ThmD.tendsto_L hP)
   simpa using hzero.add_const (3 * (1 - P.lam))
 
@@ -159,7 +159,7 @@ theorem tendsto_atDLocalCorrelationError
     {P : Params} (hP : P.Valid) :
     Tendsto (fun T => localCorrelationError T (P.atD T)
       (ThmD.cDT P.ϱ P.lam) (12 * P.w / P.L T + 3 * (1 - P.lam)))
-      atTop (𝒩 (3 * (1 - P.lam))) := by
+      atTop (𝓝 (3 * (1 - P.lam))) := by
   have heps := tendsto_atDEpsFull hP
   have htail := (tendsto_atDTailRatio_zero hP).const_mul 2
   have hsum := heps.add htail
@@ -172,7 +172,7 @@ theorem tendsto_atDLocalCorrelationError
 theorem tendsto_atDLocalDelta
     {P : Params} (hP : P.Valid) :
     Tendsto (fun T => atDLocalDelta T P) atTop
-      (𝒩 (explicitDeltaLower - 18 * (1 - P.lam))) := by
+      (𝓝 (explicitDeltaLower - 18 * (1 - P.lam))) := by
   have herr := (tendsto_atDLocalCorrelationError hP).const_mul 6
   have hlim := tendsto_const_nhds.sub herr
   convert hlim using 1 <;> ring

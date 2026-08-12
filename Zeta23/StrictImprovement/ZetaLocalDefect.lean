@@ -70,7 +70,7 @@ theorem hatAz_mult2_with_core_gain
   have hbins :
       (Fintype.card (Fin (intervalBinCount (coreBinD T P))) : ℝ) ≤
         coreBinD T P / 4 + 1 :=
-    coreIntervalBin_card_le Z T 3 P hL hT
+    coreIntervalBin_card_le T 3 P hL hT
   have hunit : ∀ z, ∑ k, ‖x z k‖ ^ 2 = 1 := by
     intro z
     dsimp [x]
@@ -93,7 +93,7 @@ theorem hatAz_mult2_with_core_gain
   have hAeq : A = P.hat T (Z.Az P T) := by
     dsimp [A, D]
     rw [← ZeroSide.Az_eq_blockA Z T P hconj,
-      ← ZeroSide.hat_eq Z T P (Z.Az P T)]
+      ← ZeroSide.hat_eq T P (Z.Az P T)]
   have hsplit := coreCard_add_excluded_eq_s1 Z T 3 P hconj
   have hcountBase :=
     (blockData Z T P hconj).s₁_add_two_s₂_add_two_p_le_Ncount
