@@ -76,9 +76,11 @@ theorem N0s_le_coreCard_add_excluded
     have hs1 : Z.s1 T = Z.N0s (T - D0 T) (2 * T + D0 T) := rfl
     rw [hs1,
       Assembly.N0s_add Z (a := T - D0 T) (b := T)
-        (c := 2 * T + D0 T) (by positivity) (by linarith [Real.sqrt_nonneg T]),
+        (c := 2 * T + D0 T) (by linarith [Real.sqrt_nonneg T])
+          (by linarith [Real.sqrt_nonneg T]),
       Assembly.N0s_add Z (a := T) (b := 2 * T)
-        (c := 2 * T + D0 T) (by linarith) (by positivity)]
+        (c := 2 * T + D0 T) (by linarith)
+          (by linarith [Real.sqrt_nonneg T])]
     omega
   rw [coreCard_add_excluded_eq_s1 Z T C P hconj]
   exact hs1main
@@ -109,11 +111,12 @@ theorem excludedSimpleCount_le_two_windows
   let Slo := S.filter fun ρ => ρ.im ≤ T + C
   let Shi := S.filter fun ρ => ¬ ρ.im ≤ T + C
   have hsplit : #Slo + #Shi = #S := by
-    exact Finset.card_filter_add_card_filter_not S
+    dsimp [Slo, Shi]
+    exact Finset.card_filter_add_card_filter_not _
   have hloSub : (↑Slo : Set ℂ) ⊆ Z.window (T - D0 T) (T + C) := by
     intro ρ hρ
     change ρ ∈ Slo at hρ
-    rw [Slo, Finset.mem_filter] at hρ
+    simp only [Slo, Finset.mem_filter] at hρ
     obtain ⟨hρS, hρup⟩ := hρ
     change ρ ∈ excludedSimpleComplex Z T C at hρS
     rw [excludedSimpleComplex, Finset.mem_map] at hρS
@@ -123,7 +126,7 @@ theorem excludedSimpleCount_le_two_windows
   have hhiSub : (↑Shi : Set ℂ) ⊆ Z.window (2 * T - C) (2 * T + D0 T) := by
     intro ρ hρ
     change ρ ∈ Shi at hρ
-    rw [Shi, Finset.mem_filter] at hρ
+    simp only [Shi, Finset.mem_filter] at hρ
     obtain ⟨hρS, hρcut⟩ := hρ
     change ρ ∈ excludedSimpleComplex Z T C at hρS
     rw [excludedSimpleComplex, Finset.mem_map] at hρS
@@ -186,6 +189,7 @@ theorem interior_three_count_le
       Assembly.N_add Z (a := T + 1) (b := T + 2) (c := T + 3)
         (by linarith) (by linarith)]
     push_cast
+    ring
   have hright :
       (Z.N (2 * T - 3) (2 * T) : ℝ) =
         Z.N (2 * T - 3) (2 * T - 2) +
@@ -196,6 +200,7 @@ theorem interior_three_count_le
       Assembly.N_add Z (a := 2 * T - 2) (b := 2 * T - 1) (c := 2 * T)
         (by linarith) (by linarith)]
     push_cast
+    ring
   rw [hleft, hright]
   linarith
 
