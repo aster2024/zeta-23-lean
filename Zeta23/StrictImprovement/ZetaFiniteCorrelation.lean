@@ -82,8 +82,15 @@ theorem gramMatrix_normalizedCoreVec_eq_finiteCorrelation
   unfold gramMatrix normalizedCoreVec unitize
   simp only [dotProduct, Pi.star_apply]
   simp_rw [finiteCoreVec_apply_real Z T P hconj hreal]
-  unfold finiteNormalizedCoreCorrelation PrimeSide.Kfun p F mass
-  simp only [Params.localFun_phiHat, Params.toSetting_d, Params.toSetting_tau]
+  simp only [Complex.star_def, map_div₀, Complex.conj_ofReal]
+  unfold finiteNormalizedCoreCorrelation
+  have hK : PrimeSide.Kfun (p T P) (F T P) (z : ℂ).im (z' : ℂ).im =
+      ∑ k : Fin (P.d T),
+        P.phiHatR T ((z : ℂ).im - P.tau T k) *
+          P.phiHatR T ((z' : ℂ).im - P.tau T k) := by
+    rfl
+  rw [hK]
+  fold finiteCoreWeight
   have hcroot : (Real.sqrt (P.a T * P.L T ^ 2) : ℂ) ≠ 0 := by
     exact_mod_cast (Real.sqrt_pos.mpr hc).ne'
   have hzroot :
@@ -94,7 +101,9 @@ theorem gramMatrix_normalizedCoreVec_eq_finiteCorrelation
     exact_mod_cast (Real.sqrt_pos.mpr (hpos z')).ne'
   have hmassroot :
       ((Real.sqrt (P.a T * P.L T ^ 2) : ℂ)) ^ 2 =
-        (P.a T * P.L T ^ 2 : ℂ) := by
+        (mass T P : ℂ) := by
+    change ((Real.sqrt (P.a T * P.L T ^ 2) : ℂ)) ^ 2 =
+      ((P.a T * P.L T ^ 2 : ℝ) : ℂ)
     rw [sq, ← Complex.ofReal_mul, Real.mul_self_sqrt hc.le]
   rw [Finset.sum_div]
   field_simp [hcroot, hzroot, hz'root]
