@@ -96,20 +96,32 @@ lemma four_trace_zero_l1_sq
   rw [ha.2.2.2.2, hb.2.2.2.2, hc.2.2.2.2, hd.2.2.2.2]
   have haSq : a ^ 2 =
       scalarPositivePart a ^ 2 + scalarNegativePart a ^ 2 := by
-    rw [ha.2.2.2.1]
-    nlinarith [ha.2.2.1]
+    calc
+      a ^ 2 = (scalarPositivePart a - scalarNegativePart a) ^ 2 :=
+        congrArg (fun x : ℝ => x ^ 2) ha.2.2.2.1
+      _ = scalarPositivePart a ^ 2 + scalarNegativePart a ^ 2 := by
+        nlinarith [ha.2.2.1]
   have hbSq : b ^ 2 =
       scalarPositivePart b ^ 2 + scalarNegativePart b ^ 2 := by
-    rw [hb.2.2.2.1]
-    nlinarith [hb.2.2.1]
+    calc
+      b ^ 2 = (scalarPositivePart b - scalarNegativePart b) ^ 2 :=
+        congrArg (fun x : ℝ => x ^ 2) hb.2.2.2.1
+      _ = scalarPositivePart b ^ 2 + scalarNegativePart b ^ 2 := by
+        nlinarith [hb.2.2.1]
   have hcSq : c ^ 2 =
       scalarPositivePart c ^ 2 + scalarNegativePart c ^ 2 := by
-    rw [hc.2.2.2.1]
-    nlinarith [hc.2.2.1]
+    calc
+      c ^ 2 = (scalarPositivePart c - scalarNegativePart c) ^ 2 :=
+        congrArg (fun x : ℝ => x ^ 2) hc.2.2.2.1
+      _ = scalarPositivePart c ^ 2 + scalarNegativePart c ^ 2 := by
+        nlinarith [hc.2.2.1]
   have hdSq : d ^ 2 =
       scalarPositivePart d ^ 2 + scalarNegativePart d ^ 2 := by
-    rw [hd.2.2.2.1]
-    nlinarith [hd.2.2.1]
+    calc
+      d ^ 2 = (scalarPositivePart d - scalarNegativePart d) ^ 2 :=
+        congrArg (fun x : ℝ => x ^ 2) hd.2.2.2.1
+      _ = scalarPositivePart d ^ 2 + scalarNegativePart d ^ 2 := by
+        nlinarith [hd.2.2.1]
   rw [haSq, hbSq, hcSq, hdSq]
   nlinarith
 
@@ -156,7 +168,7 @@ private lemma frobSq_eq_sum_norm_sq_four
     Matrix.conjTranspose_apply, map_sum, Complex.star_def]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
-  rw [Complex.conj_mul', ← Complex.ofReal_pow, Complex.ofReal_re]
+  rw [RCLike.conj_mul, ← RCLike.ofReal_pow, RCLike.ofReal_re]
 
 lemma frobSq_fin4_of_diag_zero
     {B : Matrix (Fin 4) (Fin 4) ℂ} (hB : B.IsHermitian)
