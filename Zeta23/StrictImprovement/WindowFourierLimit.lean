@@ -170,17 +170,21 @@ lemma sharpW_paperFT_re_scaled
   rw [smul_eq_mul] at hscale
   have hleft : -(L / 2) / L = -(1 : ℝ) / 2 := by
     field_simp
-    ring
   have hright : L / 2 / L = (1 : ℝ) / 2 := by
     field_simp
-    ring
   rw [hleft, hright] at hscale
-  rw [← hscale]
-  apply intervalIntegral.integral_congr
-  intro u _
-  congr 2
-  field_simp
-  ring
+  unfold endpointKAt
+  calc
+    (∫ u in -(L / 2)..L / 2,
+        ThmD.vStar lam (u / L) * Real.cos (x / L * u)) =
+        ∫ u in -(L / 2)..L / 2,
+          ThmD.vStar lam (u / L) * Real.cos (x * (u / L)) := by
+      apply intervalIntegral.integral_congr
+      intro u _
+      congr 2
+      field_simp
+    _ = L * ∫ s in (-(1 : ℝ) / 2)..(1 / 2),
+        ThmD.vStar lam s * Real.cos (x * s) := hscale
 
 /-- Uniform finite-window numerator error.  No restriction on `x` is needed. -/
 theorem phiD_VPhiR_scaled_close_endpointKAt
@@ -197,21 +201,25 @@ theorem phiD_VPhiR_scaled_close_endpointKAt
     hrho hlam0 hlam1 hw0 hwL
   rw [Complex.ofReal_div] at hfourier
   rw [sharpW_paperFT_re_scaled hL] at hfourier
+  have hfourier' :
+      |AdmWindow.VPhiR (ThmD.phiD rho lam L w) (x / L) -
+          L * endpointKAt lam x| ≤
+        ∫ u, |ThmD.phiD rho lam L w u ^ 2 - ThmD.sharpW lam L u| := by
+    simpa [AdmWindow.VPhiR, AdmWindow.VPhi, Complex.ofReal_div] using hfourier
   have hraw :
       |AdmWindow.VPhiR (ThmD.phiD rho lam L w) (x / L) -
-        L * endpointKAt lam x| ≤ 2 * w := hfourier.trans hL1
+        L * endpointKAt lam x| ≤ 2 * w := hfourier'.trans hL1
   have hrewrite :
       L⁻¹ * AdmWindow.VPhiR (ThmD.phiD rho lam L w) (x / L) - endpointKAt lam x =
         L⁻¹ * (AdmWindow.VPhiR (ThmD.phiD rho lam L w) (x / L) -
           L * endpointKAt lam x) := by
     field_simp
-    ring
   rw [hrewrite, abs_mul, abs_of_pos (inv_pos.mpr hL)]
   calc
     L⁻¹ * |AdmWindow.VPhiR (ThmD.phiD rho lam L w) (x / L) -
         L * endpointKAt lam x| ≤ L⁻¹ * (2 * w) :=
           mul_le_mul_of_nonneg_left hraw (inv_nonneg.mpr hL.le)
-    _ = 2 * w / L := by field_simp; ring
+    _ = 2 * w / L := by field_simp
 
 /-- The zero-frequency fixed-`lam` kernel is the scale-free mass `aStar`. -/
 @[simp] theorem endpointKAt_zero (lam : ℝ) :
