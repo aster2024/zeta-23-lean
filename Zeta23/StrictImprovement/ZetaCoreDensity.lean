@@ -105,7 +105,7 @@ theorem coreCard_lower_from_simple_epsilon_form
   have he := eventually_le_mul_of_nonneg_isLittleO he0 hN
     (excludedSimpleCount_three_isLittleO Z hR) (show 0 < eps / 2 by linarith)
   have htransfer := eventually_coreCard_lower_of Z Q
-    (eventually_ge_atTop 0) hconj hbEv he
+    (eventually_ge_atTop (0 : ℝ)) hconj hbEv he
   filter_upwards [htransfer] with T h
   convert h using 1 <;> ring
 
@@ -123,8 +123,9 @@ theorem eventually_coreCard_le_one_add
     Eventually.of_forall fun T => Nat.cast_nonneg _
   have hII := eventually_le_mul_of_nonneg_isLittleO hII0 hN
     (NII_isLittleO_N Z hR) heps
-  filter_upwards [eventually_ge_atTop 0, hconj, hII] with T hT hc hsmall
-  have hcardNat := coreCard_le_N_add_NII Z hT (Q T) hc
+  filter_upwards [eventually_ge_atTop (0 : ℝ), hconj, hII]
+    with T hT hc hsmall
+  have hcardNat := coreCard_le_N_add_NII Z (C := 3) hT (Q T) hc
   have hcard : (Fintype.card (CoreSimpleLabel Z T 3) : ℝ) ≤
       (Z.N T (2 * T) : ℝ) + (Assembly.NII Z T : ℝ) := by
     exact_mod_cast hcardNat

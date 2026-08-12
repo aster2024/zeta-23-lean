@@ -97,11 +97,22 @@ theorem tendsto_coreBinD_div_N
     apply (isLittleO_iff_tendsto' _).mp
       (coreBinD_sub_lam_mul_N_isLittleO Z hR P)
     filter_upwards [hNpos] with T hT
-    exact hT.ne'
-  refine (tendsto_const_nhds.add hzero).congr' ?_
-  filter_upwards [hNpos] with T hT
-  field_simp [hT.ne']
-  ring
+    intro hNzero
+    exact (hT.ne' hNzero).elim
+  have hsum :
+      Tendsto (fun T => P.lam +
+        (coreBinD T P - P.lam * (Z.N T (2 * T) : ℝ)) /
+          (Z.N T (2 * T) : ℝ)) atTop (𝓝 (P.lam + 0)) :=
+    tendsto_const_nhds.add hzero
+  have heq :
+      (fun T => P.lam +
+        (coreBinD T P - P.lam * (Z.N T (2 * T) : ℝ)) /
+          (Z.N T (2 * T) : ℝ)) =ᶠ[atTop]
+        (fun T => coreBinD T P / (Z.N T (2 * T) : ℝ)) := by
+    filter_upwards [hNpos] with T hT
+    field_simp [hT.ne']
+    ring
+  simpa using hsum.congr' heq
 
 /-- One-sided form consumed by the finite-height gain estimate. -/
 theorem eventually_coreBinD_le
