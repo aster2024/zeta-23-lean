@@ -47,9 +47,21 @@ jobs:
           use-mathlib-cache: true
 
       # The public cache endpoint occasionally fails before Lean is invoked.
-      # Retry the identical pinned action once; a second failure remains fatal.
+      # Retry the identical pinned action twice; a third failure remains fatal.
       - name: Retry the pinned Lean toolchain and Mathlib cache
+        id: lean_setup_secondary
+        continue-on-error: true
         if: steps.lean_setup_primary.outcome == 'failure'
+        uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9 # v1
+        with:
+          auto-config: false
+          build: false
+          test: false
+          lint: false
+          use-mathlib-cache: true
+
+      - name: Final retry of the pinned Lean toolchain and Mathlib cache
+        if: steps.lean_setup_secondary.outcome == 'failure'
         uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9 # v1
         with:
           auto-config: false
