@@ -57,17 +57,15 @@ theorem fullCoreCorrelation_atD_eq_phiDNormalizedKernel
   rw [show (P.atD T).localFun T = P.localFunD T from Params.atD_localFun T hP]
   unfold PrimeSide.Kinf phiDNormalizedKernel
   rw [Params.atD_a T hP]
-  unfold Params.localFunD AdmWindow.localFun AdmWindow.av
+  unfold Params.localFunD Params.phiD AdmWindow.localFun AdmWindow.av
   simp only [Params.atD_toSetting, Params.toSetting_L, Params.atD_L,
     coreScaledOrdinate]
   have hx :
       (P.L T * (z : ℂ).im - P.L T * (z' : ℂ).im) / P.L T =
         (z : ℂ).im - (z' : ℂ).im := by
     field_simp [hL.ne']
-    ring
   rw [hx]
   field_simp [hL.ne']
-  ring
 
 /-- Uniform full-correlation comparison for the concrete `atD` family. -/
 theorem fullCoreCorrelation_atD_close_endpointR
@@ -113,15 +111,18 @@ theorem packedCoreTriple_atD_local_energy
   have hL : 0 < (P.atD T).L T := by
     simpa using (show 0 < P.L T by linarith [hP.one_le_w])
   have heps : 0 ≤ 12 * P.w / P.L T + 3 * (1 - P.lam) := by
-    have : 0 < P.L T := by linarith [hP.one_le_w]
-    positivity
+    have hL' : 0 < P.L T := by linarith [hP.one_le_w]
+    have hw0 : 0 ≤ P.w := by linarith [hP.one_le_w]
+    have hlam0 : 0 ≤ 1 - P.lam := sub_nonneg.mpr hP.lam_le_one
+    have hfinite0 : 0 ≤ 12 * P.w / P.L T :=
+      div_nonneg (mul_nonneg (by norm_num) hw0) hL'.le
+    nlinarith
   apply packedCoreTriple_local_energy Z T (P.atD T) hconj
     (ThmD.cDT P.ϱ P.lam)
     hreal hF hT hc hbudget hL hpos heps
   · intro z z'
-    simpa only [Params.atD_L] using
+    simpa only [Params.atD_L, coreScaledOrdinate] using
       (fullCoreCorrelation_atD_close_endpointR Z hP hwL z z')
-  · exact q
 
 end StrictImprovement
 end Zeta23
