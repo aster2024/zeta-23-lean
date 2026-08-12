@@ -36,8 +36,8 @@ theorem hasDerivAt_offsetNumerator (n : ℕ) (e : ℝ) :
   have hcos := (Real.hasDerivAt_cos (e / 2)).comp e harg
   have hcoef : HasDerivAt
       (fun y : ℝ => 2 * Real.pi * (n : ℝ) + y) 1 e := by
-    simpa only [add_comm] using
-      (hasDerivAt_id e).add_const (2 * Real.pi * (n : ℝ))
+    simpa only [id_eq] using
+      (hasDerivAt_id e).const_add (2 * Real.pi * (n : ℝ))
   unfold offsetNumerator offsetNumeratorDerivative
   have h := (hcoef.mul hsin).sub (hcos.const_mul endpointKappa)
   simp only [Function.comp_apply, id_eq] at h
@@ -57,13 +57,17 @@ theorem offsetNumerator_strictMonoOn (n : ℕ) (hn : 1 ≤ n) :
   have hsin : 0 < Real.sin (e / 2) := by
     apply Real.sin_pos_of_pos_of_lt_pi
     · exact div_pos heIoo.1 (by norm_num)
-    · linarith [Real.pi_pos]
+    · nlinarith [heIoo.2, Real.pi_pos]
   have hcos : 0 < Real.cos (e / 2) := by
     apply Real.cos_pos_of_mem_Ioo
-    constructor <;> linarith [Real.pi_pos]
+    constructor
+    · nlinarith [heIoo.1, Real.pi_pos]
+    · nlinarith [heIoo.2, Real.pi_pos]
   have hnreal : (1 : ℝ) ≤ n := by exact_mod_cast hn
+  have hnpos : 0 < (n : ℝ) := lt_of_lt_of_le (by norm_num) hnreal
   have hcoef : 0 < (2 * Real.pi * (n : ℝ) + e) / 2 := by
-    nlinarith [Real.pi_pos]
+    have hmain : 0 < 2 * Real.pi * (n : ℝ) := by positivity
+    nlinarith [heIoo.1]
   have hone : 0 < 1 + endpointKappa / 2 := by
     nlinarith [endpointKappa_pos]
   positivity
@@ -174,8 +178,8 @@ lemma right_radius_numerator_lower
     refine intervalIntegral.integral_mono_on hab hconst_int hderiv_int ?_
     intro e he
     apply root_neighborhood_derivative_lower hlow
-    rw [abs_of_nonneg (by linarith : 0 ≤ e - rootOffset n hn)]
-    linarith
+    rw [abs_of_nonneg (by linarith [he.1] : 0 ≤ e - rootOffset n hn)]
+    linarith [he.2]
   have hroot := rootOffset_numerator_zero n hn
   have hint := integral_offsetNumeratorDerivative n
     (rootOffset n hn) (rootOffset n hn + localizationRadius)
@@ -209,8 +213,8 @@ lemma left_radius_numerator_lower
     refine intervalIntegral.integral_mono_on hab hconst_int hderiv_int ?_
     intro e he
     apply root_neighborhood_derivative_lower hlow
-    rw [abs_of_nonpos (by linarith : e - rootOffset n hn ≤ 0)]
-    linarith
+    rw [abs_of_nonpos (by linarith [he.2] : e - rootOffset n hn ≤ 0)]
+    linarith [he.1]
   have hroot := rootOffset_numerator_zero n hn
   have hint := integral_offsetNumeratorDerivative n
     (rootOffset n hn - localizationRadius) (rootOffset n hn)
@@ -229,6 +233,7 @@ theorem outside_radius_numerator_lower
       ≤ |offsetNumerator n e| := by
   let c : ℝ := 3 * (n : ℝ) * ((112391 : ℝ) / 115200) * localizationRadius
   have hnreal : (1 : ℝ) ≤ n := by exact_mod_cast hn
+  have hnpos : 0 < (n : ℝ) := lt_of_lt_of_le (by norm_num) hnreal
   have hcpos : 0 < c := by
     dsimp [c]
     positivity
@@ -238,13 +243,13 @@ theorem outside_radius_numerator_lower
   have hleftmem :
       rootOffset n hn - localizationRadius ∈ Set.Icc (0 : ℝ) Real.pi := by
     constructor
-    · nlinarith
-    · nlinarith [Real.pi_gt_three]
+    · nlinarith [hlow, hrsmall]
+    · nlinarith [hrootmem.2, hrpos, Real.pi_gt_three]
   have hrightmem :
       rootOffset n hn + localizationRadius ∈ Set.Icc (0 : ℝ) Real.pi := by
     constructor
-    · nlinarith
-    · nlinarith [Real.pi_gt_three]
+    · nlinarith [hrootmem.1, hrpos]
+    · nlinarith [hrootmem.2, hrsmall, Real.pi_gt_three]
   have hleft := left_radius_numerator_lower hlow
   have hright := right_radius_numerator_lower hlow
   have hmono := (offsetNumerator_strictMonoOn n hn).monotoneOn
@@ -258,7 +263,6 @@ theorem outside_radius_numerator_lower
       dsimp [c] at hcpos ⊢
       nlinarith
     rw [abs_of_neg hneg]
-    dsimp [c]
     nlinarith
   · have hfar' := hfar
     rw [abs_of_nonneg (sub_nonneg.mpr her)] at hfar'
@@ -269,7 +273,6 @@ theorem outside_radius_numerator_lower
       dsimp [c] at hcpos ⊢
       nlinarith
     rw [abs_of_pos hpos]
-    dsimp [c]
     nlinarith
 
 /-- Translating by `2*pi*n` changes the scalar numerator only by the unit
@@ -345,14 +348,14 @@ lemma positive_interval_denominator_bounds
   dsimp
   have hnreal : (1 : ℝ) ≤ n := by exact_mod_cast hn
   have hxpos : 0 < 2 * Real.pi * (n : ℝ) + e := by
-    nlinarith [Real.pi_pos]
+    nlinarith [he.1, Real.pi_pos]
   have hxlarge : 6 < 2 * Real.pi * (n : ℝ) + e := by
-    nlinarith [Real.pi_gt_three]
+    nlinarith [he.1, Real.pi_gt_three]
   have hupper :
       2 * Real.pi * (n : ℝ) + e
         ≤ (((2 * n + 1 : ℕ) : ℝ) * Real.pi) := by
     push_cast
-    nlinarith [Real.pi_pos]
+    nlinarith [he.2, Real.pi_pos]
   have huppos : 0 < (((2 * n + 1 : ℕ) : ℝ) * Real.pi) := by
     positivity
   have hprod :
@@ -468,7 +471,7 @@ lemma endpointK_eq_twice_half_integral (x : ℝ) :
       apply intervalIntegral.integral_congr
       intro s _
       unfold ThmD.vStar
-      rw [mul_neg, Real.cos_neg, mul_neg, Real.cos_neg]
+      simp only [mul_neg, Real.cos_neg]
     rw [← heven, hcomp]
     norm_num
   unfold endpointK
@@ -513,11 +516,14 @@ theorem endpointK_initial_interval_lower
     have hcos2base := Real.one_sub_sq_div_two_le_cos (x := x * s)
     have hcos2 : (11 : ℝ) / 16 ≤ Real.cos (x * s) := by
       nlinarith
+    have hcos1' :
+        (15 : ℝ) / 16 ≤ Real.cos (Real.sqrt 2 * 1 * s) := by
+      simpa only [mul_one] using hcos1
     unfold ThmD.vStar
     calc
       (165 : ℝ) / 256 = ((15 : ℝ) / 16) * ((11 : ℝ) / 16) := by norm_num
       _ ≤ Real.cos (Real.sqrt 2 * 1 * s) * Real.cos (x * s) := by
-        apply mul_le_mul hcos1 hcos2 (by norm_num)
+        apply mul_le_mul hcos1' hcos2 (by norm_num)
         nlinarith
   have hpoint_tail : ∀ s ∈ Set.Icc ((1 : ℝ) / 4) (1 / 2),
       0 ≤ ThmD.vStar 1 s * Real.cos (x * s) := by
@@ -525,7 +531,8 @@ theorem endpointK_initial_interval_lower
     have hvs : 0 ≤ ThmD.vStar 1 s := by
       unfold ThmD.vStar
       apply Real.cos_nonneg_of_mem_Icc
-      have harg0 : 0 ≤ Real.sqrt 2 * 1 * s := by positivity
+      have harg0 : 0 ≤ Real.sqrt 2 * 1 * s := by
+        exact mul_nonneg (mul_nonneg (Real.sqrt_nonneg 2) (by norm_num)) hs.1
       have hsqrt_le_two : Real.sqrt 2 ≤ 2 := by
         nlinarith [hsqrt_sq, Real.sqrt_nonneg 2]
       have harg_le_one : Real.sqrt 2 * 1 * s ≤ 1 := by
@@ -534,14 +541,15 @@ theorem endpointK_initial_interval_lower
             apply mul_le_mul_of_nonneg_right
             · nlinarith
             · linarith [hs.1]
-          _ ≤ 1 := by nlinarith
+          _ ≤ 1 := by nlinarith [hs.2]
       constructor
       · nlinarith [Real.pi_gt_three]
       · nlinarith [Real.pi_gt_three]
     have hxc : 0 ≤ Real.cos (x * s) := by
       apply Real.cos_nonneg_of_mem_Icc
       constructor
-      · nlinarith [mul_nonneg hx.1 (by linarith [hs.1])]
+      · have hxs0 : 0 ≤ x * s := mul_nonneg hx.1 (by linarith [hs.1])
+        nlinarith [hxs0, Real.pi_pos]
       · have hxs : x * s ≤ Real.pi / 2 := by
           exact (mul_le_mul hx.2 hs.2 (by linarith [hs.1]) Real.pi_pos.le).trans_eq
             (by ring)
@@ -591,7 +599,9 @@ theorem zero_free_interval_G_lower
     norm_num
   have ht : t ∈ Set.Icc (Real.pi / 2) Real.pi := by
     dsimp [t]
-    constructor <;> nlinarith [Real.pi_pos]
+    constructor
+    · nlinarith [hx.1, Real.pi_pos]
+    · nlinarith [hx.2, Real.pi_pos]
   have hsin : 0 ≤ Real.sin t :=
     Real.sin_nonneg_of_nonneg_of_le_pi
       (le_trans (by positivity) ht.1) ht.2
@@ -608,9 +618,10 @@ theorem zero_free_interval_G_lower
     nlinarith
   have hxlarge : (6 : ℝ) / 5 ≤ x := by
     have hfactor : 1 ≤ 2 * (m : ℝ) - 1 := by nlinarith
-    have hpi_le : Real.pi ≤ (2 * (m : ℝ) - 1) * Real.pi :=
-      mul_le_mul_of_nonneg_right hfactor Real.pi_pos.le
-    nlinarith [Real.pi_gt_three]
+    have hpi_le : Real.pi ≤ (2 * (m : ℝ) - 1) * Real.pi := by
+      simpa only [one_mul] using
+        mul_le_mul_of_nonneg_right hfactor Real.pi_pos.le
+    nlinarith [hx.1, hpi_le, Real.pi_gt_three]
   have hklarge : (6 : ℝ) / 5 ≤ endpointKappa :=
     six_fifths_lt_endpointKappa.le
   have hweighted :
