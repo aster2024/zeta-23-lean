@@ -50,7 +50,7 @@ lemma Wfun_le_explicit
     calc PrimeSide.psiA cϱ p Δ ^ 2
         ≤ (cϱ / (p.w * Δ ^ 2)) ^ 2 :=
           pow_le_pow_left₀ hψ0 hψ 2
-      _ = (cϱ / p.w) ^ 2 / Δ ^ 4 := by field_simp; ring
+      _ = (cϱ / p.w) ^ 2 / Δ ^ 4 := by field_simp
   have hint := PrimeSide.setIntegral_psiA_sq_Ioi_le_div hF hΔ
   have hh : 0 ≤ p.h⁻¹ := inv_nonneg.mpr (PrimeSide.h_pos hF).le
   unfold PrimeSide.Wfun
@@ -94,10 +94,10 @@ theorem rho_core_le_budget
   have hWanti := Wfun_antitoneOn hF
   have hWL : PrimeSide.Wfun cϱ p (τ - p.T) ≤
       PrimeSide.Wfun cϱ p C :=
-    hWanti hC0 (by linarith) hleft
+    hWanti hC0 (show 0 ≤ τ - p.T by linarith) hleft
   have hWR : PrimeSide.Wfun cϱ p (2 * p.T - τ) ≤
       PrimeSide.Wfun cϱ p C :=
-    hWanti hC0 (by linarith) hright
+    hWanti hC0 (show 0 ≤ 2 * p.T - τ by linarith) hright
   have hψanti := PrimeSide.psiA_sq_antitoneOn hF
   have hlast0 : 0 ≤ p.tau p.d - τ := by linarith
   have hlast : PrimeSide.psiA cϱ p (p.tau p.d - τ) ^ 2 ≤
@@ -113,7 +113,6 @@ theorem rho_core_le_budget
           pow_le_pow_left₀ hψ0 hψ 2
       _ = (cϱ / p.w) ^ 2 / (C - 1) ^ 4 := by
         field_simp
-        ring
   unfold coreTailBudget
   linarith
 
@@ -142,7 +141,6 @@ theorem rho_le_explicit
           pow_le_pow_left₀ hψ0 hψ 2
       _ = (cϱ / p.w) ^ 2 / (p.tau p.d - τ) ^ 4 := by
         field_simp
-        ring
   exact hbase.trans (add_le_add (add_le_add hWL hWR) hlast)
 
 variable (Z : ZeroConfig) (T C : ℝ) (P : Params)
@@ -169,7 +167,11 @@ lemma finiteCoreWeight_eq_one_sub_rho_div
         P.phiHatR T ((z : ℂ).im - P.tau T k) ^ 2 /
           (P.a T * P.L T ^ 2) := by
     intro k
-    rw [gammaOf_of_re_eq_half hzre, ← Complex.ofReal_sub, hreal,
+    change ‖evalVec Z T P (z : ZI Z T) k /
+        (Real.sqrt (P.a T * P.L T ^ 2) : ℂ)‖ ^ 2 =
+      P.phiHatR T ((z : ℂ).im - P.tau T k) ^ 2 /
+        (P.a T * P.L T ^ 2)
+    rw [evalVec, gammaOf_of_re_eq_half hzre, ← Complex.ofReal_sub, hreal,
       norm_div, Complex.norm_real, Real.norm_eq_abs,
       abs_of_pos (Real.sqrt_pos.mpr hc), div_pow, Real.sq_sqrt hc.le,
       Complex.norm_real, Real.norm_eq_abs, sq_abs]
@@ -190,7 +192,7 @@ lemma finiteCoreWeight_pos_of_rho_lt
       P.a T * P.L T ^ 2) :
     0 < finiteCoreWeight Z T C P hconj z := by
   rw [finiteCoreWeight_eq_one_sub_rho_div Z T C P hconj hreal hc z]
-  exact sub_pos.mpr (div_lt_one hc hrho)
+  exact sub_pos.mpr ((div_lt_one hc).2 hrho)
 
 /-- Concrete uniform nonvanishing theorem.  All analytic content is now in
 the single explicit scalar gate `coreTailBudget < aL^2`. -/

@@ -88,7 +88,8 @@ theorem endpoint_threeCoordinateEnergy_lower
         unfold threeCoordinateEnergy at h ⊢
         have hzy' : z - y = -(y - z) := by ring
         have hzx' : z - x = -(x - z) := by ring
-        rw [hzy', hzx', endpointR_neg, endpointR_neg] at h
+        have hyx' : y - x = -(x - y) := by ring
+        rw [hzy', hzx', hyx', endpointR_neg, endpointR_neg, endpointR_neg] at h
         linarith
 
 /-- Three arbitrary real correlations uniformly close to the three endpoint
