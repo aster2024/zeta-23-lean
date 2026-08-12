@@ -65,8 +65,25 @@ jobs:
 
       - name: Build the default root including the wider endpoint
         run: |
-          set -euo pipefail
+          set -uo pipefail
+          set +e
           lake build --wfail 2>&1 | tee wider-build.log
+          build_status=${PIPESTATUS[0]}
+          set -e
+          if [[ "${build_status}" -ne 0 ]]; then
+            {
+              printf '### Lean build failure tail\n\n```text\n'
+              tail -n 240 wider-build.log
+              printf '```\n'
+            } >> "${GITHUB_STEP_SUMMARY}"
+
+            diagnostic=$(tail -n 120 wider-build.log)
+            diagnostic=${diagnostic//'%'/'%25'}
+            diagnostic=${diagnostic//$'\r'/'%0D'}
+            diagnostic=${diagnostic//$'\n'/'%0A'}
+            printf '::error title=Lean build failure tail::%s\n' "${diagnostic}"
+            exit "${build_status}"
+          fi
 
       - name: Compare baseline and wider axiom sets
         run: |
