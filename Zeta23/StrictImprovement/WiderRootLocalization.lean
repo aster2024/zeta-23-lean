@@ -523,7 +523,7 @@ theorem wider_last_zero_free_short_G_lower
     rw [show widerRadius = (1 : ℝ) / 8 by rfl] at hnearLeft
     dsimp [e]
     norm_num at hnearLeft ⊢
-    exact hnearLeft.le
+    simpa [add_comm] using hnearLeft.le
   have heupper : eps ≤ (21 : ℝ) / 40 := by nlinarith [heps.2]
   have hLpos : 0 < L := by
     simpa [L, firstSixIndex] using widerDerivativeLower_pos (5 : Fin 6)
@@ -673,7 +673,8 @@ theorem small_endpointK_localizes_first_six
   by_cases h2 : x ≤ 2 * Real.pi
   · have hgap := wider_zero_free_interval_K_lower
       (i := (0 : Fin 5)) (x := x) (by
-        simpa using (show x ∈ Set.Icc Real.pi (2 * Real.pi) from ⟨hpi, h2⟩))
+        convert (show x ∈ Set.Icc Real.pi (2 * Real.pi) from ⟨hpi, h2⟩)
+          using 1 <;> norm_num)
     exfalso
     linarith
   have h2pi : 2 * Real.pi ≤ x := (not_le.mp h2).le
@@ -681,13 +682,15 @@ theorem small_endpointK_localizes_first_six
   · refine ⟨0, ?_⟩
     change |x - firstSixRoot (0 : Fin 6)| < widerRadius
     exact wider_positive_half_interval_localizes
-      (i := (0 : Fin 5)) ⟨h2pi, h3⟩ hsmall
+      (i := (0 : Fin 5)) (by
+        convert (show x ∈ Set.Icc (2 * Real.pi) (3 * Real.pi) from
+          ⟨h2pi, h3⟩) using 1 <;> norm_num) hsmall
   have h3pi : 3 * Real.pi ≤ x := (not_le.mp h3).le
   by_cases h4 : x ≤ 4 * Real.pi
   · have hgap := wider_zero_free_interval_K_lower
       (i := (1 : Fin 5)) (x := x) (by
-        simpa using (show x ∈ Set.Icc (3 * Real.pi) (4 * Real.pi) from
-          ⟨h3pi, h4⟩))
+        convert (show x ∈ Set.Icc (3 * Real.pi) (4 * Real.pi) from
+          ⟨h3pi, h4⟩) using 1 <;> norm_num)
     exfalso
     linarith
   have h4pi : 4 * Real.pi ≤ x := (not_le.mp h4).le
@@ -695,13 +698,15 @@ theorem small_endpointK_localizes_first_six
   · refine ⟨1, ?_⟩
     change |x - firstSixRoot (1 : Fin 6)| < widerRadius
     exact wider_positive_half_interval_localizes
-      (i := (1 : Fin 5)) ⟨h4pi, h5⟩ hsmall
+      (i := (1 : Fin 5)) (by
+        convert (show x ∈ Set.Icc (4 * Real.pi) (5 * Real.pi) from
+          ⟨h4pi, h5⟩) using 1 <;> norm_num) hsmall
   have h5pi : 5 * Real.pi ≤ x := (not_le.mp h5).le
   by_cases h6 : x ≤ 6 * Real.pi
   · have hgap := wider_zero_free_interval_K_lower
       (i := (2 : Fin 5)) (x := x) (by
-        simpa using (show x ∈ Set.Icc (5 * Real.pi) (6 * Real.pi) from
-          ⟨h5pi, h6⟩))
+        convert (show x ∈ Set.Icc (5 * Real.pi) (6 * Real.pi) from
+          ⟨h5pi, h6⟩) using 1 <;> norm_num)
     exfalso
     linarith
   have h6pi : 6 * Real.pi ≤ x := (not_le.mp h6).le
@@ -709,13 +714,15 @@ theorem small_endpointK_localizes_first_six
   · refine ⟨2, ?_⟩
     change |x - firstSixRoot (2 : Fin 6)| < widerRadius
     exact wider_positive_half_interval_localizes
-      (i := (2 : Fin 5)) ⟨h6pi, h7⟩ hsmall
+      (i := (2 : Fin 5)) (by
+        convert (show x ∈ Set.Icc (6 * Real.pi) (7 * Real.pi) from
+          ⟨h6pi, h7⟩) using 1 <;> norm_num) hsmall
   have h7pi : 7 * Real.pi ≤ x := (not_le.mp h7).le
   by_cases h8 : x ≤ 8 * Real.pi
   · have hgap := wider_zero_free_interval_K_lower
       (i := (3 : Fin 5)) (x := x) (by
-        simpa using (show x ∈ Set.Icc (7 * Real.pi) (8 * Real.pi) from
-          ⟨h7pi, h8⟩))
+        convert (show x ∈ Set.Icc (7 * Real.pi) (8 * Real.pi) from
+          ⟨h7pi, h8⟩) using 1 <;> norm_num)
     exfalso
     linarith
   have h8pi : 8 * Real.pi ≤ x := (not_le.mp h8).le
@@ -723,13 +730,15 @@ theorem small_endpointK_localizes_first_six
   · refine ⟨3, ?_⟩
     change |x - firstSixRoot (3 : Fin 6)| < widerRadius
     exact wider_positive_half_interval_localizes
-      (i := (3 : Fin 5)) ⟨h8pi, h9⟩ hsmall
+      (i := (3 : Fin 5)) (by
+        convert (show x ∈ Set.Icc (8 * Real.pi) (9 * Real.pi) from
+          ⟨h8pi, h9⟩) using 1 <;> norm_num) hsmall
   have h9pi : 9 * Real.pi ≤ x := (not_le.mp h9).le
   by_cases h10 : x ≤ 10 * Real.pi
   · have hgap := wider_zero_free_interval_K_lower
       (i := (4 : Fin 5)) (x := x) (by
-        simpa using (show x ∈ Set.Icc (9 * Real.pi) (10 * Real.pi) from
-          ⟨h9pi, h10⟩))
+        convert (show x ∈ Set.Icc (9 * Real.pi) (10 * Real.pi) from
+          ⟨h9pi, h10⟩) using 1 <;> norm_num)
     exfalso
     linarith
   have h10pi : 10 * Real.pi ≤ x := (not_le.mp h10).le
@@ -737,7 +746,9 @@ theorem small_endpointK_localizes_first_six
   · refine ⟨4, ?_⟩
     change |x - firstSixRoot (4 : Fin 6)| < widerRadius
     exact wider_positive_half_interval_localizes
-      (i := (4 : Fin 5)) ⟨h10pi, h11⟩ hsmall
+      (i := (4 : Fin 5)) (by
+        convert (show x ∈ Set.Icc (10 * Real.pi) (11 * Real.pi) from
+          ⟨h10pi, h11⟩) using 1 <;> norm_num) hsmall
   have h11pi : 11 * Real.pi ≤ x := (not_le.mp h11).le
   refine ⟨5, ?_⟩
   change |x - firstSixRoot (5 : Fin 6)| < widerRadius

@@ -144,7 +144,6 @@ theorem gramMatrix_normalizedCoreVec_eq_finiteCorrelation
   apply Finset.sum_congr rfl
   intro k hk
   field_simp [hzroot, hz'root]
-  ring
 
 /-- The pointwise tail budget places every finite squared norm in
 `[1-q,1]`, where `q=budget/(aL²)`. -/
