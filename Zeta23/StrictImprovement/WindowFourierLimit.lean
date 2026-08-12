@@ -165,6 +165,7 @@ lemma sharpW_paperFT_re_scaled
     MeasureTheory.integral_Icc_eq_integral_Ioc,
     ← intervalIntegral.integral_of_le (by linarith : -(L / 2) ≤ L / 2)]
   have hscale := intervalIntegral.integral_comp_div
+    (a := -(L / 2)) (b := L / 2)
     (f := fun s : ℝ => ThmD.vStar lam s * Real.cos (x * s)) hL.ne'
   rw [smul_eq_mul] at hscale
   have hleft : -(L / 2) / L = -(1 : ℝ) / 2 := by
@@ -194,6 +195,7 @@ theorem phiD_VPhiR_scaled_close_endpointKAt
     (integrable_sharpW lam hL) (x / L)
   have hL1 := ThmD.integral_abs_phiDsq_sub_sharp
     hrho hlam0 hlam1 hw0 hwL
+  rw [Complex.ofReal_div] at hfourier
   rw [sharpW_paperFT_re_scaled hL] at hfourier
   have hraw :
       |AdmWindow.VPhiR (ThmD.phiD rho lam L w) (x / L) -
@@ -266,15 +268,15 @@ theorem endpointKAt_abs_le_zero
     refine intervalIntegral.integral_mono_on (by norm_num) hf.abs hv ?_
     intro s hs
     have hv0 : 0 ≤ v s := by
-      dsimp [v]
       have habs : |s| ≤ (1 : ℝ) / 2 := abs_le.mpr ⟨by linarith [hs.1], hs.2⟩
-      exact ThmD.cos_factor_ge hlam0 hlam1 (by norm_num) habs
+      have hge := ThmD.cos_factor_ge (lam := lam) (L := (1 : ℝ))
+        hlam0 hlam1 (by norm_num) (u := s) habs
+      dsimp [v]
+      simpa using hge.trans' (by norm_num : (0 : ℝ) ≤ 3 / 4)
     dsimp [f]
     rw [abs_mul, abs_of_nonneg hv0]
     exact mul_le_of_le_one_right hv0 (Real.abs_cos_le_one _)
-  change |∫ s in (-(1 : ℝ) / 2)..(1 / 2), f s| ≤
-    ∫ s in (-(1 : ℝ) / 2)..(1 / 2), v s
-  exact habs.trans hmono
+  simpa [endpointKAt, f, v] using habs.trans hmono
 
 /-- Pointwise profile convergence as `lam -> 1-`, with a rational Lipschitz
 constant. -/
