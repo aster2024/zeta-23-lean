@@ -74,7 +74,7 @@ theorem eventually_coreCard_lower_of
       (H - eps) * (Z.N T (2 * T) : ℝ) ≤
         (Fintype.card (CoreSimpleLabel Z T 3) : ℝ) := by
   filter_upwards [hT, hconj, hbase, hboundary] with T hT0 hc hb he
-  have hcountNat := N0s_le_coreCard_add_excluded Z hT0 (Q T) hc
+  have hcountNat := N0s_le_coreCard_add_excluded Z (C := 3) hT0 (Q T) hc
   have hcount : (Z.N0s T (2 * T) : ℝ) ≤
       (Fintype.card (CoreSimpleLabel Z T 3) : ℝ) +
         (excludedSimpleCount Z T 3 : ℝ) := by

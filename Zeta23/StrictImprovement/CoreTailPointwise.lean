@@ -163,7 +163,8 @@ lemma finiteCoreWeight_eq_one_sub_rho_div
   have hzre : (z : ℂ).re = 1 / 2 := by
     exact (mkData_σ_eq_iff Z T (evalVec Z T P) (evalVec_reflect hconj) z).mp hzfixed
   have hs : ∀ k : Fin (P.d T),
-      ‖(D Z T P hconj).v z k / (Real.sqrt (P.a T * P.L T ^ 2) : ℂ)‖ ^ 2 =
+      ‖(D Z T P hconj).v (coreOnLine Z T C P hconj z) k /
+          (Real.sqrt (P.a T * P.L T ^ 2) : ℂ)‖ ^ 2 =
         P.phiHatR T ((z : ℂ).im - P.tau T k) ^ 2 /
           (P.a T * P.L T ^ 2) := by
     intro k

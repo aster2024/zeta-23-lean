@@ -142,7 +142,7 @@ theorem wider_positive_interval_outside_radius_K_lower
   have hpiUpper : Real.pi < (22 : ℝ) / 7 := by
     have h := Real.pi_lt_d4
     norm_num at h ⊢
-    exact h
+    linarith
   have hfactorPos : 0 < (2 * n + 1 : ℝ) := by
     positivity
   have hAupper : ((2 * n + 1 : ℕ) : ℝ) * Real.pi < A := by
@@ -180,9 +180,8 @@ theorem wider_positive_interval_outside_radius_K_lower
     widerCorrelationThreshold
         < ((3 : ℝ) / 2) / D *
             (widerDerivativeLower n * widerRadius) := by
-          dsimp [D, A]
-          rw [hnEq]
-          convert hrat using 1 <;> ring
+          simpa [D, A, hnEq, div_eq_mul_inv, mul_assoc, mul_left_comm,
+            mul_comm] using hrat
     _ ≤ ((3 : ℝ) / 2) / D * |endpointG x| :=
       mul_le_mul_of_nonneg_left (by simpa [x] using hG) hfactor
     _ ≤ |endpointK x| := hK
@@ -293,7 +292,7 @@ theorem wider_zero_free_interval_K_lower
   have hpiUpper : Real.pi < (22 : ℝ) / 7 := by
     have h := Real.pi_lt_d4
     norm_num at h ⊢
-    exact h
+    linarith
   have hx' : x ∈ Set.Icc
       ((2 * (m : ℝ) - 1) * Real.pi)
       ((2 * (m : ℝ)) * Real.pi) := by
@@ -327,9 +326,8 @@ theorem wider_zero_free_interval_K_lower
   calc
     widerCorrelationThreshold
         ≤ ((3 : ℝ) / 2) / D * ((592688 : ℝ) / 490449) := by
-          dsimp [D, A]
-          rw [hmEq]
-          convert hrat using 1 <;> ring
+          simpa [D, A, hmEq, div_eq_mul_inv, mul_assoc, mul_left_comm,
+            mul_comm] using hrat
     _ ≤ ((3 : ℝ) / 2) / D * |endpointG x| :=
       mul_le_mul_of_nonneg_left hG hfactor
     _ ≤ |endpointK x| := hK
@@ -345,7 +343,7 @@ lemma wider_final_sine_lower {u : ℝ}
   have hpiUpper : Real.pi < (22 : ℝ) / 7 := by
     have h := Real.pi_lt_d4
     norm_num at h ⊢
-    exact h
+    linarith
   have huUpper : u < (11 : ℝ) / 7 := by nlinarith
   have hsin := Real.sin_ge_sub_cube huNonneg
   by_cases hhalf : u ≤ (1 : ℝ) / 2
@@ -431,7 +429,7 @@ theorem wider_last_zero_free_far_K_lower
   have hpiUpper : Real.pi < (22 : ℝ) / 7 := by
     have h := Real.pi_lt_d4
     norm_num at h ⊢
-    exact h
+    linarith
   have hxpos : 0 < x := lt_of_lt_of_le (by
     nlinarith [Real.pi_gt_three]) hx.1
   have hxlarge : 2 < x := by nlinarith
@@ -532,7 +530,7 @@ theorem wider_last_zero_free_short_K_lower
   have hpiUpper : Real.pi < (22 : ℝ) / 7 := by
     have h := Real.pi_lt_d4
     norm_num at h ⊢
-    exact h
+    linarith
   have hxpos : 0 < x := lt_of_lt_of_le (by
     nlinarith [Real.pi_gt_three]) hx.1
   have hxlarge : 2 < x := by nlinarith
