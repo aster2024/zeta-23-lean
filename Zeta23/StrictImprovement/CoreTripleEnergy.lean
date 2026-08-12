@@ -42,6 +42,13 @@ private abbrev mass : ℝ := P.a T * P.L T ^ 2
 def localCorrelationError (cRho epsFull : ℝ) : ℝ :=
   epsFull + 2 * (coreTailBudget cRho (p T P) 3 / mass T P)
 
+/-- Public expansion of the local error, avoiding any downstream dependence
+on this module's private abbreviations. -/
+@[simp] theorem localCorrelationError_eq (cRho epsFull : ℝ) :
+    localCorrelationError T P cRho epsFull =
+      epsFull + 2 * (coreTailBudget cRho (P.toSetting T) 3 /
+        (P.a T * P.L T ^ 2)) := rfl
+
 /-- Every canonical packed core triple inherits the endpoint energy, with
 exactly the sum of the full-kernel error and the finite-normalization error. -/
 theorem packedCoreTriple_local_energy

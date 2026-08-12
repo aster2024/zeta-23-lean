@@ -91,7 +91,10 @@ theorem tendsto_widerAtDLocalDelta
   have hconst : Tendsto (fun _ : ℝ => widerDeltaLower) atTop
       (𝓝 widerDeltaLower) := tendsto_const_nhds
   have hlim := hconst.sub herr
-  convert hlim using 1 <;> ring
+  have hend : widerDeltaLower - 6 * (3 * (1 - P.lam)) =
+      widerDeltaLower - 18 * (1 - P.lam) := by ring
+  rw [← hend]
+  simpa only [widerAtDLocalDelta] using hlim
 
 /-- Any constant strictly below the limiting wider defect is eventually a
 valid local lower bound. -/
