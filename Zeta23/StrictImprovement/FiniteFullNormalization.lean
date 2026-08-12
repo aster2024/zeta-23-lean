@@ -81,7 +81,7 @@ lemma rtrace_rankOneProjector (x : d -> ℂ) :
   rw [map_sum]
   apply Finset.sum_congr rfl
   intro k _
-  rw [Complex.conj_mul', ← RCLike.ofReal_pow, RCLike.ofReal_re]
+  rw [Complex.mul_conj', ← RCLike.ofReal_pow, RCLike.ofReal_re]
 
 /-- A finite sum of unit projectors has real trace equal to the family
 cardinality. -/
@@ -156,6 +156,7 @@ lemma normalizationGap_eq_sum (x : s -> d -> ℂ) (w : s -> ℝ) :
     Matrix.sub_apply, Matrix.sum_apply, Matrix.smul_apply, smul_eq_mul]
   rw [← Finset.sum_sub_distrib]
   refine Finset.sum_congr rfl fun i _ => ?_
+  push_cast
   ring
 
 lemma normalizationGap_posSemidef
