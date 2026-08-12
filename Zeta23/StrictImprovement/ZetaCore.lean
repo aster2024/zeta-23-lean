@@ -128,9 +128,11 @@ theorem posIndex_scaledBlockA_sub_core_le
       (ZeroSide.s2_eq_mk Z T (evalVec Z T P)
         (evalVec_reflect hconj)).symm
   have hp : (Pr Z T P hconj).p = Z.p T := by
-    simpa [Pr] using
-      (ZeroSide.p_eq_mk Z T (evalVec Z T P)
-        (evalVec_reflect hconj)).symm
+    change #({z : ZI Z T | 1 / 2 < (z : ℂ).re}) = Z.p T
+    have hp0 := ZeroSide.p_eq_mk Z T (evalVec Z T P)
+      (evalVec_reflect hconj)
+    change Z.p T = #({z : ZI Z T | 1 / 2 < (z : ℂ).re}) at hp0
+    exact hp0.symm
   rw [hs₂, hp] at hraw
   exact hraw
 
