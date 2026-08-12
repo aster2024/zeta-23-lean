@@ -68,8 +68,11 @@ lemma blockData_S₁_eq_nearSimple :
   ext z
   simp only [nearSimple, Finset.mem_filter, Finset.mem_univ, true_and,
     ZeroSide.ZeroBlockData.S₁]
-  rw [mkData_σ_eq_iff]
-  rfl
+  change
+    ((ZeroSide.mkData Z T (evalVec Z T P) (evalVec_reflect hconj)).σ z = z ∧
+      (ZeroSide.mkData Z T (evalVec Z T P) (evalVec_reflect hconj)).m z = 1) ↔
+        (z : ℂ).re = 1 / 2 ∧ Z.mult z = 1
+  rw [ZeroSide.mkData_σ_eq_iff, ZeroSide.mkData_m]
 
 lemma coreSimple_subset_blockData_S₁ :
     coreSimple Z T C ⊆ (D Z T P hconj).S₁ := by
@@ -90,7 +93,11 @@ lemma card_onLine_sdiff_core :
   rw [(D Z T P hconj).card_onLine_sdiff_selected
     (coreSimple Z T C) (coreSimple_subset_blockData_S₁ Z T C P hconj)]
   rw [card_blockData_S₁_sdiff_core]
-  rw [← s2_eq_mk Z T (evalVec Z T P) (evalVec_reflect hconj)]
+  have hs₂ : (D Z T P hconj).s₂ = Z.s2 T := by
+    simpa [D, ZeroSide.blockData] using
+      (ZeroSide.s2_eq_mk Z T (evalVec Z T P)
+        (evalVec_reflect hconj)).symm
+  rw [hs₂]
 
 /-- Positive-index bound for the actual core contribution, still in exact
 hat scaling `c = a L^2`.  The excluded count has not been estimated. -/
@@ -116,10 +123,16 @@ theorem posIndex_scaledBlockA_sub_core_le
       (ZeroSide.ZeroBlockData.isHermitian_real_smul
         (D Z T P hconj).blockA_isHermitian _)
   rw [card_blockData_S₁_sdiff_core] at hraw
-  rw [← s2_eq_mk Z T (evalVec Z T P) (evalVec_reflect hconj)] at hraw
-  rw [← p_eq_mk Z T (evalVec Z T P) (evalVec_reflect hconj)] at hraw
+  have hs₂ : (D Z T P hconj).s₂ = Z.s2 T := by
+    simpa [D, ZeroSide.blockData] using
+      (ZeroSide.s2_eq_mk Z T (evalVec Z T P)
+        (evalVec_reflect hconj)).symm
+  have hp : (Pr Z T P hconj).p = Z.p T := by
+    simpa [Pr] using
+      (ZeroSide.p_eq_mk Z T (evalVec Z T P)
+        (evalVec_reflect hconj)).symm
+  rw [hs₂, hp] at hraw
   exact hraw
 
 end StrictImprovement
 end Zeta23
-

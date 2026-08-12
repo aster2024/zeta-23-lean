@@ -161,6 +161,8 @@ jobs:
             wider-root-neighborhood-build.log "Wider root neighborhood preflight failure"
           run_preflight Zeta23.StrictImprovement.CoreComplement \
             core-complement-build.log "Core complement preflight failure"
+          run_preflight Zeta23.StrictImprovement.ZetaCore \
+            zeta-core-build.log "Zeta core preflight failure"
 
           lake build \
             Zeta23.StrictImprovement.ZetaWiderEndpointPassage \
@@ -235,6 +237,7 @@ jobs:
             finite-full-normalization-build.log
             wider-root-neighborhood-build.log
             core-complement-build.log
+            zeta-core-build.log
             build-commit.txt
             lean-version.txt
             lake-version.txt
