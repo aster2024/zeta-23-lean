@@ -42,7 +42,7 @@ theorem endpoint_threeCoordinateEnergy_ordered
   have hxy' : y - x = -(x - y) := by ring
   have hxz' : (y - x) + (z - y) = -(x - z) := by ring
   have hyz' : z - y = -(y - z) := by ring
-  rw [hxy', hxz', hyz', endpointR_neg, endpointR_neg, endpointR_neg] at h
+  rw [hxz', hxy', hyz', endpointR_neg, endpointR_neg, endpointR_neg] at h
   linarith
 
 /-- The endpoint lower bound is independent of the enumeration order of the
@@ -62,7 +62,8 @@ theorem endpoint_threeCoordinateEnergy_lower
         have hzy' : z - y = -(y - z) := by ring
         rw [hzy', endpointR_neg] at h
         linarith
-      · have h := endpoint_threeCoordinateEnergy_ordered hzx hxy hyzD
+      · have h := endpoint_threeCoordinateEnergy_ordered hzx hxy
+          (by simpa [abs_sub_comm] using hyzD)
         unfold threeCoordinateEnergy at h ⊢
         have hzx' : z - x = -(x - z) := by ring
         have hzy' : z - y = -(y - z) := by ring
@@ -75,13 +76,15 @@ theorem endpoint_threeCoordinateEnergy_lower
       rw [hyx', endpointR_neg] at h
       linarith
     · rcases le_total y z with hyz | hzy
-      · have h := endpoint_threeCoordinateEnergy_ordered hyz hzx hxyD
+      · have h := endpoint_threeCoordinateEnergy_ordered hyz hzx
+          (by simpa [abs_sub_comm] using hxyD)
         unfold threeCoordinateEnergy at h ⊢
         have hyx' : y - x = -(x - y) := by ring
         have hzx' : z - x = -(x - z) := by ring
         rw [hyx', hzx', endpointR_neg, endpointR_neg] at h
         linarith
-      · have h := endpoint_threeCoordinateEnergy_ordered hzy hyx hxzD
+      · have h := endpoint_threeCoordinateEnergy_ordered hzy hyx
+          (by simpa [abs_sub_comm] using hxzD)
         unfold threeCoordinateEnergy at h ⊢
         have hzy' : z - y = -(y - z) := by ring
         have hzx' : z - x = -(x - z) := by ring

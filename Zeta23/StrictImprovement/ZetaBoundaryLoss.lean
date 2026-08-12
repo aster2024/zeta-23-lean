@@ -177,24 +177,39 @@ theorem interior_three_count_le
   have h0 := (hloc T).trans (hlog T (by linarith) (by linarith))
   have h1 : (Z.N (T + 1) (T + 2) : ℝ) ≤
       A₀ * Real.log (4 * T) := by
-    convert (hloc (T + 1)).trans
-      (hlog (T + 1) (by linarith) (by linarith)) using 1 <;> ring
+    have hraw := (hloc (T + 1)).trans
+      (hlog (T + 1) (by linarith) (by linarith))
+    have hend : T + 1 + 1 = T + 2 := by ring
+    rw [hend] at hraw
+    exact hraw
   have h2 : (Z.N (T + 2) (T + 3) : ℝ) ≤
       A₀ * Real.log (4 * T) := by
-    convert (hloc (T + 2)).trans
-      (hlog (T + 2) (by linarith) (by linarith)) using 1 <;> ring
+    have hraw := (hloc (T + 2)).trans
+      (hlog (T + 2) (by linarith) (by linarith))
+    have hend : T + 2 + 1 = T + 3 := by ring
+    rw [hend] at hraw
+    exact hraw
   have h3 : (Z.N (2 * T - 3) (2 * T - 2) : ℝ) ≤
       A₀ * Real.log (4 * T) := by
-    convert (hloc (2 * T - 3)).trans
-      (hlog (2 * T - 3) (by linarith) (by linarith)) using 1 <;> ring
+    have hraw := (hloc (2 * T - 3)).trans
+      (hlog (2 * T - 3) (by linarith) (by linarith))
+    have hend : 2 * T - 3 + 1 = 2 * T - 2 := by ring
+    rw [hend] at hraw
+    exact hraw
   have h4 : (Z.N (2 * T - 2) (2 * T - 1) : ℝ) ≤
       A₀ * Real.log (4 * T) := by
-    convert (hloc (2 * T - 2)).trans
-      (hlog (2 * T - 2) (by linarith) (by linarith)) using 1 <;> ring
+    have hraw := (hloc (2 * T - 2)).trans
+      (hlog (2 * T - 2) (by linarith) (by linarith))
+    have hend : 2 * T - 2 + 1 = 2 * T - 1 := by ring
+    rw [hend] at hraw
+    exact hraw
   have h5 : (Z.N (2 * T - 1) (2 * T) : ℝ) ≤
       A₀ * Real.log (4 * T) := by
-    convert (hloc (2 * T - 1)).trans
-      (hlog (2 * T - 1) (by linarith) (by linarith)) using 1 <;> ring
+    have hraw := (hloc (2 * T - 1)).trans
+      (hlog (2 * T - 1) (by linarith) (by linarith))
+    have hend : 2 * T - 1 + 1 = 2 * T := by ring
+    rw [hend] at hraw
+    exact hraw
   have hleft :
       (Z.N T (T + 3) : ℝ) =
         Z.N T (T + 1) + Z.N (T + 1) (T + 2) + Z.N (T + 2) (T + 3) := by
