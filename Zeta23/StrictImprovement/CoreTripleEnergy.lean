@@ -95,19 +95,40 @@ theorem packedCoreTriple_local_energy
           |fullCoreCorrelation Z T P (idx 0) (idx 1) -
             endpointR (coreScaledOrdinate Z T 3 P (idx 0) -
               coreScaledOrdinate Z T 3 P (idx 1))| := abs_sub_le _ _ _
-      _ ≤ _ := add_le_add hfin hlim
+      _ ≤ _ := by
+        simpa [p, mass, add_comm] using add_le_add hfin hlim
   have h02close : |c₀₂ - endpointR (x₀ - x₂)| ≤ eps := by
     have hfin := finiteNormalizedCoreCorrelation_close_full
       Z T P hconj hreal hF hT hc hbudget (idx 0) (idx 2)
     have hlim := hfull (idx 0) (idx 2)
     dsimp [c₀₂, x₀, x₂, eps, epsFin]
-    exact (abs_sub_le _ _ _).trans (add_le_add hfin hlim)
+    calc
+      |finiteNormalizedCoreCorrelation Z T P hconj (idx 0) (idx 2) -
+          endpointR (coreScaledOrdinate Z T 3 P (idx 0) -
+            coreScaledOrdinate Z T 3 P (idx 2))|
+        ≤ |finiteNormalizedCoreCorrelation Z T P hconj (idx 0) (idx 2) -
+            fullCoreCorrelation Z T P (idx 0) (idx 2)| +
+          |fullCoreCorrelation Z T P (idx 0) (idx 2) -
+            endpointR (coreScaledOrdinate Z T 3 P (idx 0) -
+              coreScaledOrdinate Z T 3 P (idx 2))| := abs_sub_le _ _ _
+      _ ≤ _ := by
+        simpa [p, mass, add_comm] using add_le_add hfin hlim
   have h12close : |c₁₂ - endpointR (x₁ - x₂)| ≤ eps := by
     have hfin := finiteNormalizedCoreCorrelation_close_full
       Z T P hconj hreal hF hT hc hbudget (idx 1) (idx 2)
     have hlim := hfull (idx 1) (idx 2)
     dsimp [c₁₂, x₁, x₂, eps, epsFin]
-    exact (abs_sub_le _ _ _).trans (add_le_add hfin hlim)
+    calc
+      |finiteNormalizedCoreCorrelation Z T P hconj (idx 1) (idx 2) -
+          endpointR (coreScaledOrdinate Z T 3 P (idx 1) -
+            coreScaledOrdinate Z T 3 P (idx 2))|
+        ≤ |finiteNormalizedCoreCorrelation Z T P hconj (idx 1) (idx 2) -
+            fullCoreCorrelation Z T P (idx 1) (idx 2)| +
+          |fullCoreCorrelation Z T P (idx 1) (idx 2) -
+            endpointR (coreScaledOrdinate Z T 3 P (idx 1) -
+              coreScaledOrdinate Z T 3 P (idx 2))| := abs_sub_le _ _ _
+      _ ≤ _ := by
+        simpa [p, mass, add_comm] using add_le_add hfin hlim
   have henergy := threeCoordinateEnergy_stable heps
     hdiam.1.le hdiam.2.1.le hdiam.2.2.le
     (finiteNormalizedCoreCorrelation_abs_le_one
@@ -117,7 +138,6 @@ theorem packedCoreTriple_local_energy
     (finiteNormalizedCoreCorrelation_abs_le_one
       Z T P hconj hreal hc hpos (idx 1) (idx 2))
     h01close h02close h12close
-  dsimp [x₀, x₁, x₂, c₀₁, c₀₂, c₁₂] at henergy
   unfold tripleCorrelationEnergy
   rw [gramMatrix_normalizedCoreVec_eq_finiteCorrelation
       Z T P hconj hreal hc hpos (idx 0) (idx 1),

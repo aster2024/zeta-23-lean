@@ -195,6 +195,12 @@ jobs:
           run_preflight Zeta23.StrictImprovement.WiderRootLocalization \
             wider-root-localization-build.log \
             "Wider root localization preflight failure"
+          run_preflight Zeta23.StrictImprovement.CoreTripleEnergy \
+            core-triple-energy-build.log \
+            "Core triple energy preflight failure"
+          run_preflight Zeta23.StrictImprovement.WiderFourPointEnergy \
+            wider-four-point-energy-build.log \
+            "Wider four-point energy preflight failure"
           run_preflight Zeta23.StrictImprovement.IntervalBinning \
             interval-binning-build.log "Interval binning preflight failure"
           run_preflight Zeta23.StrictImprovement.ZetaCoreBinning \
@@ -281,6 +287,8 @@ jobs:
             zeta-finite-normalization-build.log
             zeta-finite-correlation-build.log
             wider-root-localization-build.log
+            core-triple-energy-build.log
+            wider-four-point-energy-build.log
             interval-binning-build.log
             zeta-core-binning-build.log
             four-block-defect-build.log

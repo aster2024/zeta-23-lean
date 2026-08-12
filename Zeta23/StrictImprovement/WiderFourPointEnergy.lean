@@ -123,8 +123,7 @@ theorem firstSixRoot_separation_floor (i j k : Fin 6) :
             simpa [e5] using firstSixRoot_eq (5 : Fin 6)
       _ = 12 * Real.pi + e5 := by
         norm_num [firstSixIndex] <;> ring
-  dsimp [e0, e1, e2, e3, e4, e5] at
-    he0 he1 he2 he3 he4 he5 he5Upper
+  dsimp [e0, e1, e2, e3, e4, e5] at he0 he1 he2 he3 he4 he5 he5Upper
   fin_cases i <;> fin_cases j <;> fin_cases k <;>
     simp [widerSeparationFloor, firstSixIndex, hz0, hz1, hz2, hz3, hz4,
       hz5] <;>
