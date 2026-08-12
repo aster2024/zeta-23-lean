@@ -55,7 +55,7 @@ theorem widthSixBin_card_le {D : ℝ} (hD : 0 ≤ D) :
         (widthSixBinCount D : ℝ) := by
     exact_mod_cast hcardNat
   rw [hcardReal, widthSixBinCount, Nat.cast_add, Nat.cast_one]
-  exact add_le_add_right hf 1
+  linarith
 
 theorem abs_coord_sub_lt_twelve_pi_of_widthSixBin_eq
     {S : Type*} {D base : ℝ} {coord : S → ℝ}

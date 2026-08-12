@@ -62,7 +62,7 @@ theorem intervalBin_card_le {D : ℝ} (hD : 0 ≤ D) :
         (intervalBinCount D : ℝ) := by
     exact_mod_cast hcardNat
   rw [hcardReal, intervalBinCount, Nat.cast_add, Nat.cast_one]
-  exact add_le_add_right hf 1
+  linarith
 
 /-- Two labels in the same floor bin have coordinate distance strictly less
 than `8*pi`. -/
