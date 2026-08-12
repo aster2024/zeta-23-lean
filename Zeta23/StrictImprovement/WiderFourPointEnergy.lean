@@ -41,9 +41,9 @@ lemma widerSeparationFloor_pos (i j k : Fin 6) :
   fin_cases i <;> fin_cases j <;> fin_cases k <;>
     norm_num [widerSeparationFloor, firstSixIndex]
 
+set_option maxHeartbeats 2000000 in
 /-- Exact root separation.  The exhaustive split is over 216 symbolic index
 triples, not over sampled root values. -/
-set_option maxHeartbeats 2000000 in
 theorem firstSixRoot_separation_floor (i j k : Fin 6) :
     widerSeparationFloor i j k ≤
       |firstSixRoot i + firstSixRoot j - firstSixRoot k| := by
@@ -308,9 +308,14 @@ theorem wider_endpoint_three_point_energy_lower
   have hDpos : 0 < di ^ 2 + dj ^ 2 + dk ^ 2 := by positivity
   have hfinal : widerDeltaLower ≤
       endpointR a ^ 2 + endpointR b ^ 2 + endpointR (a + b) ^ 2 := by
-    apply (mul_le_mul_left hDpos).mp
-    calc
-      widerDeltaLower * (di ^ 2 + dj ^ 2 + dk ^ 2)
+    have hmul :
+        (di ^ 2 + dj ^ 2 + dk ^ 2) * widerDeltaLower ≤
+          (di ^ 2 + dj ^ 2 + dk ^ 2) *
+            (endpointR a ^ 2 + endpointR b ^ 2 + endpointR (a + b) ^ 2) := by
+      calc
+      (di ^ 2 + dj ^ 2 + dk ^ 2) * widerDeltaLower =
+          widerDeltaLower * (di ^ 2 + dj ^ 2 + dk ^ 2) := by ring
+      _
           ≤ (firstSixRoot i + firstSixRoot j - firstSixRoot k) ^ 2 := by
             simpa [di, dj, dk] using hsep
       _ = (u + v - w) ^ 2 := hrootId
@@ -319,6 +324,7 @@ theorem wider_endpoint_three_point_energy_lower
       _ ≤ (di ^ 2 + dj ^ 2 + dk ^ 2) *
             (endpointR a ^ 2 + endpointR b ^ 2 + endpointR (a + b) ^ 2) :=
         mul_le_mul_of_nonneg_left hlocal hDpos.le
+    exact le_of_mul_le_mul_left hmul hDpos
   linarith
 
 end StrictImprovement
