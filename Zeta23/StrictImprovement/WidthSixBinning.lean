@@ -140,6 +140,10 @@ theorem corePackedFour_pair_distance_lt_twelve_pi
       12 * Real.pi := by
   apply abs_coord_sub_lt_twelve_pi_of_widthSixBin_eq
     (coreScaledOrdinate_range Z T C P hL hC)
+  change coreWidthSixBin Z T C P hL hC
+        (packedFourIndex (coreWidthSixEnumeration Z T C P hL hC) q r) =
+      coreWidthSixBin Z T C P hL hC
+        (packedFourIndex (coreWidthSixEnumeration Z T C P hL hC) q t)
   rw [corePackedFourIndex_bin, corePackedFourIndex_bin]
 
 end StrictImprovement
