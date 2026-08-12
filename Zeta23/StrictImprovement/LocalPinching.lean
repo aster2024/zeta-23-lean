@@ -212,7 +212,8 @@ theorem traceNorm_blockPinch_le (owner : n → Option β)
               ∑ i, ‖cutVector owner b (fun j => U j k) i‖ ^ 2 := by
           apply Finset.sum_congr rfl
           intro i _
-          simp [cutVector]
+          by_cases hi : owner i = some b <;>
+            simp [cutVector, hi, norm_star]
         by_cases hk : 0 ≤ hA.eigenvalues k
         · simp only [c, u, v, hk, if_true, Pi.neg_apply, norm_neg]
           rw [hstar]
@@ -305,7 +306,7 @@ theorem sum_traceNorm_principal_le
             exact hinj hab
       _ ≤ (Finset.univ : Finset n).sum e :=
         Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _)
-          (fun i _ _ => by dsimp [e]; exact sq_nonneg ‖U i k‖)
+          (fun i _ _ => sq_nonneg (e i))
       _ = ∑ i, e i := rfl
   have hcol : ∀ k, ∑ i, ‖U i k‖ ^ 2 = 1 := by
     have hDS := normSqMatrix_mem_doublyStochastic_of_unitary
