@@ -118,8 +118,8 @@ lemma sum_eigen_vecMulVec_eq {A : Matrix n n ℂ} (hA : A.IsHermitian) :
   intro k _
   rw [mul_diagonal, Matrix.star_apply]
   simp only [Matrix.smul_apply, vecMulVec_apply,
-    Complex.real_smul, smul_eq_mul, Function.comp_apply]
-  ring
+    smul_eq_mul, Function.comp_apply]
+  ac_rfl
 
 lemma abs_smul_signed_vecMulVec (x : ℝ) (u v : n → ℂ) :
     ((|x| : ℝ) : ℂ) •
@@ -130,7 +130,6 @@ lemma abs_smul_signed_vecMulVec (x : ℝ) (u v : n → ℂ) :
   · have hneg : x < 0 := lt_of_not_ge hx
     ext i j
     simp [hx, abs_of_neg hneg, Matrix.smul_apply, vecMulVec_apply]
-    ring
 
 /-- Contractivity of an incomplete disjoint block pinching for the Hermitian
 trace norm defined in `Tail.RankOne`. -/
@@ -208,10 +207,19 @@ theorem traceNorm_blockPinch_le (owner : n → Option β)
         rw [Finset.mul_sum]
         apply Finset.sum_congr rfl
         intro b _
-        by_cases hk : 0 ≤ hA.eigenvalues k <;>
-          simp only [c, u, v, hk, if_true, if_false, Pi.neg_apply,
-            norm_neg, norm_star]
-        ring
+        have hstar :
+            (∑ i, ‖cutVector owner b (fun j => star (U j k)) i‖ ^ 2) =
+              ∑ i, ‖cutVector owner b (fun j => U j k) i‖ ^ 2 := by
+          apply Finset.sum_congr rfl
+          intro i _
+          simp [cutVector]
+        by_cases hk : 0 ≤ hA.eigenvalues k
+        · simp only [c, u, v, hk, if_true, Pi.neg_apply, norm_neg]
+          rw [hstar]
+          ring
+        · simp only [c, u, v, hk, if_false, Pi.neg_apply, norm_neg]
+          rw [hstar]
+          ring
     _ ≤ ∑ k, |hA.eigenvalues k| * 1 := by
         apply Finset.sum_le_sum
         intro k _
@@ -254,7 +262,8 @@ theorem sum_traceNorm_principal_le
               vecMulVec (fun i => U i k) (fun i => star (U i k))).submatrix
               (idx b) (idx b) := by
             ext r s
-            simp [Matrix.submatrix, Matrix.smul_apply, vecMulVec_apply]
+            simp [Matrix.submatrix, Matrix.sum_apply, Matrix.smul_apply,
+              vecMulVec_apply]
       _ = A.submatrix (idx b) (idx b) := by
             rw [show U = (hA.eigenvectorUnitary : Matrix n n ℂ) from rfl,
               sum_eigen_vecMulVec_eq hA]
@@ -273,24 +282,31 @@ theorem sum_traceNorm_principal_le
     refine hraw.trans_eq ?_
     apply Finset.sum_congr rfl
     intro k _
-    by_cases hk : 0 ≤ hA.eigenvalues k <;>
-      simp only [hk, if_true, if_false, Pi.neg_apply, norm_neg, norm_star]
-    ring
+    by_cases hk : 0 ≤ hA.eigenvalues k
+    · simp only [hk, if_true, Pi.neg_apply, norm_neg, norm_star]
+      ring_nf
+    · simp only [hk, if_false, Pi.neg_apply, norm_neg, norm_star]
+      ring_nf
   have hinjective_energy : ∀ k,
       ∑ b, ∑ r, ‖U (idx b r) k‖ ^ 2 ≤ ∑ i, ‖U i k‖ ^ 2 := by
     intro k
-    rw [← Fintype.sum_prod_type]
+    let e : n → ℝ := fun i => ‖U i k‖ ^ 2
+    change (∑ b, ∑ r, e (idx b r)) ≤ ∑ i, e i
+    have hprod : (∑ b, ∑ r, e (idx b r)) =
+        ∑ bg : β × γ, e (idx bg.1 bg.2) := by
+      rw [Fintype.sum_prod_type]
+    rw [hprod]
     calc
-      (∑ bg : β × γ, ‖U (idx bg.1 bg.2) k‖ ^ 2)
-          = ∑ i in (Finset.univ.image
-              (fun bg : β × γ => idx bg.1 bg.2)), ‖U i k‖ ^ 2 := by
+      (∑ bg : β × γ, e (idx bg.1 bg.2))
+          = (Finset.univ.image
+              (fun bg : β × γ => idx bg.1 bg.2)).sum e := by
             rw [Finset.sum_image]
             intro a _ b _ hab
             exact hinj hab
-      _ ≤ ∑ i in (Finset.univ : Finset n), ‖U i k‖ ^ 2 :=
+      _ ≤ (Finset.univ : Finset n).sum e :=
         Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _)
-          (fun i _ _ => sq_nonneg ‖U i k‖)
-      _ = ∑ i, ‖U i k‖ ^ 2 := rfl
+          (fun i _ _ => by dsimp [e]; exact sq_nonneg ‖U i k‖)
+      _ = ∑ i, e i := rfl
   have hcol : ∀ k, ∑ i, ‖U i k‖ ^ 2 = 1 := by
     have hDS := normSqMatrix_mem_doublyStochastic_of_unitary
       (hA.eigenvectorUnitary).2
