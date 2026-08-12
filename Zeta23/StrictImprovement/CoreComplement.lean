@@ -29,15 +29,14 @@ open Matrix Finset
 open scoped BigOperators ComplexOrder
 
 namespace Zeta23
-namespace StrictImprovement
+namespace ZeroSide
+namespace ZeroBlockData
 
 open RHLinalg
-open ZeroSide
+open StrictImprovement
 
 variable {i d : Type*} [Fintype i] [DecidableEq i]
 variable [Fintype d] [DecidableEq d]
-
-namespace ZeroBlockData
 
 variable (D : ZeroBlockData i d)
 
@@ -211,6 +210,5 @@ theorem posIndex_scaledBlockA_sub_selectedSimple_le
   exact h
 
 end ZeroBlockData
-
-end StrictImprovement
+end ZeroSide
 end Zeta23
