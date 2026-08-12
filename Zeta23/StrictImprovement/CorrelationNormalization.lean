@@ -64,12 +64,11 @@ theorem normalized_scalar_close
   have hscale : |k / u - k| ≤ 1 - u := by
     have heq : k / u - k = k * (1 / u - 1) := by
       field_simp [hu0.ne']
-      ring
     rw [heq, abs_mul, abs_of_nonneg hinv0]
     calc
       |k| * (1 / u - 1) ≤ u * (1 / u - 1) :=
         mul_le_mul_of_nonneg_right hk hinv0
-      _ = 1 - u := by field_simp [hu0.ne']; ring
+      _ = 1 - u := by field_simp [hu0.ne']
   have hscaleq : |k / u - k| ≤ q := by linarith
   calc
     |k / u - f| ≤ |k / u - k| + |k - f| := abs_sub_le _ _ _

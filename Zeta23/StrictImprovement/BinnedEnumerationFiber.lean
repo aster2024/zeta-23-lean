@@ -80,6 +80,7 @@ theorem fiberBinnedEnumeration_cover
     ∑ b, fiberOccupancy bin b =
         Fintype.card (Σ b : B, {s : S // bin s = b}) := by
       simp [fiberOccupancy]
+      rfl
     _ = Fintype.card S :=
       Fintype.card_congr (Equiv.sigmaFiberEquiv bin)
 
@@ -98,12 +99,12 @@ theorem rank_trace_two_with_fiber_binning
         (packedTripleIndex (fiberBinnedEnumeration bin)) q)
     {Q : Matrix d d ℂ} (hQ : Q.IsHermitian)
     {b : ℕ} (hb : RHLinalg.posIndex hQ ≤ b) :
-    2 * RHLinalg.rtrace (columnMatrix x * (columnMatrix x)ᴴ)
+    2 * RHLinalg.rtrace (columnMatrix x * Matrix.conjTranspose (columnMatrix x))
         - (Fintype.card S : ℝ)
         + 4 * RHLinalg.rtrace Q - 4 * (b : ℝ)
         + delta / (9 * (Fintype.card S : ℝ)) *
           max 0 ((Fintype.card S : ℝ) - D / 2 - 2) ^ 2
-      ≤ frobSq (columnMatrix x * (columnMatrix x)ᴴ + Q) := by
+      ≤ frobSq (columnMatrix x * Matrix.conjTranspose (columnMatrix x) + Q) := by
   exact rank_trace_two_with_binned_gram_triples
     (fiberBinnedEnumeration bin) (fiberBinnedEnumeration_cover bin)
     D hbins x hunit hdelta hlocal hQ hb

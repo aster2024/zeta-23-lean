@@ -151,6 +151,14 @@ jobs:
             triple-packing-count-build.log "Triple packing count preflight failure"
           run_preflight Zeta23.StrictImprovement.WiderRootArithmetic \
             wider-root-arithmetic-build.log "Wider root arithmetic preflight failure"
+          run_preflight Zeta23.StrictImprovement.BinnedEnumerationFiber \
+            binned-enumeration-fiber-build.log "Binned enumeration fiber preflight failure"
+          run_preflight Zeta23.StrictImprovement.CorrelationNormalization \
+            correlation-normalization-build.log "Correlation normalization preflight failure"
+          run_preflight Zeta23.StrictImprovement.FiniteFullNormalization \
+            finite-full-normalization-build.log "Finite/full normalization preflight failure"
+          run_preflight Zeta23.StrictImprovement.WiderRootNeighborhood \
+            wider-root-neighborhood-build.log "Wider root neighborhood preflight failure"
 
           lake build \
             Zeta23.StrictImprovement.ZetaWiderEndpointPassage \
@@ -220,6 +228,10 @@ jobs:
             kernel-stability-build.log
             triple-packing-count-build.log
             wider-root-arithmetic-build.log
+            binned-enumeration-fiber-build.log
+            correlation-normalization-build.log
+            finite-full-normalization-build.log
+            wider-root-neighborhood-build.log
             build-commit.txt
             lean-version.txt
             lake-version.txt

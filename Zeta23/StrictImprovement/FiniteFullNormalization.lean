@@ -59,7 +59,9 @@ lemma unitize_isUnit (v : d -> ℂ) (hv : 0 < vectorWeight v) :
     rw [norm_div, Complex.norm_real, Real.norm_eq_abs,
       abs_of_pos (Real.sqrt_pos.mpr hv), div_pow, Real.sq_sqrt hv.le]
   simp_rw [hs]
-  rw [← Finset.sum_div, div_self hv.ne']
+  rw [← Finset.sum_div]
+  change vectorWeight v / vectorWeight v = 1
+  exact div_self hv.ne'
 
 /-- The Hermitian rank-one projector `x x^*`. -/
 def rankOneProjector (x : d -> ℂ) : Matrix d d ℂ :=
@@ -79,7 +81,7 @@ lemma rtrace_rankOneProjector (x : d -> ℂ) :
   rw [map_sum]
   apply Finset.sum_congr rfl
   intro k _
-  rw [RCLike.conj_mul, ← RCLike.ofReal_pow, RCLike.ofReal_re]
+  rw [Complex.conj_mul', ← RCLike.ofReal_pow, RCLike.ofReal_re]
 
 /-- A finite sum of unit projectors has real trace equal to the family
 cardinality. -/
@@ -151,7 +153,7 @@ lemma normalizationGap_eq_sum (x : s -> d -> ℂ) (w : s -> ℝ) :
       ∑ i, (((1 - w i : ℝ) : ℂ) • rankOneProjector (x i)) := by
   ext a b
   simp only [normalizationGap, projectorSum, weightedProjectorSum,
-    Matrix.sub_apply, Finset.sum_apply, Matrix.smul_apply, smul_eq_mul]
+    Matrix.sub_apply, Matrix.sum_apply, Matrix.smul_apply, smul_eq_mul]
   rw [← Finset.sum_sub_distrib]
   refine Finset.sum_congr rfl fun i _ => ?_
   ring
@@ -169,7 +171,7 @@ rank--trace theorem. -/
 lemma projectorSum_eq_columnMatrix_mul_conjTranspose (x : s -> d -> ℂ) :
     projectorSum x = columnMatrix x * (columnMatrix x)ᴴ := by
   ext a b
-  simp only [projectorSum, rankOneProjector, Finset.sum_apply,
+  simp only [projectorSum, rankOneProjector, Matrix.sum_apply,
     vecMulVec_apply, Pi.star_apply, RCLike.star_def, Matrix.mul_apply,
     Matrix.conjTranspose_apply, columnMatrix]
 
@@ -198,8 +200,12 @@ theorem posIndex_unit_complement_le_weighted_complement
         (A - weightedProjectorSum x w) - normalizationGap x w := by
     unfold normalizationGap
     abel
-  rw [hEq]
-  exact posIndex_sub_posSemidef_le (hA.sub hweighted.isHermitian) hgap
+  calc
+    posIndex (hA.sub (projectorSum_posSemidef x).isHermitian) =
+        posIndex ((hA.sub hweighted.isHermitian).sub hgap.isHermitian) :=
+      posIndex_congr _ _ hEq
+    _ ≤ posIndex (hA.sub hweighted.isHermitian) :=
+      posIndex_sub_posSemidef_le (hA.sub hweighted.isHermitian) hgap
 
 /-- The complete finite-dimensional synthesis: after the PSD normalization
 step, the canonical binned triples give the explicit quadratic gain directly

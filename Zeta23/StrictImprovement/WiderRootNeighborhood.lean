@@ -78,7 +78,6 @@ theorem wider_neighborhood_numerator_linear
   rcases le_total e eps with hleft | hright
   · have hdist' := abs_le.mp hdist
     have helow : -(1 : ℝ) / 8 ≤ e := by
-      dsimp [eps] at hdist' ⊢
       rw [hrho] at hdist'
       nlinarith [heps.1]
     have hupper : eps ≤ (21 : ℝ) / 40 := by
@@ -110,7 +109,6 @@ theorem wider_neighborhood_numerator_linear
       dsimp [eps]
       nlinarith [heps.1]
     have hupper : e ≤ (21 : ℝ) / 40 := by
-      dsimp [eps] at hdist' ⊢
       rw [hrho] at hdist'
       nlinarith [heps.2]
     have hconstInt : IntervalIntegrable (fun _ : ℝ => L) volume eps e :=
@@ -226,8 +224,8 @@ theorem wider_neighborhood_R_linear
     simpa [n, A, firstSixIndex, one_div] using wider_local_slope_rational i
   rw [div_eq_mul_inv]
   calc
-    |x - firstSixRoot i| * widerSlopeDenominator i⁻¹
-        = widerSlopeDenominator i⁻¹ * |x - firstSixRoot i| := by ring
+    |x - firstSixRoot i| * (widerSlopeDenominator i)⁻¹
+        = (widerSlopeDenominator i)⁻¹ * |x - firstSixRoot i| := by ring
     _ ≤ ((3 / 2 : ℝ) * widerDerivativeLower n / A ^ 2) *
             |x - firstSixRoot i| :=
           mul_le_mul_of_nonneg_right hslope (abs_nonneg _)
