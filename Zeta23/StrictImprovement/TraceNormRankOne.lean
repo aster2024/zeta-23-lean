@@ -100,7 +100,7 @@ theorem traceNorm_le_of_hasSum_vecMulVec_two
     rw [← mul_sum, ← sum_div, sum_add_distrib,
       sum_normSq_unitary_mulVec hE (u ρ),
       sum_normSq_unitary_mulVec hE (star (v ρ))]
-    congr 1
+    simp only [Pi.star_apply, norm_star]
     ring
   have hF_nonneg : ∀ i ρ, 0 ≤ F i ρ := fun i ρ => by
     have := hc ρ
