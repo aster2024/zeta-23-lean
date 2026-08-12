@@ -206,7 +206,7 @@ theorem posIndex_unit_complement_le_weighted_complement
   calc
     posIndex (hA.sub (projectorSum_posSemidef x).isHermitian) =
         posIndex ((hA.sub hweighted.isHermitian).sub hgap.isHermitian) :=
-      posIndex_congr _ _ hEq
+      ZeroSide.ZeroBlockData.posIndex_congr _ _ hEq
     _ ≤ posIndex (hA.sub hweighted.isHermitian) :=
       posIndex_sub_posSemidef_le (hA.sub hweighted.isHermitian) hgap
 
