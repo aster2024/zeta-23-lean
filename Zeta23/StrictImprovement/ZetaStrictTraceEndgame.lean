@@ -116,7 +116,7 @@ theorem strict_thmD_mult2_abstract
         aT T * P.L T := by rw [hida]; rfl
     rw [hrt, hfr, haL] at hA
     have htr : |(aT T * P.L T)⁻¹ * trG T - N T| ≤ R₁ T :=
-      ThmD.trGhat_sub_N_le hapos hLpos (by simpa only using htr1 T hT₁)
+      Assembly.trGhat_sub_N_le hapos hLpos (by simpa only using htr1 T hT₁)
     have hfrb : ((aT T * P.L T)⁻¹) ^ 2 * trG2 T ≤
         cinv T * N T + R₂ T := by
       have h := hfr2 T hT₂
