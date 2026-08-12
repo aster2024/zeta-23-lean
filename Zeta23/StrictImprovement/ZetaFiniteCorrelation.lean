@@ -113,7 +113,7 @@ theorem gramMatrix_normalizedCoreVec_eq_finiteCorrelation
     rw [sq, ← Complex.ofReal_mul, Real.mul_self_sqrt hc.le]
   rw [Finset.sum_div]
   field_simp [hcroot, hzroot, hz'root]
-  rw [← hmassroot]
+  rw [hmassroot]
   ring
 
 /-- The pointwise tail budget places every finite squared norm in
@@ -155,6 +155,7 @@ theorem finiteKfun_div_mass_abs_le_sqrt_weights
     unfold S₁ PrimeSide.rho
     simp only [Params.localFun_a, Params.localFun_phiHat, Params.toSetting_L,
       Params.toSetting_d, Params.toSetting_tau]
+    change S₁ = mass T P * (1 - (mass T P - S₁) / mass T P)
     field_simp [hc.ne']
     ring
   have hS₂ : S₂ = mass T P * finiteCoreWeight Z T 3 P hconj z' := by
@@ -162,6 +163,7 @@ theorem finiteKfun_div_mass_abs_le_sqrt_weights
     unfold S₂ PrimeSide.rho
     simp only [Params.localFun_a, Params.localFun_phiHat, Params.toSetting_L,
       Params.toSetting_d, Params.toSetting_tau]
+    change S₂ = mass T P * (1 - (mass T P - S₂) / mass T P)
     field_simp [hc.ne']
     ring
   have hCS := Finset.sum_mul_sq_le_sq_mul_sq Finset.univ
