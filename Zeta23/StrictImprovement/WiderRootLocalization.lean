@@ -205,7 +205,21 @@ theorem wider_zero_free_interval_G_lower
     norm_num
   have ht : t ∈ Set.Icc (Real.pi / 2) Real.pi := by
     dsimp [t]
-    constructor <;> nlinarith [Real.pi_pos]
+    constructor
+    · calc
+        Real.pi / 2 =
+            ((2 * (m : ℝ) - 1) * Real.pi) / 2 -
+              ((m : ℝ) - 1) * Real.pi := by ring
+        _ ≤ x / 2 - ((m : ℝ) - 1) * Real.pi :=
+          sub_le_sub_right
+            (div_le_div_of_nonneg_right hx.1 (by norm_num)) _
+    · calc
+        x / 2 - ((m : ℝ) - 1) * Real.pi ≤
+            ((2 * (m : ℝ)) * Real.pi) / 2 -
+              ((m : ℝ) - 1) * Real.pi :=
+          sub_le_sub_right
+            (div_le_div_of_nonneg_right hx.2 (by norm_num)) _
+        _ = Real.pi := by ring
   have hsin : 0 ≤ Real.sin t :=
     Real.sin_nonneg_of_nonneg_of_le_pi
       (le_trans (by positivity) ht.1) ht.2
@@ -223,7 +237,8 @@ theorem wider_zero_free_interval_G_lower
   have hxlarge : (592688 : ℝ) / 490449 ≤ x := by
     have hfactor : 1 ≤ 2 * (m : ℝ) - 1 := by nlinarith
     have hpi_le : Real.pi ≤ (2 * (m : ℝ) - 1) * Real.pi :=
-      mul_le_mul_of_nonneg_right hfactor Real.pi_pos.le
+      by simpa only [one_mul] using
+        mul_le_mul_of_nonneg_right hfactor Real.pi_pos.le
     have hcpi : (592688 : ℝ) / 490449 < Real.pi := by
       nlinarith [Real.pi_gt_three]
     exact hcpi.le.trans (hpi_le.trans hx.1)
@@ -359,7 +374,8 @@ lemma wider_final_sine_lower {u : ℝ}
     have hsq : u ^ 2 < (121 : ℝ) / 49 := by
       have hprod :
           0 < ((11 : ℝ) / 7 - u) * ((11 : ℝ) / 7 + u) :=
-        mul_pos (sub_pos.mpr huUpper) (add_pos (by norm_num) huNonneg)
+        mul_pos (sub_pos.mpr huUpper)
+          (add_pos (by norm_num) (lt_of_lt_of_le (by norm_num) hu0))
       nlinarith
     have hcube : u ^ 3 < (121 : ℝ) / 49 * u := by
       have hmul := mul_lt_mul_of_pos_left hsq (lt_of_lt_of_le (by norm_num) hu0)
@@ -376,9 +392,15 @@ theorem wider_last_zero_free_far_G_lower
   let u : ℝ := -e / 2
   have he : e ∈ Set.Icc (-Real.pi) 0 := by
     dsimp [e]
-    constructor <;> linarith
+    constructor
+    · calc
+        -Real.pi = 11 * Real.pi - 12 * Real.pi := by ring
+        _ ≤ x - 12 * Real.pi := sub_le_sub_right hx.1 _
+    · exact sub_nonpos.mpr hx.2
   have hefar : e ≤ -(1 : ℝ) / 8 := by
-    simpa [e, widerRadius] using hfar
+    change x - 12 * Real.pi ≤ -(1 : ℝ) / 8
+    change x - 12 * Real.pi ≤ -(1 : ℝ) / 8 at hfar
+    exact hfar
   have hu0 : (1 : ℝ) / 16 ≤ u := by
     dsimp [u]
     linarith

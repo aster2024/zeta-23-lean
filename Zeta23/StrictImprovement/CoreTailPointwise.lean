@@ -182,7 +182,15 @@ lemma finiteCoreWeight_eq_one_sub_rho_div
   unfold PrimeSide.rho
   simp only [Params.localFun_a, Params.localFun_phiHat, Params.toSetting_L,
     Params.toSetting_d, Params.toSetting_tau]
-  field_simp
+  have ha : P.a T ≠ 0 := by
+    intro ha0
+    rw [ha0, zero_mul] at hc
+    exact (lt_irrefl 0 hc)
+  have hL : P.L T ≠ 0 := by
+    intro hL0
+    rw [hL0, zero_pow (by norm_num), mul_zero] at hc
+    exact (lt_irrefl 0 hc)
+  field_simp [ha, hL]
   ring
 
 /-- A strict pointwise tail bound is exactly what is needed to justify unit
