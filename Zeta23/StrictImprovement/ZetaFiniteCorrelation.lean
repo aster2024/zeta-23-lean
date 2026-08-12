@@ -105,6 +105,14 @@ theorem gramMatrix_normalizedCoreVec_eq_finiteCorrelation
   have hz'root :
       (Real.sqrt (finiteCoreWeight Z T 3 P hconj z') : ℂ) ≠ 0 := by
     exact_mod_cast (Real.sqrt_pos.mpr (hpos z')).ne'
+  have ha : P.a T ≠ 0 := by
+    intro ha
+    apply hc.ne'
+    simp [mass, ha]
+  have hL : P.L T ≠ 0 := by
+    intro hL
+    apply hc.ne'
+    simp [mass, hL]
   have hmassroot :
       ((Real.sqrt (P.a T * P.L T ^ 2) : ℂ)) ^ 2 =
         (mass T P : ℂ) := by
@@ -112,8 +120,9 @@ theorem gramMatrix_normalizedCoreVec_eq_finiteCorrelation
       ((P.a T * P.L T ^ 2 : ℝ) : ℂ)
     rw [sq, ← Complex.ofReal_mul, Real.mul_self_sqrt hc.le]
   rw [Finset.sum_div]
-  field_simp [hcroot, hzroot, hz'root]
+  field_simp [hcroot, hzroot, hz'root, ha, hL]
   rw [hmassroot]
+  simp only [sub_eq_add_neg, add_comm]
   ring
 
 /-- The pointwise tail budget places every finite squared norm in
@@ -146,6 +155,14 @@ theorem finiteKfun_div_mass_abs_le_sqrt_weights
     |PrimeSide.Kfun (p T P) (F T P) (z : ℂ).im (z' : ℂ).im / mass T P| ≤
       Real.sqrt (finiteCoreWeight Z T 3 P hconj z) *
         Real.sqrt (finiteCoreWeight Z T 3 P hconj z') := by
+  have ha : P.a T ≠ 0 := by
+    intro ha
+    apply hc.ne'
+    simp [mass, ha]
+  have hL : P.L T ≠ 0 := by
+    intro hL
+    apply hc.ne'
+    simp [mass, hL]
   let S₁ : ℝ := ∑ k : Fin (P.d T),
     P.phiHatR T ((z : ℂ).im - P.tau T k) ^ 2
   let S₂ : ℝ := ∑ k : Fin (P.d T),
@@ -156,7 +173,7 @@ theorem finiteKfun_div_mass_abs_le_sqrt_weights
     simp only [Params.localFun_a, Params.localFun_phiHat, Params.toSetting_L,
       Params.toSetting_d, Params.toSetting_tau]
     change S₁ = mass T P * (1 - (mass T P - S₁) / mass T P)
-    field_simp [hc.ne']
+    field_simp [hc.ne', ha, hL]
     ring
   have hS₂ : S₂ = mass T P * finiteCoreWeight Z T 3 P hconj z' := by
     rw [finiteCoreWeight_eq_one_sub_rho_div Z T 3 P hconj hreal hc z']
@@ -164,7 +181,7 @@ theorem finiteKfun_div_mass_abs_le_sqrt_weights
     simp only [Params.localFun_a, Params.localFun_phiHat, Params.toSetting_L,
       Params.toSetting_d, Params.toSetting_tau]
     change S₂ = mass T P * (1 - (mass T P - S₂) / mass T P)
-    field_simp [hc.ne']
+    field_simp [hc.ne', ha, hL]
     ring
   have hCS := Finset.sum_mul_sq_le_sq_mul_sq Finset.univ
     (fun k : Fin (P.d T) => P.phiHatR T ((z : ℂ).im - P.tau T k))
