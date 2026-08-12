@@ -81,7 +81,7 @@ lemma rtrace_rankOneProjector (x : d -> ℂ) :
   rw [map_sum]
   apply Finset.sum_congr rfl
   intro k _
-  rw [Complex.mul_conj', ← RCLike.ofReal_pow, RCLike.ofReal_re]
+  rw [Complex.mul_conj', RCLike.ofReal_re]
 
 /-- A finite sum of unit projectors has real trace equal to the family
 cardinality. -/
