@@ -68,7 +68,7 @@ private lemma finiteCoreVec_apply_real
         (Real.sqrt (mass T P) : ℂ) := by
   change P.phiHat T (gammaOf (z : ℂ) - P.tau T k) /
       (Real.sqrt (mass T P) : ℂ) = _
-  rw [gammaOf_of_re_eq_half (core_re_eq_half Z T P z),
+  rw [gammaOf_of_re_eq_half (core_re_eq_half Z T z),
     ← Complex.ofReal_sub, hreal]
 
 /-- The abstract Gram entry of the unitized finite vectors is exactly the
@@ -82,7 +82,6 @@ theorem gramMatrix_normalizedCoreVec_eq_finiteCorrelation
   unfold gramMatrix normalizedCoreVec unitize
   simp only [dotProduct, Pi.star_apply]
   simp_rw [finiteCoreVec_apply_real Z T P hconj hreal]
-  simp only [map_div₀, Complex.conj_ofReal]
   unfold finiteNormalizedCoreCorrelation PrimeSide.Kfun p F mass
   simp only [Params.localFun_phiHat, Params.toSetting_d, Params.toSetting_tau]
   have hcroot : (Real.sqrt (P.a T * P.L T ^ 2) : ℂ) ≠ 0 := by
@@ -115,7 +114,7 @@ theorem finiteCoreWeight_mem_budget
       finiteCoreWeight Z T 3 P hconj z ≤ 1 := by
   have hrho0 := PrimeSide.rho_nonneg hF (z : ℂ).im
   have hrhole := rho_core_le_budget hF hT (by norm_num)
-    (core_mem_bounds Z T P z)
+    (core_mem_bounds Z T z)
   rw [finiteCoreWeight_eq_one_sub_rho_div Z T 3 P hconj hreal hc z]
   constructor
   · have hdiv := div_le_div_of_nonneg_right hrhole hc.le
@@ -138,14 +137,14 @@ theorem finiteKfun_div_mass_abs_le_sqrt_weights
     P.phiHatR T ((z' : ℂ).im - P.tau T k) ^ 2
   have hS₁ : S₁ = mass T P * finiteCoreWeight Z T 3 P hconj z := by
     rw [finiteCoreWeight_eq_one_sub_rho_div Z T 3 P hconj hreal hc z]
-    unfold S₁ PrimeSide.rho p F mass
+    unfold S₁ PrimeSide.rho mass
     simp only [Params.localFun_a, Params.localFun_phiHat, Params.toSetting_L,
       Params.toSetting_d, Params.toSetting_tau]
     field_simp [hc.ne']
     ring
   have hS₂ : S₂ = mass T P * finiteCoreWeight Z T 3 P hconj z' := by
     rw [finiteCoreWeight_eq_one_sub_rho_div Z T 3 P hconj hreal hc z']
-    unfold S₂ PrimeSide.rho p F mass
+    unfold S₂ PrimeSide.rho mass
     simp only [Params.localFun_a, Params.localFun_phiHat, Params.toSetting_L,
       Params.toSetting_d, Params.toSetting_tau]
     field_simp [hc.ne']
@@ -225,9 +224,9 @@ theorem finiteNormalizedCoreCorrelation_close_full
   have hwz' := finiteCoreWeight_mem_budget Z T P hconj hreal hF hT hc z'
   have hk := finiteKfun_div_mass_abs_le_sqrt_weights Z T P hconj hreal hc z z'
   have hrz := rho_core_le_budget hF hT (by norm_num)
-    (core_mem_bounds Z T P z)
+    (core_mem_bounds Z T z)
   have hrz' := rho_core_le_budget hF hT (by norm_num)
-    (core_mem_bounds Z T P z')
+    (core_mem_bounds Z T z')
   have hout := PrimeSide.abs_Kinf_sub_Kfun_le hF
     (z : ℂ).im (z' : ℂ).im (s := (1 : ℝ)) (by norm_num)
   have hout' :
