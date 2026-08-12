@@ -569,8 +569,10 @@ theorem endpointK_initial_interval_lower
   have hquarter :
       (165 : ℝ) / 1024 ≤
         ∫ s in (0 : ℝ)..(1 / 4), ThmD.vStar 1 s * Real.cos (x * s) := by
+    have hconst : IntervalIntegrable (fun _ : ℝ => (165 : ℝ) / 256)
+        volume (0 : ℝ) (1 / 4) := intervalIntegrable_const
     have hmono := intervalIntegral.integral_mono_on (by norm_num : (0 : ℝ) ≤ 1 / 4)
-      intervalIntegrable_const (hcont.intervalIntegrable _ _) hpoint_quarter
+      hconst (hcont.intervalIntegrable _ _) hpoint_quarter
     rw [intervalIntegral.integral_const, smul_eq_mul] at hmono
     norm_num at hmono ⊢
     exact hmono
@@ -927,7 +929,7 @@ theorem endpoint_three_point_energy_lower
             |(a + b) - firstThreeRoot k| := abs_add_le _ _
       _ ≤ (|firstThreeRoot i - a| + |firstThreeRoot j - b|) +
             |(a + b) - firstThreeRoot k| :=
-          add_le_add_right (abs_add_le _ _) _
+          add_le_add (abs_add_le _ _) le_rfl
   have hi' : |firstThreeRoot i - a| < localizationRadius := by
     simpa [abs_sub_comm] using hi
   have hj' : |firstThreeRoot j - b| < localizationRadius := by
