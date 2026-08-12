@@ -175,6 +175,12 @@ jobs:
           run_preflight Zeta23.StrictImprovement.ZetaFiniteNormalization \
             zeta-finite-normalization-build.log \
             "Zeta finite normalization preflight failure"
+          run_preflight Zeta23.StrictImprovement.ZetaFiniteCorrelation \
+            zeta-finite-correlation-build.log \
+            "Zeta finite correlation preflight failure"
+          run_preflight Zeta23.StrictImprovement.WiderRootLocalization \
+            wider-root-localization-build.log \
+            "Wider root localization preflight failure"
           run_preflight Zeta23.StrictImprovement.IntervalBinning \
             interval-binning-build.log "Interval binning preflight failure"
           run_preflight Zeta23.StrictImprovement.ZetaCoreBinning \
@@ -259,6 +265,8 @@ jobs:
             core-complement-build.log
             zeta-core-build.log
             zeta-finite-normalization-build.log
+            zeta-finite-correlation-build.log
+            wider-root-localization-build.log
             interval-binning-build.log
             zeta-core-binning-build.log
             four-block-defect-build.log
