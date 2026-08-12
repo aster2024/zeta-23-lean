@@ -75,12 +75,10 @@ private lemma frobSq_eq_sum_norm_sq_local
     frobSq A = ∑ i, ∑ j, ‖A i j‖ ^ 2 := by
   unfold frobSq
   simp only [Matrix.trace, Matrix.diag_apply, Matrix.mul_apply,
-    Matrix.conjTranspose_apply, map_sum, Complex.star_def]
+    Matrix.conjTranspose_apply, map_sum, RCLike.star_def]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
-  rw [Complex.conj_mul', ← Complex.ofReal_pow]
-  change (Complex.ofReal (‖A i j‖ ^ 2)).re = ‖A i j‖ ^ 2
-  simp
+  rw [RCLike.conj_mul, ← RCLike.ofReal_pow, RCLike.ofReal_re]
 
 /-- Exact Frobenius bookkeeping for a Hermitian `3 x 3` matrix with zero
 diagonal. -/
@@ -123,12 +121,21 @@ lemma frobSq_gramDeviation_triple
   have hdiag : ∀ r,
       (gramDeviation x).submatrix (idx b) (idx b) r r = 0 := fun r =>
     gramDeviation_diag_zero x hunit (idx b r)
+  have h01 : (gramDeviation x).submatrix (idx b) (idx b) 0 1 =
+      gramMatrix x (idx b 0) (idx b 1) := by
+    exact gramDeviation_offdiag x
+      (hlocal_ne (by norm_num : (0 : Fin 3) ≠ 1))
+  have h02 : (gramDeviation x).submatrix (idx b) (idx b) 0 2 =
+      gramMatrix x (idx b 0) (idx b 2) := by
+    exact gramDeviation_offdiag x
+      (hlocal_ne (by norm_num : (0 : Fin 3) ≠ 2))
+  have h12 : (gramDeviation x).submatrix (idx b) (idx b) 1 2 =
+      gramMatrix x (idx b 1) (idx b 2) := by
+    exact gramDeviation_offdiag x
+      (hlocal_ne (by norm_num : (1 : Fin 3) ≠ 2))
   rw [frobSq_fin3_of_diag_zero
     ((gramDeviation_isHermitian x).submatrix (idx b)) hdiag]
-  simp only [Matrix.submatrix]
-  rw [gramDeviation_offdiag x (hlocal_ne (by norm_num : (0 : Fin 3) ≠ 1)),
-    gramDeviation_offdiag x (hlocal_ne (by norm_num : (0 : Fin 3) ≠ 2)),
-    gramDeviation_offdiag x (hlocal_ne (by norm_num : (1 : Fin 3) ≠ 2))]
+  rw [h01, h02, h12]
   rfl
 
 /-- Unit-vector Gram triples with local correlation energy at least `delta`
