@@ -191,12 +191,12 @@ theorem rank_trace_two_with_binned_gram_triples
       delta ≤ tripleCorrelationEnergy x (packedTripleIndex E) q)
     {Q : Matrix d d ℂ} (hQ : Q.IsHermitian)
     {b : ℕ} (hb : RHLinalg.posIndex hQ ≤ b) :
-    2 * RHLinalg.rtrace (columnMatrix x * (columnMatrix x)ᴴ)
+    2 * RHLinalg.rtrace (columnMatrix x * Matrix.conjTranspose (columnMatrix x))
         - (Fintype.card S : ℝ)
         + 4 * RHLinalg.rtrace Q - 4 * (b : ℝ)
         + delta / (9 * (Fintype.card S : ℝ)) *
           max 0 ((Fintype.card S : ℝ) - D / 2 - 2) ^ 2
-      ≤ frobSq (columnMatrix x * (columnMatrix x)ᴴ + Q) := by
+      ≤ frobSq (columnMatrix x * Matrix.conjTranspose (columnMatrix x) + Q) := by
   have hbase := rank_trace_two_with_local_gram_triples
     x hunit (packedTripleIndex E) (packedTripleIndex_injective E)
     hdelta hlocal hQ hb
