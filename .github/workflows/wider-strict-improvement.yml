@@ -92,6 +92,7 @@ jobs:
             lake-manifest.json \
             Zeta23.lean \
             .github/workflows/wider-strict-improvement.yml \
+            .github/scripts/extract_axiom_union.py \
             comparator/PrintAxioms/StrictImprovement.lean \
             comparator/PrintAxioms/WiderStrictImprovement.lean \
             $(git ls-files 'Zeta23/StrictImprovement/*.lean') |
@@ -307,18 +308,10 @@ jobs:
             exit 1
           fi
 
-          extract_axiom_union() {
-            sed -n 's/.*depends on axioms: \[\(.*\)\]$/\1/p' "$1" |
-              tr ',' '\n' |
-              sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' -e '/^$/d' |
-              LC_ALL=C sort -u
-          }
-
-          extract_axiom_union baseline-axioms.txt > baseline-axiom-set.txt
-          extract_axiom_union wider-axioms.txt > wider-axiom-set.txt
-
-          test -s baseline-axiom-set.txt
-          test -s wider-axiom-set.txt
+          python3 .github/scripts/extract_axiom_union.py \
+            baseline-axioms.txt baseline-axiom-set.txt
+          python3 .github/scripts/extract_axiom_union.py \
+            wider-axioms.txt wider-axiom-set.txt
           if ! cmp baseline-axiom-set.txt wider-axiom-set.txt; then
             diff -u baseline-axiom-set.txt wider-axiom-set.txt |
               tee axiom-diff.txt || true
