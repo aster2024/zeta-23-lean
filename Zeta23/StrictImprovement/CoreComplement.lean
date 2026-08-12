@@ -95,28 +95,34 @@ lemma selectedHatPart_eq_sum_vhat
   simp only [selectedHatPart, selectedOnPart, Matrix.smul_apply,
     Matrix.sum_apply, smul_eq_mul, Finset.mul_sum, rankOneProjector,
     Matrix.vecMulVec_apply]
-  rw [Finset.sum_coe_sort S]
-  refine Finset.sum_congr rfl fun z hz => ?_
-  have hz₁ : z ∈ D.S₁ := hS₁ hz
-  have hzon : z ∈ D.onLine := D.S₁_subset_onLine hz₁
-  have hm : D.m z = 1 := by
-    have hz₁' := hz₁
-    simp only [ZeroSide.ZeroBlockData.S₁, Finset.mem_filter,
-      Finset.mem_univ, true_and] at hz₁'
-    exact hz₁'.2
-  have hreal : starRingEnd ℂ (D.v z b) = D.v z b := by
-    have := congrFun (D.star_v_of_onLine ((D.mem_onLine).mp hzon)) b
-    rwa [Pi.star_apply, RCLike.star_def] at this
-  simp only [ZeroSide.ZeroBlockData.vhat, Pi.star_apply, RCLike.star_def,
-    map_div₀, hreal, Complex.conj_ofReal, hm, Nat.cast_one, one_mul]
-  have hsq : ((Real.sqrt c : ℂ)) ^ 2 = (c : ℂ) := by
-    rw [sq, ← Complex.ofReal_mul, Real.mul_self_sqrt hc.le]
-  have hc0 : (Real.sqrt c : ℂ) ≠ 0 := by
-    exact_mod_cast (Real.sqrt_pos.mpr hc).ne'
-  have hcc : (c : ℂ) ≠ 0 := by exact_mod_cast hc.ne'
-  rw [div_mul_div_comm, ← sq, hsq]
-  push_cast
-  field_simp
+  apply Finset.sum_bij (fun z hz => (⟨z, hz⟩ : S))
+  · intro z hz
+    simp
+  · intro z _ w _ hzw
+    exact congrArg Subtype.val hzw
+  · intro z _
+    exact ⟨z.1, z.2, Subtype.ext rfl⟩
+  · intro z hz
+    have hz₁ : z ∈ D.S₁ := hS₁ hz
+    have hzon : z ∈ D.onLine := D.S₁_subset_onLine hz₁
+    have hm : D.m z = 1 := by
+      have hz₁' := hz₁
+      simp only [ZeroSide.ZeroBlockData.S₁, Finset.mem_filter,
+        Finset.mem_univ, true_and] at hz₁'
+      exact hz₁'.2
+    have hreal : starRingEnd ℂ (D.v z b) = D.v z b := by
+      have := congrFun (D.star_v_of_onLine ((D.mem_onLine).mp hzon)) b
+      rwa [Pi.star_apply, RCLike.star_def] at this
+    simp only [ZeroSide.ZeroBlockData.vhat, Pi.star_apply, RCLike.star_def,
+      map_div₀, hreal, Complex.conj_ofReal, hm, Nat.cast_one, one_mul]
+    have hsq : ((Real.sqrt c : ℂ)) ^ 2 = (c : ℂ) := by
+      rw [sq, ← Complex.ofReal_mul, Real.mul_self_sqrt hc.le]
+    have hc0 : (Real.sqrt c : ℂ) ≠ 0 := by
+      exact_mod_cast (Real.sqrt_pos.mpr hc).ne'
+    have hcc : (c : ℂ) ≠ 0 := by exact_mod_cast hc.ne'
+    rw [div_mul_div_comm, ← sq, hsq]
+    push_cast
+    field_simp
 
 /-- If the selected family consists only of simple on-line labels, its
 on-line complement is the disjoint union of the excluded simple labels and
@@ -188,12 +194,20 @@ theorem posIndex_scaledBlockA_sub_selected_le
   have hcomp := D.selectedHatPart_posSemidef (D.onLine \ S)
     Finset.sdiff_subset hc
   have hEq := D.scaledBlockA_sub_selected_eq S hS c
-  rw [hEq]
+  have hidx :
+      posIndex (hA.sub
+          (D.selectedHatPart_posSemidef S hS hc).isHermitian) =
+        posIndex (hcomp.isHermitian.add (D.blockQ_isHermitian c)) :=
+    posIndex_congr _ _ hEq
   have hsum := posIndex_add_le hcomp.isHermitian (D.blockQ_isHermitian c)
   rw [posIndex_eq_rank_of_posSemidef hcomp] at hsum
-  exact hsum.trans (Nat.add_le_add
-    (D.rank_selectedHatPart_le (D.onLine \ S) hc)
-    (D.posIndex_blockQ_le Pr hc))
+  calc
+    posIndex (hA.sub
+        (D.selectedHatPart_posSemidef S hS hc).isHermitian) =
+        posIndex (hcomp.isHermitian.add (D.blockQ_isHermitian c)) := hidx
+    _ ≤ #(D.onLine \ S) + Pr.p := hsum.trans (Nat.add_le_add
+      (D.rank_selectedHatPart_le (D.onLine \ S) hc)
+      (D.posIndex_blockQ_le Pr hc))
 
 /-- Core-simple form of the same bound.  The three summands are respectively
 excluded simple on-line labels, multiple on-line labels, and off-line pairs. -/
