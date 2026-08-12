@@ -113,21 +113,34 @@ jobs:
           }
 
           set +e
-          lake build Zeta23.StrictImprovement.LocalPinching \
-            2>&1 | tee local-pinching-build.log
-          local_pinching_status=${PIPESTATUS[0]}
-          if [[ "${local_pinching_status}" -ne 0 ]]; then
-            publish_failure local-pinching-build.log "Local pinching preflight failure"
-            exit "${local_pinching_status}"
-          fi
+          run_preflight() {
+            local target=$1
+            local log_file=$2
+            local title=$3
+            lake build "${target}" 2>&1 | tee "${log_file}"
+            local status=${PIPESTATUS[0]}
+            if [[ "${status}" -ne 0 ]]; then
+              publish_failure "${log_file}" "${title}"
+              exit "${status}"
+            fi
+          }
 
-          lake build Zeta23.StrictImprovement.ExplicitDelta \
-            2>&1 | tee explicit-delta-build.log
-          explicit_delta_status=${PIPESTATUS[0]}
-          if [[ "${explicit_delta_status}" -ne 0 ]]; then
-            publish_failure explicit-delta-build.log "Explicit delta preflight failure"
-            exit "${explicit_delta_status}"
-          fi
+          run_preflight Zeta23.StrictImprovement.LocalPinching \
+            local-pinching-build.log "Local pinching preflight failure"
+          run_preflight Zeta23.StrictImprovement.ExplicitDelta \
+            explicit-delta-build.log "Explicit delta preflight failure"
+          run_preflight Zeta23.StrictImprovement.GramTriples \
+            gram-triples-build.log "Gram triples preflight failure"
+          run_preflight Zeta23.StrictImprovement.EndpointTaylorRefinement \
+            endpoint-taylor-build.log "Endpoint Taylor preflight failure"
+          run_preflight Zeta23.StrictImprovement.QuadraticGain \
+            quadratic-gain-build.log "Quadratic gain preflight failure"
+          run_preflight Zeta23.StrictImprovement.WiderQuadraticGain \
+            wider-quadratic-gain-build.log "Wider quadratic gain preflight failure"
+          run_preflight Zeta23.StrictImprovement.KernelRoots \
+            kernel-roots-build.log "Kernel roots preflight failure"
+          run_preflight Zeta23.StrictImprovement.WindowFourierLimit \
+            window-fourier-limit-build.log "Window Fourier limit preflight failure"
 
           lake build \
             Zeta23.StrictImprovement.ZetaWiderEndpointPassage \
@@ -186,6 +199,12 @@ jobs:
             lean-failure-diagnostics-bounded.txt
             local-pinching-build.log
             explicit-delta-build.log
+            gram-triples-build.log
+            endpoint-taylor-build.log
+            quadratic-gain-build.log
+            wider-quadratic-gain-build.log
+            kernel-roots-build.log
+            window-fourier-limit-build.log
             build-commit.txt
             lean-version.txt
             lake-version.txt

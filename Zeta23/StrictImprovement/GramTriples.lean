@@ -44,6 +44,9 @@ lemma gramMatrix_isHermitian (x : s → d → ℂ) :
   intro i j
   simp only [gramMatrix, dotProduct, Pi.star_apply, star_sum, star_mul',
     star_star]
+  apply Finset.sum_congr rfl
+  intro k _
+  ac_rfl
 
 lemma gramMatrix_diag (x : s → d → ℂ) (i : s) :
     gramMatrix x i i = ((∑ k, ‖x i k‖ ^ 2 : ℝ) : ℂ) := by
@@ -75,7 +78,9 @@ private lemma frobSq_eq_sum_norm_sq_local
     Matrix.conjTranspose_apply, map_sum, Complex.star_def]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
-  rw [Complex.conj_mul', ← Complex.ofReal_pow, Complex.ofReal_re]
+  rw [Complex.conj_mul', ← Complex.ofReal_pow]
+  change (Complex.ofReal (‖A i j‖ ^ 2)).re = ‖A i j‖ ^ 2
+  simp
 
 /-- Exact Frobenius bookkeeping for a Hermitian `3 x 3` matrix with zero
 diagonal. -/
@@ -120,6 +125,7 @@ lemma frobSq_gramDeviation_triple
     gramDeviation_diag_zero x hunit (idx b r)
   rw [frobSq_fin3_of_diag_zero
     ((gramDeviation_isHermitian x).submatrix (idx b)) hdiag]
+  simp only [Matrix.submatrix]
   rw [gramDeviation_offdiag x (hlocal_ne (by norm_num : (0 : Fin 3) ≠ 1)),
     gramDeviation_offdiag x (hlocal_ne (by norm_num : (0 : Fin 3) ≠ 2)),
     gramDeviation_offdiag x (hlocal_ne (by norm_num : (1 : Fin 3) ≠ 2))]

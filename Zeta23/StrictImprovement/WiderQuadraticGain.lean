@@ -46,7 +46,7 @@ theorem wider_quadratic_core_gain_lower
     exact mul_le_mul hdelta hsq (sq_nonneg _) (hdelta₀.trans hdelta)
   rw [show delta / (8 * s) * (s - D / 2 - 3) ^ 2 =
       delta * (s - D / 2 - 3) ^ 2 / (8 * s) by ring]
-  rw [le_div_iff₀ (mul_pos (by norm_num) hs)]
+  apply (le_div_iff₀ (mul_pos (by norm_num) hs)).2
   calc
     delta₀ * q ^ 2 / (8 * u) * N * (8 * s)
         = delta₀ * q ^ 2 * N * s / u := by

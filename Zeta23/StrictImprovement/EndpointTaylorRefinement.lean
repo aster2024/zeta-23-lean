@@ -177,6 +177,7 @@ theorem endpointKappa_refined_lower :
     calc
       (37043 : ℝ) / 40320 = Real.sqrt 2 * sinSeptic th := by
         unfold sinSeptic
+        symm
         calc
           Real.sqrt 2 *
               (th - th ^ 3 / 6 + th ^ 5 / 120 - th ^ 7 / 5040)
