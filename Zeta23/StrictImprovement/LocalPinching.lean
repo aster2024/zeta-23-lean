@@ -51,13 +51,19 @@ lemma sum_cutVector_normSq_le (owner : n → Option β) (u : n → ℂ) :
   intro i _
   cases hi : owner i with
   | none => simp [cutVector, hi]
-  | some b => simp [cutVector, hi]
+  | some b =>
+      rw [Finset.sum_eq_single b]
+      · simp [cutVector, hi]
+      · intro b' _ hb'
+        simp [cutVector, hi, Ne.symm hb']
+      · simp
 
 lemma blockPinch_vecMulVec (owner : n → Option β) (u v : n → ℂ) :
     blockPinch owner (vecMulVec u v)
       = ∑ b, vecMulVec (cutVector owner b u) (cutVector owner b v) := by
   ext i j
-  simp only [blockPinch, Finset.sum_apply, vecMulVec_apply]
+  change (∑ b, if owner i = some b ∧ owner j = some b then u i * v j else 0) =
+    ∑ b, cutVector owner b u i * cutVector owner b v j
   apply Finset.sum_congr rfl
   intro b _
   by_cases hi : owner i = some b <;>
@@ -78,7 +84,9 @@ lemma blockPinch_sum (owner : n → Option β)
     {ι : Type*} [Fintype ι] [DecidableEq ι] (A : ι → Matrix n n ℂ) :
     blockPinch owner (∑ k, A k) = ∑ k, blockPinch owner (A k) := by
   ext i j
-  simp only [blockPinch, Finset.sum_apply]
+  change (∑ b, if owner i = some b ∧ owner j = some b then
+      ∑ k, A k i j else 0) =
+    ∑ k, ∑ b, if owner i = some b ∧ owner j = some b then A k i j else 0
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl
   intro b _
@@ -92,8 +100,7 @@ lemma blockPinch_isHermitian (owner : n → Option β)
   have hstar : star (A j i) = A i j := by
     have h := congrFun (congrFun hA.eq i) j
     simpa [Matrix.conjTranspose_apply] using h
-  simp only [Matrix.conjTranspose_apply, blockPinch, star_sum, star_ite,
-    star_zero]
+  simp only [Matrix.conjTranspose_apply, blockPinch, star_sum, star_zero]
   apply Finset.sum_congr rfl
   intro b _
   by_cases hi : owner i = some b <;>
