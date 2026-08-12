@@ -522,7 +522,8 @@ theorem wider_last_zero_free_short_G_lower
   have helow : -(1 : ℝ) / 8 ≤ e := by
     rw [show widerRadius = (1 : ℝ) / 8 by rfl] at hnearLeft
     dsimp [e]
-    convert hnearLeft.le using 1 <;> ring
+    norm_num at hnearLeft ⊢
+    exact hnearLeft.le
   have heupper : eps ≤ (21 : ℝ) / 40 := by nlinarith [heps.2]
   have hLpos : 0 < L := by
     simpa [L, firstSixIndex] using widerDerivativeLower_pos (5 : Fin 6)
@@ -554,9 +555,9 @@ theorem wider_last_zero_free_short_G_lower
     dsimp [e]
     ring
   have hGid := endpointG_abs_eq_offsetNumerator_abs 6 e
-  have hcoord : 2 * Real.pi * (6 : ℝ) + e = x := by
+  have hcoord : 2 * Real.pi * ((6 : ℕ) : ℝ) + e = x := by
     calc
-      2 * Real.pi * (6 : ℝ) + e = 12 * Real.pi + e := by ring
+      2 * Real.pi * ((6 : ℕ) : ℝ) + e = 12 * Real.pi + e := by ring
       _ = x := hxrepr
   rw [hcoord] at hGid
   rw [hGid]
@@ -648,8 +649,11 @@ theorem wider_positive_half_interval_localizes
     simpa [j, n, firstSixIndex] using h
   change |x - firstSixRoot j| < widerRadius
   rw [hroot]
-  dsimp [e, n] at hnear
-  convert hnear using 1 <;> ring
+  rw [show x - (2 * Real.pi * (n : ℝ) + firstSixOffset j) =
+      e - firstSixOffset j by
+    dsimp [e]
+    ring]
+  exact hnear
 
 /-- Every point of `[0,12*pi]` with endpoint kernel below
 `1815107/989072150` lies in one
