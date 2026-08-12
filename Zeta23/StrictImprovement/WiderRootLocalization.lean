@@ -398,8 +398,8 @@ theorem wider_last_zero_free_far_G_lower
         _ ≤ x - 12 * Real.pi := sub_le_sub_right hx.1 _
     · exact sub_nonpos.mpr hx.2
   have hefar : e ≤ -(1 : ℝ) / 8 := by
-    change x - 12 * Real.pi ≤ -(1 : ℝ) / 8
-    change x - 12 * Real.pi ≤ -(1 : ℝ) / 8 at hfar
+    rw [show widerRadius = (1 : ℝ) / 8 by rfl] at hfar
+    dsimp [e]
     exact hfar
   have hu0 : (1 : ℝ) / 16 ≤ u := by
     dsimp [u]
@@ -418,11 +418,11 @@ theorem wider_last_zero_free_far_G_lower
     dsimp [u, e]
     ring
   have hsinShift : Real.sin (x / 2) = -Real.sin u := by
-    rw [harg, Real.sin_add_nat_mul_pi]
-    simp
+    rw [harg]
+    simpa using (Real.sin_add_nat_mul_pi (-u) 6)
   have hcosShift : Real.cos (x / 2) = Real.cos u := by
-    rw [harg, Real.cos_add_nat_mul_pi]
-    simp
+    rw [harg]
+    simpa using (Real.cos_add_nat_mul_pi (-u) 6)
   have hx33 : 33 < x := by
     nlinarith [hx.1, Real.pi_gt_three]
   have hxpos : 0 < x := by linarith
@@ -454,7 +454,9 @@ theorem wider_last_zero_free_far_K_lower
     linarith
   have hxpos : 0 < x := lt_of_lt_of_le (by
     nlinarith [Real.pi_gt_three]) hx.1
-  have hxlarge : 2 < x := by nlinarith
+  have hxlarge : 2 < x := by
+    exact (show (2 : ℝ) < 11 * Real.pi by
+      nlinarith [Real.pi_gt_three]).trans_le hx.1
   have hxupper : x < (264 : ℝ) / 7 := by
     exact hx.2.trans_lt (by nlinarith)
   have hdenpos : 0 < x ^ 2 - 2 := by nlinarith
@@ -473,7 +475,8 @@ theorem wider_last_zero_free_far_K_lower
   calc
     widerCorrelationThreshold
         < ((3 : ℝ) / 2) / D * ((33 : ℝ) / 17) := by
-          simpa [D] using wider_last_zero_free_far_rational
+          simpa [D, div_eq_mul_inv, mul_assoc, mul_left_comm, mul_comm] using
+            wider_last_zero_free_far_rational
     _ < ((3 : ℝ) / 2) / D * |endpointG x| :=
       mul_lt_mul_of_pos_left hG (by positivity)
     _ ≤ |endpointK x| := hK
@@ -491,7 +494,11 @@ theorem wider_last_zero_free_short_G_lower
   let L : ℝ := widerDerivativeLower 6
   have he : e ∈ Set.Icc (-Real.pi) 0 := by
     dsimp [e]
-    constructor <;> linarith
+    constructor
+    · calc
+        -Real.pi = 11 * Real.pi - 12 * Real.pi := by ring
+        _ ≤ x - 12 * Real.pi := sub_le_sub_right hx.1 _
+    · exact sub_nonpos.mpr hx.2
   have heps := firstSixOffset_mem 5
   have hrootEq : firstSixRoot 5 = 12 * Real.pi + eps := by
     simpa [eps, firstSixIndex] using firstSixRoot_eq 5
@@ -504,7 +511,9 @@ theorem wider_last_zero_free_short_G_lower
   rw [hdistEq, abs_of_nonpos (sub_nonpos.mpr heroot)] at hfar'
   have hlen : widerRadius ≤ eps - e := hfar'
   have helow : -(1 : ℝ) / 8 ≤ e := by
-    simpa [e, widerRadius] using hnearLeft.le
+    rw [show widerRadius = (1 : ℝ) / 8 by rfl] at hnearLeft
+    dsimp [e]
+    exact hnearLeft.le
   have heupper : eps ≤ (21 : ℝ) / 40 := by nlinarith [heps.2]
   have hLpos : 0 < L := by
     simpa [L, firstSixIndex] using widerDerivativeLower_pos (5 : Fin 6)
@@ -555,7 +564,9 @@ theorem wider_last_zero_free_short_K_lower
     linarith
   have hxpos : 0 < x := lt_of_lt_of_le (by
     nlinarith [Real.pi_gt_three]) hx.1
-  have hxlarge : 2 < x := by nlinarith
+  have hxlarge : 2 < x := by
+    exact (show (2 : ℝ) < 11 * Real.pi by
+      nlinarith [Real.pi_gt_three]).trans_le hx.1
   have hxupper : x < (264 : ℝ) / 7 := hx.2.trans_lt (by nlinarith)
   have hdenpos : 0 < x ^ 2 - 2 := by nlinarith
   have hdenD : x ^ 2 - 2 < D := by
@@ -574,7 +585,8 @@ theorem wider_last_zero_free_short_K_lower
     widerCorrelationThreshold
         < ((3 : ℝ) / 2) / D *
             (widerDerivativeLower 6 * widerRadius) := by
-          simpa [D] using wider_last_zero_free_short_rational
+          simpa [D, div_eq_mul_inv, mul_assoc, mul_left_comm, mul_comm] using
+            wider_last_zero_free_short_rational
     _ ≤ ((3 : ℝ) / 2) / D * |endpointG x| :=
       mul_le_mul_of_nonneg_left hG hfactor
     _ ≤ |endpointK x| := hK
