@@ -86,9 +86,11 @@ theorem packedCoreFour_atD_local_energy
 theorem tendsto_widerAtDLocalDelta
     {P : Params} (hP : P.Valid) :
     Tendsto (fun T => widerAtDLocalDelta T P) atTop
-      (𝒩 (widerDeltaLower - 18 * (1 - P.lam))) := by
+      (𝓝 (widerDeltaLower - 18 * (1 - P.lam))) := by
   have herr := (tendsto_atDLocalCorrelationError hP).const_mul 6
-  have hlim := tendsto_const_nhds.sub herr
+  have hconst : Tendsto (fun _ : ℝ => widerDeltaLower) atTop
+      (𝓝 widerDeltaLower) := tendsto_const_nhds
+  have hlim := hconst.sub herr
   convert hlim using 1 <;> ring
 
 /-- Any constant strictly below the limiting wider defect is eventually a

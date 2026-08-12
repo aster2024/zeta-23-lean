@@ -163,10 +163,8 @@ theorem tendsto_atDLocalCorrelationError
   have heps := tendsto_atDEpsFull hP
   have htail := (tendsto_atDTailRatio_zero hP).const_mul 2
   have hsum := heps.add htail
-  apply hsum.congr'
-  filter_upwards [] with T
-  simp [localCorrelationError, atDTailRatio, Params.atD_toSetting,
-    Params.atD_L]
+  simpa [localCorrelationError, atDTailRatio, Params.atD_toSetting,
+    Params.atD_L] using hsum
 
 /-- Fixed-`lam` limit of the actual local energy constant. -/
 theorem tendsto_atDLocalDelta
@@ -174,7 +172,9 @@ theorem tendsto_atDLocalDelta
     Tendsto (fun T => atDLocalDelta T P) atTop
       (𝓝 (explicitDeltaLower - 18 * (1 - P.lam))) := by
   have herr := (tendsto_atDLocalCorrelationError hP).const_mul 6
-  have hlim := tendsto_const_nhds.sub herr
+  have hconst : Tendsto (fun _ : ℝ => explicitDeltaLower) atTop
+      (𝓝 explicitDeltaLower) := tendsto_const_nhds
+  have hlim := hconst.sub herr
   convert hlim using 1 <;> ring
 
 /-- Any constant strictly below the limiting local defect is eventually a

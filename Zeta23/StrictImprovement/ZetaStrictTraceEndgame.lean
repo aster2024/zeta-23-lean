@@ -40,7 +40,7 @@ theorem strict_thmD_mult2_abstract
     {c : ℝ} (hc0 : 0 < c)
     (hc : Tendsto
       (fun T => ThmD.cRatio (P.lam1 T) (aT T) (bT T) (JT T))
-      atTop (𝒩 c))
+      atTop (𝓝 c))
     (ha : ∀ᶠ T in atTop, 1 / 2 ≤ aT T ∧ aT T ≤ 1)
     (theta₀ : ℝ → ℝ)
     (hTail : ∀ᶠ T in atTop,
@@ -55,7 +55,7 @@ theorem strict_thmD_mult2_abstract
       (P.atD T).trGtilde T = trG T ∧
       (P.atD T).trGtildeSq T = trG2 T ∧
       (P.atD T).a T = aT T)
-    (hcalE : Tendsto P.calE atTop (𝒩 0))
+    (hcalE : Tendsto P.calE atTop (𝓝 0))
     (gain boundary : ℝ → ℝ) {eta : ℝ}
     (hSeam : ∀ᶠ T in atTop,
       4 * rtrace ((P.atD T).hat T (Z.Gz (P.atD T) T)) -
@@ -91,7 +91,7 @@ theorem strict_thmD_mult2_abstract
     (4 * R₁ T + R₂ T + 3 * (NII Z T : ℝ) +
       B T * (4 + 2 * Real.sqrt (cinv T * N T + R₂ T) + B T)) +
         |cinv T - c⁻¹| * N T with herr
-  have hcinv_to : Tendsto cinv atTop (𝒩 c⁻¹) := hc.inv₀ hc0.ne'
+  have hcinv_to : Tendsto cinv atTop (𝓝 c⁻¹) := hc.inv₀ hc0.ne'
   have hmain : ∀ᶠ T in atTop,
       (2 - c⁻¹) * N T - err T + gain T ≤
         (Z.N0s T (2 * T) : ℝ) + boundary T := by
@@ -168,7 +168,7 @@ theorem strict_thmD_mult2_abstract
     rw [abs_of_nonneg h.1]
     exact h.2
   have o2 : R₂ =o[atTop] N := by
-    have hcE0 : Tendsto (fun T => C₂ * P.calE T) atTop (𝒩 0) := by
+    have hcE0 : Tendsto (fun T => C₂ * P.calE T) atTop (𝓝 0) := by
       simpa using hcalE.const_mul C₂
     have i1 : (fun T => cinv T * N T) =O[atTop] N := by
       have h := hcinvO.mul (isBigO_refl N atTop)
@@ -187,10 +187,10 @@ theorem strict_thmD_mult2_abstract
     exact hO.trans_isLittleO
       (Assembly.isLittleO_N_of_isLittleO_Tl Z Hpaper.RvM
         Assembly.isLittleO_sqrt_mul_l_Tl)
-  have o4 : Tendsto B atTop (𝒩 0) := by
+  have o4 : Tendsto B atTop (𝓝 0) := by
     have hup : Tendsto
         (fun T => 2 * |Ctheta| *
-          (l T * T ^ (P.lam / 2 - 1) / P.L T)) atTop (𝒩 0) := by
+          (l T * T ^ (P.lam / 2 - 1) / P.L T)) atTop (𝓝 0) := by
       simpa using (Assembly.tendsto_theta_over_L P hlam0 hlam1).const_mul
         (2 * |Ctheta|)
     refine tendsto_of_tendsto_of_tendsto_of_le_of_le'
@@ -231,7 +231,7 @@ theorem strict_thmD_mult2_abstract
     (B := B) (cl := cinv) hNtop o1 o2 o3 o4 hcinv_bd
   have o6 : (fun T => |cinv T - c⁻¹| * N T) =o[atTop] N := by
     refine isLittleO_of_tendsto_zero_mul ?_
-    have hzero : Tendsto (fun T => cinv T - c⁻¹) atTop (𝒩 0) := by
+    have hzero : Tendsto (fun T => cinv T - c⁻¹) atTop (𝓝 0) := by
       simpa using hcinv_to.sub_const c⁻¹
     simpa using hzero.abs
   have herr_o : err =o[atTop] N := o5.add o6
