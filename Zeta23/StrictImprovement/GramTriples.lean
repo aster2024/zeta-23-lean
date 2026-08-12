@@ -124,15 +124,15 @@ lemma frobSq_gramDeviation_triple
   have h01 : (gramDeviation x).submatrix (idx b) (idx b) 0 1 =
       gramMatrix x (idx b 0) (idx b 1) := by
     exact gramDeviation_offdiag x
-      (hlocal_ne (by norm_num : (0 : Fin 3) ≠ 1))
+      (hlocal_ne (by decide : (0 : Fin 3) ≠ 1))
   have h02 : (gramDeviation x).submatrix (idx b) (idx b) 0 2 =
       gramMatrix x (idx b 0) (idx b 2) := by
     exact gramDeviation_offdiag x
-      (hlocal_ne (by norm_num : (0 : Fin 3) ≠ 2))
+      (hlocal_ne (by decide : (0 : Fin 3) ≠ 2))
   have h12 : (gramDeviation x).submatrix (idx b) (idx b) 1 2 =
       gramMatrix x (idx b 1) (idx b 2) := by
     exact gramDeviation_offdiag x
-      (hlocal_ne (by norm_num : (1 : Fin 3) ≠ 2))
+      (hlocal_ne (by decide : (1 : Fin 3) ≠ 2))
   rw [frobSq_fin3_of_diag_zero
     ((gramDeviation_isHermitian x).submatrix (idx b)) hdiag]
   rw [h01, h02, h12]
