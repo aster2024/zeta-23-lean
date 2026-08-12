@@ -63,7 +63,7 @@ main dyadic zero count. -/
 selected core. -/
 theorem eventually_coreCard_lower_of
     (Z : ZeroConfig) (Q : ℝ → Params) {H eps : ℝ}
-    (hT : ∀ᶠ T in atTop, 0 ≤ T)
+    (hT : ∀ᶠ T : ℝ in atTop, 0 ≤ T)
     (hconj : ∀ᶠ T in atTop, ZeroSide.PhiHatConj T (Q T))
     (hbase : ∀ᶠ T in atTop,
       H * (Z.N T (2 * T) : ℝ) ≤ (Z.N0s T (2 * T) : ℝ))

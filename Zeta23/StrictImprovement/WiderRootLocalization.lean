@@ -101,7 +101,8 @@ theorem wider_positive_interval_outside_radius_G_lower
           nlinarith [heps.2, Real.pi_gt_three]
       have hrdist : |r - eps| ≤ widerRadius := by
         dsimp [r]
-        rw [abs_of_nonneg hrhoPos.le]
+        rw [show eps + widerRadius - eps = widerRadius by ring,
+          abs_of_nonneg hrhoPos.le]
       have hlin := wider_neighborhood_numerator_linear i hrdist
       have hrootr := hmono hrootMem hrMem (by
         dsimp [r]
@@ -115,7 +116,8 @@ theorem wider_positive_interval_outside_radius_G_lower
       rw [abs_of_nonneg heNonneg]
       have hdistEq : |r - eps| = widerRadius := by
         dsimp [r]
-        rw [abs_of_nonneg hrhoPos.le]
+        rw [show eps + widerRadius - eps = widerRadius by ring,
+          abs_of_nonneg hrhoPos.le]
       rw [hdistEq] at hlin
       dsimp [n, eps, L] at hlin hreOrder ⊢
       nlinarith

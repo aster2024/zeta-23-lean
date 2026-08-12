@@ -173,8 +173,9 @@ lemma finiteCoreWeight_eq_one_sub_rho_div
         (P.a T * P.L T ^ 2)
     rw [evalVec, gammaOf_of_re_eq_half hzre, ← Complex.ofReal_sub, hreal,
       norm_div, Complex.norm_real, Real.norm_eq_abs,
+      Complex.norm_real, Real.norm_eq_abs,
       abs_of_pos (Real.sqrt_pos.mpr hc), div_pow, Real.sq_sqrt hc.le,
-      Complex.norm_real, Real.norm_eq_abs, sq_abs]
+      sq_abs]
   simp_rw [hs]
   rw [← Finset.sum_div]
   unfold PrimeSide.rho
@@ -207,7 +208,7 @@ theorem all_finiteCoreWeight_pos_of_budget
   intro z
   have hz := z.2
   simp only [coreSimple, Finset.mem_filter] at hz
-  have hF := PrimeSide.localHyps_concrete hP hwL hl hX
+  have hF := (PrimeSide.localHyps_concrete hP hwL hl hX).toCore.toCoreW
   have hrhoLe := rho_core_le_budget hF hT hC hz.2
   have hrho : PrimeSide.rho (P.toSetting T) (P.localFun T) (z : ℂ).im <
       P.a T * P.L T ^ 2 := hrhoLe.trans_lt hbudget
@@ -247,11 +248,10 @@ theorem coreTailBudget_three_le
   have hprod : p.h⁻¹ * ((cϱ / p.w) ^ 2 / 81) ≤
       p.L * (cϱ ^ 2 / 81) := by
     exact mul_le_mul hhL hq81 (by positivity) hF.L_pos.le
-  change
-    2 * ((cϱ / p.w) ^ 2 / 81 +
-      p.h⁻¹ * ((cϱ / p.w) ^ 2 / 81)) +
-        (cϱ / p.w) ^ 2 / 16 ≤
-      cϱ ^ 2 * (2 * p.L / 81 + 113 / 1296)
+  rw [show coreTailBudget cϱ p 3 =
+      2 * ((cϱ / p.w) ^ 2 / 81 +
+        p.h⁻¹ * ((cϱ / p.w) ^ 2 / 81)) +
+          (cϱ / p.w) ^ 2 / 16 by norm_num [coreTailBudget]]
   calc
     2 * ((cϱ / p.w) ^ 2 / 81 +
         p.h⁻¹ * ((cϱ / p.w) ^ 2 / 81)) +
@@ -267,7 +267,8 @@ theorem coreTailBudget_three_lt_half_L_sq
     (hF : PrimeSide.LocalHypsCoreW cϱ p F) (hlarge : cϱ ^ 2 < p.L) :
     coreTailBudget cϱ p 3 < p.L ^ 2 / 2 := by
   have hbase := coreTailBudget_three_le hF
-  have hfac : 0 < 2 * p.L / 81 + 113 / 1296 := by positivity
+  have hfac : 0 < 2 * p.L / 81 + 113 / 1296 := by
+    nlinarith [hF.L_pos]
   have hstrict : cϱ ^ 2 * (2 * p.L / 81 + 113 / 1296) <
       p.L * (2 * p.L / 81 + 113 / 1296) :=
     mul_lt_mul_of_pos_right hlarge hfac
@@ -286,7 +287,7 @@ theorem concrete_coreTailBudget_three_lt
     (hl : 1 ≤ l T) (hX : 1 ≤ P.X T)
     (hlarge : P.crho ^ 2 < P.L T) :
     coreTailBudget P.crho (P.toSetting T) 3 < P.a T * P.L T ^ 2 := by
-  have hF := PrimeSide.localHyps_concrete hP hwL hl hX
+  have hF := (PrimeSide.localHyps_concrete hP hwL hl hX).toCore.toCoreW
   have hhalf := Params.half_le_a hP hwL
   have htail := coreTailBudget_three_lt_half_L_sq hF hlarge
   have hscale : P.L T ^ 2 / 2 ≤ P.a T * P.L T ^ 2 := by
