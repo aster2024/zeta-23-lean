@@ -234,10 +234,10 @@ theorem outside_radius_numerator_lower
   let c : ℝ := 3 * (n : ℝ) * ((112391 : ℝ) / 115200) * localizationRadius
   have hnreal : (1 : ℝ) ≤ n := by exact_mod_cast hn
   have hnpos : 0 < (n : ℝ) := lt_of_lt_of_le (by norm_num) hnreal
+  have hrpos := localizationRadius_pos
   have hcpos : 0 < c := by
     dsimp [c]
-    positivity
-  have hrpos := localizationRadius_pos
+    exact mul_pos (mul_pos (mul_pos (by norm_num) hnpos) (by norm_num)) hrpos
   have hrsmall := localizationRadius_lt_one_div_twenty_four
   have hrootmem := rootOffset_mem n hn
   have hleftmem :
@@ -532,7 +532,8 @@ theorem endpointK_initial_interval_lower
       unfold ThmD.vStar
       apply Real.cos_nonneg_of_mem_Icc
       have harg0 : 0 ≤ Real.sqrt 2 * 1 * s := by
-        exact mul_nonneg (mul_nonneg (Real.sqrt_nonneg 2) (by norm_num)) hs.1
+        have hs0 : 0 ≤ s := le_trans (by norm_num) hs.1
+        exact mul_nonneg (mul_nonneg (Real.sqrt_nonneg 2) (by norm_num)) hs0
       have hsqrt_le_two : Real.sqrt 2 ≤ 2 := by
         nlinarith [hsqrt_sq, Real.sqrt_nonneg 2]
       have harg_le_one : Real.sqrt 2 * 1 * s ≤ 1 := by
@@ -710,7 +711,8 @@ theorem zero_free_interval_K_lower
   have hfactor_low : 1 ≤ 2 * (m : ℝ) - 1 := by nlinarith
   have hfactor_high : 2 * (m : ℝ) ≤ 8 := by nlinarith
   apply endpointK_lower_of_global_gap_bounds
-  · exact (mul_le_mul_of_nonneg_right hfactor_low Real.pi_pos.le).trans hx.1
+  · simpa only [one_mul] using
+      (mul_le_mul_of_nonneg_right hfactor_low Real.pi_pos.le).trans hx.1
   · exact hx.2.trans (mul_le_mul_of_nonneg_right hfactor_high Real.pi_pos.le)
   · exact zero_free_interval_G_lower hm hx
 
@@ -806,7 +808,8 @@ theorem small_endpointK_localizes_first_three
   by_cases h2 : x ≤ 2 * Real.pi
   · have hgap := zero_free_interval_K_lower
       (m := 1) (by norm_num) (by norm_num) (x := x) (by
-        simpa using (show x ∈ Set.Icc Real.pi (2 * Real.pi) from ⟨hpi, h2⟩))
+        norm_num
+        exact ⟨hpi, h2⟩)
     exfalso
     linarith [zero_free_bound_gt_threshold]
   have h2pi : 2 * Real.pi ≤ x := (not_le.mp h2).le
@@ -818,8 +821,8 @@ theorem small_endpointK_localizes_first_three
   by_cases h4 : x ≤ 4 * Real.pi
   · have hgap := zero_free_interval_K_lower
       (m := 2) (by norm_num) (by norm_num) (x := x) (by
-        simpa using (show x ∈ Set.Icc (3 * Real.pi) (4 * Real.pi) from
-          ⟨h3pi, h4⟩))
+        norm_num
+        exact ⟨h3pi, h4⟩)
     exfalso
     linarith [zero_free_bound_gt_threshold]
   have h4pi : 4 * Real.pi ≤ x := (not_le.mp h4).le
@@ -831,8 +834,8 @@ theorem small_endpointK_localizes_first_three
   by_cases h6 : x ≤ 6 * Real.pi
   · have hgap := zero_free_interval_K_lower
       (m := 3) (by norm_num) (by norm_num) (x := x) (by
-        simpa using (show x ∈ Set.Icc (5 * Real.pi) (6 * Real.pi) from
-          ⟨h5pi, h6⟩))
+        norm_num
+        exact ⟨h5pi, h6⟩)
     exfalso
     linarith [zero_free_bound_gt_threshold]
   have h6pi : 6 * Real.pi ≤ x := (not_le.mp h6).le
@@ -843,8 +846,8 @@ theorem small_endpointK_localizes_first_three
   have h7pi : 7 * Real.pi ≤ x := (not_le.mp h7).le
   have hgap := zero_free_interval_K_lower
     (m := 4) (by norm_num) (by norm_num) (x := x) (by
-      simpa using (show x ∈ Set.Icc (7 * Real.pi) (8 * Real.pi) from
-        ⟨h7pi, hx.2⟩))
+      norm_num
+      exact ⟨h7pi, hx.2⟩)
   exfalso
   linarith [zero_free_bound_gt_threshold]
 
@@ -921,10 +924,10 @@ theorem endpoint_three_point_energy_lower
       |(firstThreeRoot i - a) + (firstThreeRoot j - b) +
           ((a + b) - firstThreeRoot k)| ≤
           |(firstThreeRoot i - a) + (firstThreeRoot j - b)| +
-            |(a + b) - firstThreeRoot k| := abs_add _ _
+            |(a + b) - firstThreeRoot k| := abs_add_le _ _
       _ ≤ (|firstThreeRoot i - a| + |firstThreeRoot j - b|) +
             |(a + b) - firstThreeRoot k| :=
-          add_le_add_right (abs_add _ _) _
+          add_le_add_right (abs_add_le _ _) _
   have hi' : |firstThreeRoot i - a| < localizationRadius := by
     simpa [abs_sub_comm] using hi
   have hj' : |firstThreeRoot j - b| < localizationRadius := by
