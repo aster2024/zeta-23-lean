@@ -58,7 +58,6 @@ theorem coreScaledOrdinate_range
   have hrhs : 2 * Real.pi * coreBinD T P = P.L T * T := by
     unfold coreBinD
     field_simp [Real.pi_ne_zero]
-    ring
   constructor
   · unfold coreScaledOrdinate coreBinBase
     nlinarith
@@ -121,8 +120,18 @@ theorem corePackedTriple_diameter_lt_eight_pi
   dsimp
   apply triple_diameter_lt_eight_pi_of_intervalBin_eq
     (coreScaledOrdinate_range Z T C P hL hC)
-  · rw [corePackedTripleIndex_bin, corePackedTripleIndex_bin]
-  · rw [corePackedTripleIndex_bin, corePackedTripleIndex_bin]
+  · change
+      coreIntervalBin Z T C P hL hC
+          (packedTripleIndex (coreBinnedEnumeration Z T C P hL hC) q 0) =
+        coreIntervalBin Z T C P hL hC
+          (packedTripleIndex (coreBinnedEnumeration Z T C P hL hC) q 1)
+    rw [corePackedTripleIndex_bin, corePackedTripleIndex_bin]
+  · change
+      coreIntervalBin Z T C P hL hC
+          (packedTripleIndex (coreBinnedEnumeration Z T C P hL hC) q 0) =
+        coreIntervalBin Z T C P hL hC
+          (packedTripleIndex (coreBinnedEnumeration Z T C P hL hC) q 2)
+    rw [corePackedTripleIndex_bin, corePackedTripleIndex_bin]
 
 end StrictImprovement
 end Zeta23

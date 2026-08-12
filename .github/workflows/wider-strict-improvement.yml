@@ -177,6 +177,10 @@ jobs:
             "Zeta finite normalization preflight failure"
           run_preflight Zeta23.StrictImprovement.IntervalBinning \
             interval-binning-build.log "Interval binning preflight failure"
+          run_preflight Zeta23.StrictImprovement.ZetaCoreBinning \
+            zeta-core-binning-build.log "Zeta core binning preflight failure"
+          run_preflight Zeta23.StrictImprovement.FourBlockDefect \
+            four-block-defect-build.log "Four-block defect preflight failure"
           run_preflight Zeta23.StrictImprovement.WidthSixBinning \
             width-six-binning-build.log "Width-six binning preflight failure"
 
@@ -256,6 +260,8 @@ jobs:
             zeta-core-build.log
             zeta-finite-normalization-build.log
             interval-binning-build.log
+            zeta-core-binning-build.log
+            four-block-defect-build.log
             width-six-binning-build.log
             build-commit.txt
             lean-version.txt

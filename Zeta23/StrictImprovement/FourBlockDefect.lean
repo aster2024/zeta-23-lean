@@ -45,11 +45,13 @@ lemma scalar_part_spec (x : ℝ) :
   · have hnx : -x ≤ 0 := neg_nonpos.mpr hx
     simp [scalarPositivePart, scalarNegativePart, max_eq_left hx,
       max_eq_right hnx, abs_of_nonneg hx]
+    exact hx
   · have hx' : x < 0 := lt_of_not_ge hx
     have hxle : x ≤ 0 := hx'.le
     have hnx : 0 ≤ -x := neg_nonneg.mpr hxle
     simp [scalarPositivePart, scalarNegativePart, max_eq_right hxle,
       max_eq_left hnx, abs_of_neg hx']
+    exact hxle
 
 lemma four_trace_zero_l1_sq
     (a b c d : ℝ) (hsum : a + b + c + d = 0) :
@@ -94,16 +96,20 @@ lemma four_trace_zero_l1_sq
   rw [ha.2.2.2.2, hb.2.2.2.2, hc.2.2.2.2, hd.2.2.2.2]
   have haSq : a ^ 2 =
       scalarPositivePart a ^ 2 + scalarNegativePart a ^ 2 := by
-    nlinarith [ha.2.2.1, ha.2.2.2.1]
+    rw [ha.2.2.2.1]
+    nlinarith [ha.2.2.1]
   have hbSq : b ^ 2 =
       scalarPositivePart b ^ 2 + scalarNegativePart b ^ 2 := by
-    nlinarith [hb.2.2.1, hb.2.2.2.1]
+    rw [hb.2.2.2.1]
+    nlinarith [hb.2.2.1]
   have hcSq : c ^ 2 =
       scalarPositivePart c ^ 2 + scalarNegativePart c ^ 2 := by
-    nlinarith [hc.2.2.1, hc.2.2.2.1]
+    rw [hc.2.2.2.1]
+    nlinarith [hc.2.2.1]
   have hdSq : d ^ 2 =
       scalarPositivePart d ^ 2 + scalarNegativePart d ^ 2 := by
-    nlinarith [hd.2.2.1, hd.2.2.2.1]
+    rw [hd.2.2.2.1]
+    nlinarith [hd.2.2.1]
   rw [haSq, hbSq, hcSq, hdSq]
   nlinarith
 
