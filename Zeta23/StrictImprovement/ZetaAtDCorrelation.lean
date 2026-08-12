@@ -51,6 +51,9 @@ theorem fullCoreCorrelation_atD_eq_phiDNormalizedKernel
       phiDNormalizedKernel P.ϱ P.lam (P.L T) P.w
         (coreScaledOrdinate Z T 3 P z - coreScaledOrdinate Z T 3 P z') := by
   unfold fullCoreCorrelation
+  change PrimeSide.Kinf ((P.atD T).toSetting T) ((P.atD T).localFun T)
+      (z : ℂ).im (z' : ℂ).im /
+        ((P.atD T).a T * (P.atD T).L T ^ 2) = _
   rw [show (P.atD T).localFun T = P.localFunD T from Params.atD_localFun T hP]
   unfold PrimeSide.Kinf phiDNormalizedKernel
   rw [Params.atD_a T hP]
@@ -105,7 +108,7 @@ theorem packedCoreTriple_atD_local_energy
         (packedTripleIndex
           (coreBinnedEnumeration Z T 3 (P.atD T)
       (by simpa using (show 0 < P.L T by linarith [hP.one_le_w]))
-            (by norm_num)) q) := by
+            (by norm_num))) q := by
   unfold atDLocalDelta
   have hL : 0 < (P.atD T).L T := by
     simpa using (show 0 < P.L T by linarith [hP.one_le_w])
