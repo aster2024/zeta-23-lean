@@ -54,7 +54,8 @@ lemma cos_le_cosQuartic {x : ℝ} (hx : 0 ≤ x) :
       simpa using hasDerivAt_pow 2 u
     have h4 : HasDerivAt (fun y : ℝ => y ^ 4) (4 * u ^ 3) u := by
       simpa using hasDerivAt_pow 4 u
-    convert (h2.div_const 2).sub (h4.div_const 24) using 1 <;> ring
+    have h := (h2.div_const 2).sub (h4.div_const 24)
+    exact h.congr_deriv (by ring)
   have hpoly_eval :
       (∫ u in (0 : ℝ)..x, u - u ^ 3 / 6) = x ^ 2 / 2 - x ^ 4 / 24 := by
     rw [intervalIntegral.integral_eq_sub_of_hasDerivAt
@@ -88,8 +89,9 @@ lemma sin_le_sinQuintic {x : ℝ} (hx : 0 ≤ x) :
     have h5 : HasDerivAt (fun y : ℝ => y ^ 5) (5 * u ^ 4) u := by
       simpa using hasDerivAt_pow 5 u
     unfold sinQuintic cosQuartic
-    convert ((hasDerivAt_id u).sub (h3.div_const 6)).add
-      (h5.div_const 120) using 1 <;> ring
+    have h := ((hasDerivAt_id u).sub (h3.div_const 6)).add
+      (h5.div_const 120)
+    exact h.congr_deriv (by ring)
   have hcos_eval :
       (∫ u in (0 : ℝ)..x, Real.cos u) = Real.sin x := by
     rw [integral_cos]
@@ -159,7 +161,9 @@ theorem endpointKappa_le : endpointKappa ≤ (49 : ℝ) / 40 := by
           Real.sqrt 2 * (th - th ^ 3 / 6 + th ^ 5 / 120)
               = (Real.sqrt 2 * th) *
                   (1 - th ^ 2 / 6 + th ^ 4 / 120) := by ring
-          _ = (441 : ℝ) / 480 := by rw [hsqrt_th, hth_sq]; norm_num
+          _ = (441 : ℝ) / 480 := by
+            rw [hsqrt_th, show th ^ 4 = (th ^ 2) ^ 2 by ring, hth_sq]
+            norm_num
   unfold endpointKappa
   rw [Real.tan_eq_sin_div_cos, ← mul_div_assoc]
   apply (div_le_iff₀ hcos_pos).2
@@ -182,6 +186,7 @@ theorem eighty_eight_over_seventy_three_lt_endpointKappa :
     calc
       (11 : ℝ) / 12
           = Real.sqrt 2 * (th - th ^ 3 / 6) := by
+              symm
               calc
                 Real.sqrt 2 * (th - th ^ 3 / 6)
                     = (Real.sqrt 2 * th) * (1 - th ^ 2 / 6) := by ring

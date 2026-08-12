@@ -62,8 +62,9 @@ lemma cosSextic_le_cos {x : ℝ} (hx : 0 ≤ x) :
     have h6 : HasDerivAt (fun y : ℝ => y ^ 6) (6 * u ^ 5) u := by
       simpa using hasDerivAt_pow 6 u
     unfold sinQuintic
-    convert ((h2.div_const 2).sub (h4.div_const 24)).add
-      (h6.div_const 720) using 1 <;> ring
+    have h := ((h2.div_const 2).sub (h4.div_const 24)).add
+      (h6.div_const 720)
+    exact h.congr_deriv (by ring)
   have hsin_eval :
       (∫ u in (0 : ℝ)..x, Real.sin u) = 1 - Real.cos x := by
     rw [integral_sin]
@@ -100,8 +101,9 @@ lemma sinSeptic_le_sin {x : ℝ} (hx : 0 ≤ x) :
     have h7 : HasDerivAt (fun y : ℝ => y ^ 7) (7 * u ^ 6) u := by
       simpa using hasDerivAt_pow 7 u
     unfold sinSeptic cosSextic
-    convert (((hasDerivAt_id u).sub (h3.div_const 6)).add
-      (h5.div_const 120)).sub (h7.div_const 5040) using 1 <;> ring
+    have h := (((hasDerivAt_id u).sub (h3.div_const 6)).add
+      (h5.div_const 120)).sub (h7.div_const 5040)
+    exact h.congr_deriv (by ring)
   have hpoly_eval :
       (∫ u in (0 : ℝ)..x, cosSextic u) = sinSeptic x := by
     rw [intervalIntegral.integral_eq_sub_of_hasDerivAt
@@ -141,8 +143,9 @@ lemma cos_le_cosOctic {x : ℝ} (hx : 0 ≤ x) :
     have h8 : HasDerivAt (fun y : ℝ => y ^ 8) (8 * u ^ 7) u := by
       simpa using hasDerivAt_pow 8 u
     unfold sinSeptic
-    convert (((h2.div_const 2).sub (h4.div_const 24)).add
-      (h6.div_const 720)).sub (h8.div_const 40320) using 1 <;> ring
+    have h := (((h2.div_const 2).sub (h4.div_const 24)).add
+      (h6.div_const 720)).sub (h8.div_const 40320)
+    exact h.congr_deriv (by ring)
   have hpoly_eval :
       (∫ u in (0 : ℝ)..x, sinSeptic u) =
         x ^ 2 / 2 - x ^ 4 / 24 + x ^ 6 / 720 - x ^ 8 / 40320 := by

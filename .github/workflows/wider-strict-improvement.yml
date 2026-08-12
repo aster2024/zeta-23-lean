@@ -113,6 +113,22 @@ jobs:
           }
 
           set +e
+          lake build Zeta23.StrictImprovement.LocalPinching \
+            2>&1 | tee local-pinching-build.log
+          local_pinching_status=${PIPESTATUS[0]}
+          if [[ "${local_pinching_status}" -ne 0 ]]; then
+            publish_failure local-pinching-build.log "Local pinching preflight failure"
+            exit "${local_pinching_status}"
+          fi
+
+          lake build Zeta23.StrictImprovement.ExplicitDelta \
+            2>&1 | tee explicit-delta-build.log
+          explicit_delta_status=${PIPESTATUS[0]}
+          if [[ "${explicit_delta_status}" -ne 0 ]]; then
+            publish_failure explicit-delta-build.log "Explicit delta preflight failure"
+            exit "${explicit_delta_status}"
+          fi
+
           lake build \
             Zeta23.StrictImprovement.ZetaWiderEndpointPassage \
             Zeta23.StrictImprovement.WiderFixedInterfaceCeiling \
@@ -168,6 +184,8 @@ jobs:
             wider-target-build.log
             lean-failure-diagnostics.txt
             lean-failure-diagnostics-bounded.txt
+            local-pinching-build.log
+            explicit-delta-build.log
             build-commit.txt
             lean-version.txt
             lake-version.txt
