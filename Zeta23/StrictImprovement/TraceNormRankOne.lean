@@ -62,14 +62,14 @@ theorem traceNorm_le_of_hasSum_vecMulVec_two
       rw [h]
       funext k
       simp only [Pi.smul_apply, Complex.real_smul, smul_eq_mul]
-    have hvv : star (fun k => U k i) ⋅ᵥ (fun k => U k i) = 1 := by
+    have hvv : star (fun k => U k i) ⬝ᵥ (fun k => U k i) = 1 := by
       have h1 := Matrix.UnitaryGroup.star_mul_self hE.eigenvectorUnitary
       have h := congrFun (congrFun h1 i) i
       simpa [hU, Matrix.mul_apply, Matrix.star_apply, dotProduct] using h
-    have hquad : star (fun k => U k i) ⋅ᵥ (E *ᵥ fun k => U k i) =
+    have hquad : star (fun k => U k i) ⬝ᵥ (E *ᵥ fun k => U k i) =
         ((hE.eigenvalues i : ℝ) : ℂ) := by
       rw [hEv, dotProduct_smul, hvv, smul_eq_mul, mul_one]
-    have hexp : star (fun k => U k i) ⋅ᵥ (E *ᵥ fun k => U k i) =
+    have hexp : star (fun k => U k i) ⬝ᵥ (E *ᵥ fun k => U k i) =
         ∑ k, star (U k i) * ∑ l, E k l * U l i := by
       simp only [dotProduct, mulVec, Pi.star_apply]
     have h2 : HasSum (fun ρ => ∑ k, star (U k i) *
@@ -121,7 +121,7 @@ theorem traceNorm_le_of_hasSum_vecMulVec_two
         Real.norm_of_nonneg (hc ρ)]
       simp only [hF]
       exact mul_le_mul_of_nonneg_left
-        (mul_le_half_sq_add_sq _ _) (hc ρ)
+        (by nlinarith [sq_nonneg (‖α i ρ‖ - ‖β i ρ‖)]) (hc ρ)
     have h := HasSum.norm_le_of_bounded (hlam i) (hF_summable i).hasSum hterm
     simpa only [Complex.norm_real, Real.norm_eq_abs] using h
   calc

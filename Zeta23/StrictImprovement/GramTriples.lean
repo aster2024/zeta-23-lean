@@ -32,7 +32,7 @@ variable [Fintype β] [DecidableEq β]
 
 /-- Gram matrix of a finite family of complex vectors. -/
 def gramMatrix (x : s → d → ℂ) : Matrix s s ℂ :=
-  fun i j => star (x i) ⋅ᵥ x j
+  fun i j => star (x i) ⬝ᵥ x j
 
 /-- Centered Gram matrix `G - I`. -/
 def gramDeviation (x : s → d → ℂ) : Matrix s s ℂ :=
