@@ -129,12 +129,16 @@ theorem gramMatrix_normalizedCoreVec_eq_finiteCorrelation
           (Real.sqrt (finiteCoreWeight Z T 3 P hconj z') : ℂ)) := by
     field_simp [hcroot, hzroot, hz'root, hmassc]
     rw [hmassroot]
+    push_cast
     ring
   simp_rw [hterm]
   rw [Finset.sum_div]
   push_cast
   field_simp [hmassc, hzroot, hz'root]
-  ring
+  have hsub (k : Fin (P.d T)) :
+      -P.tau T k + (z' : ℂ).im = (z' : ℂ).im - P.tau T k := by
+    ring
+  ring_nf <;> simp_rw [hsub]
 
 /-- The pointwise tail budget places every finite squared norm in
 `[1-q,1]`, where `q=budget/(aL²)`. -/
