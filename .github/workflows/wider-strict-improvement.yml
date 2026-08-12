@@ -283,7 +283,26 @@ jobs:
 
           test -s baseline-axiom-set.txt
           test -s wider-axiom-set.txt
-          cmp baseline-axiom-set.txt wider-axiom-set.txt
+          if ! cmp baseline-axiom-set.txt wider-axiom-set.txt; then
+            python3 - <<'PY'
+          import difflib
+          from pathlib import Path
+
+          baseline = Path("baseline-axiom-set.txt").read_text().splitlines()
+          wider = Path("wider-axiom-set.txt").read_text().splitlines()
+          diff = "\n".join(difflib.unified_diff(
+              baseline, wider,
+              fromfile="baseline-axiom-set.txt",
+              tofile="wider-axiom-set.txt",
+              lineterm="",
+          )) + "\n"
+          Path("axiom-diff.txt").write_text(diff)
+          print(diff, end="")
+          annotation = diff[:3000].replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+          print(f"::error title=Axiom-set mismatch::{annotation}")
+          PY
+            exit 1
+          fi
 
       - name: Preserve build and axiom receipts
         if: always()
@@ -338,6 +357,7 @@ jobs:
             wider-axioms.txt
             baseline-axiom-set.txt
             wider-axiom-set.txt
+            axiom-diff.txt
           if-no-files-found: warn
           retention-days: 90
 
