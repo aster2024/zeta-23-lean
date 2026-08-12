@@ -113,6 +113,8 @@ theorem gramMatrix_normalizedCoreVec_eq_finiteCorrelation
     change ((Real.sqrt (P.a T * P.L T ^ 2) : ℂ)) ^ 2 =
       ((P.a T * P.L T ^ 2 : ℝ) : ℂ)
     rw [sq, ← Complex.ofReal_mul, Real.mul_self_sqrt hc.le]
+  -- Normalize each summand before summing.  A global ring pass can otherwise
+  -- normalize inside the opaque `phiHatR` arguments and hide their equality.
   have hterm (k : Fin (P.d T)) :
       ((P.phiHatR T ((z : ℂ).im - P.tau T k) : ℂ) /
           (Real.sqrt (mass T P) : ℂ) /
