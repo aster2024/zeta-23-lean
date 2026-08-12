@@ -62,8 +62,7 @@ lemma blockPinch_vecMulVec (owner : n → Option β) (u v : n → ℂ) :
     blockPinch owner (vecMulVec u v)
       = ∑ b, vecMulVec (cutVector owner b u) (cutVector owner b v) := by
   ext i j
-  change (∑ b, if owner i = some b ∧ owner j = some b then u i * v j else 0) =
-    ∑ b, cutVector owner b u i * cutVector owner b v j
+  simp only [blockPinch, Matrix.sum_apply, vecMulVec_apply]
   apply Finset.sum_congr rfl
   intro b _
   by_cases hi : owner i = some b <;>
@@ -84,9 +83,7 @@ lemma blockPinch_sum (owner : n → Option β)
     {ι : Type*} [Fintype ι] [DecidableEq ι] (A : ι → Matrix n n ℂ) :
     blockPinch owner (∑ k, A k) = ∑ k, blockPinch owner (A k) := by
   ext i j
-  change (∑ b, if owner i = some b ∧ owner j = some b then
-      ∑ k, A k i j else 0) =
-    ∑ k, ∑ b, if owner i = some b ∧ owner j = some b then A k i j else 0
+  simp only [blockPinch, Matrix.sum_apply]
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl
   intro b _
@@ -100,7 +97,7 @@ lemma blockPinch_isHermitian (owner : n → Option β)
   have hstar : star (A j i) = A i j := by
     have h := congrFun (congrFun hA.eq i) j
     simpa [Matrix.conjTranspose_apply] using h
-  simp only [Matrix.conjTranspose_apply, blockPinch, star_sum, star_zero]
+  simp only [Matrix.conjTranspose_apply, blockPinch, star_sum]
   apply Finset.sum_congr rfl
   intro b _
   by_cases hi : owner i = some b <;>
@@ -116,10 +113,11 @@ lemma sum_eigen_vecMulVec_eq {A : Matrix n n ℂ} (hA : A.IsHermitian) :
   ext i j
   conv_rhs => rw [hA.spectral_theorem, Unitary.conjStarAlgAut_apply]
   rw [Matrix.mul_apply]
+  simp only [Matrix.sum_apply]
   apply Finset.sum_congr rfl
   intro k _
   rw [mul_diagonal, Matrix.star_apply]
-  simp only [Finset.sum_apply, Matrix.smul_apply, vecMulVec_apply,
+  simp only [Matrix.smul_apply, vecMulVec_apply,
     Complex.real_smul, smul_eq_mul, Function.comp_apply]
   ring
 
