@@ -90,7 +90,13 @@ theorem gramMatrix_normalizedCoreVec_eq_finiteCorrelation
           P.phiHatR T ((z' : ℂ).im - P.tau T k) := by
     rfl
   rw [hK]
-  fold finiteCoreWeight
+  change (∑ k : Fin (P.d T),
+      (P.phiHatR T ((z : ℂ).im - P.tau T k) : ℂ) /
+          (Real.sqrt (mass T P) : ℂ) /
+          (Real.sqrt (finiteCoreWeight Z T 3 P hconj z) : ℂ) *
+        ((P.phiHatR T ((z' : ℂ).im - P.tau T k) : ℂ) /
+          (Real.sqrt (mass T P) : ℂ) /
+          (Real.sqrt (finiteCoreWeight Z T 3 P hconj z') : ℂ))) = _
   have hcroot : (Real.sqrt (P.a T * P.L T ^ 2) : ℂ) ≠ 0 := by
     exact_mod_cast (Real.sqrt_pos.mpr hc).ne'
   have hzroot :
@@ -146,14 +152,14 @@ theorem finiteKfun_div_mass_abs_le_sqrt_weights
     P.phiHatR T ((z' : ℂ).im - P.tau T k) ^ 2
   have hS₁ : S₁ = mass T P * finiteCoreWeight Z T 3 P hconj z := by
     rw [finiteCoreWeight_eq_one_sub_rho_div Z T 3 P hconj hreal hc z]
-    unfold S₁ PrimeSide.rho mass
+    unfold S₁ PrimeSide.rho
     simp only [Params.localFun_a, Params.localFun_phiHat, Params.toSetting_L,
       Params.toSetting_d, Params.toSetting_tau]
     field_simp [hc.ne']
     ring
   have hS₂ : S₂ = mass T P * finiteCoreWeight Z T 3 P hconj z' := by
     rw [finiteCoreWeight_eq_one_sub_rho_div Z T 3 P hconj hreal hc z']
-    unfold S₂ PrimeSide.rho mass
+    unfold S₂ PrimeSide.rho
     simp only [Params.localFun_a, Params.localFun_phiHat, Params.toSetting_L,
       Params.toSetting_d, Params.toSetting_tau]
     field_simp [hc.ne']
