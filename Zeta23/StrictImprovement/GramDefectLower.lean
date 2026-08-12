@@ -71,9 +71,8 @@ lemma sum_spec_vecMulVec_eq
   apply Finset.sum_congr rfl
   intro k _
   rw [mul_diagonal, Matrix.star_apply]
-  simp only [Finset.sum_apply, Matrix.smul_apply, vecMulVec_apply,
-    Complex.real_smul, smul_eq_mul, Function.comp_apply]
-  ring
+  simp only [Matrix.smul_apply, vecMulVec_apply, smul_eq_mul]
+  ac_rfl
 
 lemma specMap_sub_one
     {A : Matrix s s ℂ} (hA : A.IsHermitian) :
