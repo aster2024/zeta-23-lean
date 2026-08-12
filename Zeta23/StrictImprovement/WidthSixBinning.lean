@@ -47,7 +47,15 @@ theorem widthSixBin_card_le {D : ℝ} (hD : 0 ≤ D) :
     (Fintype.card (Fin (widthSixBinCount D)) : ℝ) ≤ D / 6 + 1 := by
   have hf : ((⌊D / 6⌋₊ : ℕ) : ℝ) ≤ D / 6 :=
     Nat.floor_le (div_nonneg hD (by norm_num))
-  simpa [widthSixBinCount] using add_le_add_right hf 1
+  have hcardNat :
+      Fintype.card (Fin (widthSixBinCount D)) = widthSixBinCount D :=
+    Fintype.card_fin _
+  have hcardReal :
+      (Fintype.card (Fin (widthSixBinCount D)) : ℝ) =
+        (widthSixBinCount D : ℝ) := by
+    exact_mod_cast hcardNat
+  rw [hcardReal, widthSixBinCount, Nat.cast_add, Nat.cast_one]
+  exact add_le_add_right hf 1
 
 theorem abs_coord_sub_lt_twelve_pi_of_widthSixBin_eq
     {S : Type*} {D base : ℝ} {coord : S → ℝ}

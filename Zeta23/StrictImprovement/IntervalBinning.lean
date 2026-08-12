@@ -54,7 +54,15 @@ theorem intervalBin_card_le {D : ℝ} (hD : 0 ≤ D) :
     (Fintype.card (Fin (intervalBinCount D)) : ℝ) ≤ D / 4 + 1 := by
   have hf : ((⌊D / 4⌋₊ : ℕ) : ℝ) ≤ D / 4 :=
     Nat.floor_le (div_nonneg hD (by norm_num))
-  simpa [intervalBinCount] using add_le_add_right hf 1
+  have hcardNat :
+      Fintype.card (Fin (intervalBinCount D)) = intervalBinCount D :=
+    Fintype.card_fin _
+  have hcardReal :
+      (Fintype.card (Fin (intervalBinCount D)) : ℝ) =
+        (intervalBinCount D : ℝ) := by
+    exact_mod_cast hcardNat
+  rw [hcardReal, intervalBinCount, Nat.cast_add, Nat.cast_one]
+  exact add_le_add_right hf 1
 
 /-- Two labels in the same floor bin have coordinate distance strictly less
 than `8*pi`. -/
