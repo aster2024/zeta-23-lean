@@ -65,7 +65,9 @@ lemma endpointStep_pos (n : ℕ) : 0 < endpointStep n := by
 
 lemma endpointStep_le_one (n : ℕ) : endpointStep n ≤ 1 := by
   unfold endpointStep
-  have hden : (1 : ℝ) ≤ (n : ℝ) + 1 := by positivity
+  have hden : (1 : ℝ) ≤ (n : ℝ) + 1 := by
+    have hn : 0 ≤ (n : ℝ) := Nat.cast_nonneg n
+    linarith
   exact (div_le_one (by positivity)).2 hden
 
 lemma endpointLam_mem_Icc (n : ℕ) : endpointLam n ∈ Set.Icc (0 : ℝ) 1 := by
@@ -81,14 +83,17 @@ lemma endpointLam_lt_one (n : ℕ) : endpointLam n < 1 := by
 
 theorem tendsto_endpointStep_zero :
     Tendsto endpointStep atTop (nhds 0) := by
-  simpa [endpointStep] using tendsto_one_div_add_atTop_nhds_zero_nat
+  change Tendsto (fun n : ℕ => 1 / ((n : ℝ) + 1)) atTop (nhds 0)
+  exact tendsto_one_div_add_atTop_nhds_zero_nat
 
 theorem tendsto_endpointLam_one :
     Tendsto endpointLam atTop (nhds 1) := by
   have h : Tendsto (fun n : ℕ => (1 : ℝ) - endpointStep n)
       atTop (nhds (1 - 0)) :=
     tendsto_const_nhds.sub tendsto_endpointStep_zero
-  simpa [endpointLam] using h
+  change Tendsto (fun n : ℕ => (1 : ℝ) - endpointStep n)
+    atTop (nhds 1)
+  simpa using h
 
 /-- `HD` is continuous at the endpoint from inside the admissible interval. -/
 theorem continuousWithinAt_HD_one :
@@ -120,14 +125,20 @@ theorem tendsto_endpointDelta :
       atTop (nhds (explicitDeltaLower - 19 * 0)) :=
     tendsto_const_nhds.sub
       (tendsto_endpointStep_zero.const_mul 19)
-  simpa [endpointDelta] using h
+  change Tendsto (fun n : ℕ => explicitDeltaLower - 19 * endpointStep n)
+    atTop (nhds explicitDeltaLower)
+  simpa using h
 
 theorem tendsto_endpointQ :
     Tendsto endpointQ atTop (nhds (ThmD.HD 1 - 1 / 2)) := by
   have hsum := tendsto_endpointLam_one.add tendsto_endpointStep_zero
   have h := ((tendsto_endpointHD.sub tendsto_endpointStep_zero).sub
       (hsum.div_const 2)).sub tendsto_endpointStep_zero
-  simpa [endpointQ, endpointEps] using h
+  change Tendsto (fun n : ℕ =>
+    ThmD.HD (endpointLam n) - endpointStep n -
+      (endpointLam n + endpointStep n) / 2 - endpointStep n)
+    atTop (nhds (ThmD.HD 1 - 1 / 2))
+  exact h
 
 /-- The strict fixed-window coefficient converges to the endpoint coefficient;
 no window parameter depends on `T` in the theorem invocation. -/
@@ -141,8 +152,16 @@ theorem tendsto_endpointRate :
       (tendsto_const_nhds.add tendsto_endpointStep_zero)
   have hgain := hnum.div hden (by norm_num : (9 : ℝ) * (1 + 0) ≠ 0)
   have h := tendsto_endpointHD.add hgain
-  convert h using 1 <;>
-    simp [endpointRate, endpointRateLimit, endpointEps] <;> ring
+  have hend :
+      ThmD.HD 1 + explicitDeltaLower * (ThmD.HD 1 - 1 / 2) ^ 2 /
+          (9 * (1 + 0)) = endpointRateLimit := by
+    unfold endpointRateLimit
+    ring
+  rw [← hend]
+  change Tendsto (fun n : ℕ => ThmD.HD (endpointLam n) +
+    endpointDelta n * endpointQ n ^ 2 / (9 * (1 + endpointStep n)))
+    atTop _
+  exact h
 
 /-- The complete collection of hypotheses needed by the fixed-window strict
 theorem at one auxiliary index. -/
@@ -175,7 +194,7 @@ theorem eventually_endpointFeasible :
     hHlim.eventually (Ioi_mem_nhds hHone)
   have hqPos : ∀ᶠ n in atTop, 0 < endpointQ n :=
     tendsto_endpointQ.eventually
-      (Ioi_mem_nhds one_sixth_lt_HD_one_sub_half)
+      (Ioi_mem_nhds (by linarith [one_sixth_lt_HD_one_sub_half]))
   filter_upwards [hlamPos, hdeltaPos, hHpos, hqPos]
     with n hlam hdelta hH hq
   refine ⟨hlam, endpointLam_lt_one n, ?_, hH, hdelta.le, ?_, hq.le⟩

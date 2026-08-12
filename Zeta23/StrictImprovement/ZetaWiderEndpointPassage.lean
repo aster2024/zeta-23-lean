@@ -47,7 +47,9 @@ theorem tendsto_widerEndpointDelta :
       atTop (nhds (widerDeltaLower - 19 * 0)) :=
     tendsto_const_nhds.sub
       (tendsto_endpointStep_zero.const_mul 19)
-  simpa [widerEndpointDelta] using h
+  change Tendsto (fun n : ℕ => widerDeltaLower - 19 * endpointStep n)
+    atTop (nhds widerDeltaLower)
+  simpa using h
 
 /-- The fixed-window wider coefficient converges to the exact endpoint
 coefficient without allowing the taper to depend on `T`. -/
@@ -61,8 +63,16 @@ theorem tendsto_widerEndpointRate :
       (tendsto_const_nhds.add tendsto_endpointStep_zero)
   have hgain := hnum.div hden (by norm_num : (8 : ℝ) * (1 + 0) ≠ 0)
   have h := tendsto_endpointHD.add hgain
-  convert h using 1 <;>
-    simp [widerEndpointRate, widerEndpointRateLimit, endpointEps] <;> ring
+  have hend :
+      ThmD.HD 1 + widerDeltaLower * (ThmD.HD 1 - 1 / 2) ^ 2 /
+          (8 * (1 + 0)) = widerEndpointRateLimit := by
+    unfold widerEndpointRateLimit
+    ring
+  rw [← hend]
+  change Tendsto (fun n : ℕ => ThmD.HD (endpointLam n) +
+    widerEndpointDelta n * endpointQ n ^ 2 / (8 * (1 + endpointStep n)))
+    atTop _
+  exact h
 
 /-- Complete fixed-window feasibility conditions for the wider route. -/
 def WiderEndpointFeasible (n : ℕ) : Prop :=
@@ -95,7 +105,7 @@ theorem eventually_widerEndpointFeasible :
     hHlim.eventually (Ioi_mem_nhds hHone)
   have hqPos : ∀ᶠ n in atTop, 0 < endpointQ n :=
     tendsto_endpointQ.eventually
-      (Ioi_mem_nhds one_sixth_lt_HD_one_sub_half)
+      (Ioi_mem_nhds (by linarith [one_sixth_lt_HD_one_sub_half]))
   filter_upwards [hlamPos, hdeltaPos, hHpos, hqPos]
     with n hlam hdelta hH hq
   refine ⟨hlam, endpointLam_lt_one n, ?_, hH, hdelta.le, ?_, hq.le⟩
