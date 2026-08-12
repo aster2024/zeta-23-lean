@@ -92,38 +92,112 @@ lemma four_trace_zero_l1_sq
     have hcd := mul_nonneg hc.2.1 hd.2.1
     dsimp [na, nb, nc, nd] at hab hac had hbc hbd hcd ⊢
     nlinarith
-  dsimp [pa, pb, pc, pd, na, nb, nc, nd] at hP hPsq hNsq ⊢
-  rw [ha.2.2.2.2, hb.2.2.2.2, hc.2.2.2.2, hd.2.2.2.2]
+  dsimp [pa, pb, pc, pd, na, nb, nc, nd] at hP hPsq hNsq
   have haSq : a ^ 2 =
       scalarPositivePart a ^ 2 + scalarNegativePart a ^ 2 := by
     calc
       a ^ 2 = (scalarPositivePart a - scalarNegativePart a) ^ 2 :=
         congrArg (fun x : ℝ => x ^ 2) ha.2.2.2.1
       _ = scalarPositivePart a ^ 2 + scalarNegativePart a ^ 2 := by
-        nlinarith [ha.2.2.1]
+        calc
+          (scalarPositivePart a - scalarNegativePart a) ^ 2 =
+              scalarPositivePart a ^ 2 -
+                2 * scalarPositivePart a * scalarNegativePart a +
+                  scalarNegativePart a ^ 2 := by ring
+          _ = scalarPositivePart a ^ 2 + scalarNegativePart a ^ 2 := by
+            rw [ha.2.2.1]
+            ring
   have hbSq : b ^ 2 =
       scalarPositivePart b ^ 2 + scalarNegativePart b ^ 2 := by
     calc
       b ^ 2 = (scalarPositivePart b - scalarNegativePart b) ^ 2 :=
         congrArg (fun x : ℝ => x ^ 2) hb.2.2.2.1
       _ = scalarPositivePart b ^ 2 + scalarNegativePart b ^ 2 := by
-        nlinarith [hb.2.2.1]
+        calc
+          (scalarPositivePart b - scalarNegativePart b) ^ 2 =
+              scalarPositivePart b ^ 2 -
+                2 * scalarPositivePart b * scalarNegativePart b +
+                  scalarNegativePart b ^ 2 := by ring
+          _ = scalarPositivePart b ^ 2 + scalarNegativePart b ^ 2 := by
+            rw [hb.2.2.1]
+            ring
   have hcSq : c ^ 2 =
       scalarPositivePart c ^ 2 + scalarNegativePart c ^ 2 := by
     calc
       c ^ 2 = (scalarPositivePart c - scalarNegativePart c) ^ 2 :=
         congrArg (fun x : ℝ => x ^ 2) hc.2.2.2.1
       _ = scalarPositivePart c ^ 2 + scalarNegativePart c ^ 2 := by
-        nlinarith [hc.2.2.1]
+        calc
+          (scalarPositivePart c - scalarNegativePart c) ^ 2 =
+              scalarPositivePart c ^ 2 -
+                2 * scalarPositivePart c * scalarNegativePart c +
+                  scalarNegativePart c ^ 2 := by ring
+          _ = scalarPositivePart c ^ 2 + scalarNegativePart c ^ 2 := by
+            rw [hc.2.2.1]
+            ring
   have hdSq : d ^ 2 =
       scalarPositivePart d ^ 2 + scalarNegativePart d ^ 2 := by
     calc
       d ^ 2 = (scalarPositivePart d - scalarNegativePart d) ^ 2 :=
         congrArg (fun x : ℝ => x ^ 2) hd.2.2.2.1
       _ = scalarPositivePart d ^ 2 + scalarNegativePart d ^ 2 := by
-        nlinarith [hd.2.2.1]
-  rw [haSq, hbSq, hcSq, hdSq]
-  nlinarith
+        calc
+          (scalarPositivePart d - scalarNegativePart d) ^ 2 =
+              scalarPositivePart d ^ 2 -
+                2 * scalarPositivePart d * scalarNegativePart d +
+                  scalarNegativePart d ^ 2 := by ring
+          _ = scalarPositivePart d ^ 2 + scalarNegativePart d ^ 2 := by
+            rw [hd.2.2.1]
+            ring
+  have hSq : a ^ 2 + b ^ 2 + c ^ 2 + d ^ 2 ≤
+      2 * (scalarPositivePart a + scalarPositivePart b +
+        scalarPositivePart c + scalarPositivePart d) ^ 2 := by
+    rw [haSq, hbSq, hcSq, hdSq]
+    calc
+      (scalarPositivePart a ^ 2 + scalarNegativePart a ^ 2) +
+            (scalarPositivePart b ^ 2 + scalarNegativePart b ^ 2) +
+          (scalarPositivePart c ^ 2 + scalarNegativePart c ^ 2) +
+        (scalarPositivePart d ^ 2 + scalarNegativePart d ^ 2) =
+          (scalarPositivePart a ^ 2 + scalarPositivePart b ^ 2 +
+              scalarPositivePart c ^ 2 + scalarPositivePart d ^ 2) +
+            (scalarNegativePart a ^ 2 + scalarNegativePart b ^ 2 +
+              scalarNegativePart c ^ 2 + scalarNegativePart d ^ 2) := by ring
+      _ ≤ (scalarPositivePart a + scalarPositivePart b +
+              scalarPositivePart c + scalarPositivePart d) ^ 2 +
+            (scalarNegativePart a + scalarNegativePart b +
+              scalarNegativePart c + scalarNegativePart d) ^ 2 :=
+        add_le_add hPsq hNsq
+      _ = 2 * (scalarPositivePart a + scalarPositivePart b +
+          scalarPositivePart c + scalarPositivePart d) ^ 2 := by
+        rw [← hP]
+        ring
+  have hAbs : |a| + |b| + |c| + |d| =
+      2 * (scalarPositivePart a + scalarPositivePart b +
+        scalarPositivePart c + scalarPositivePart d) := by
+    rw [ha.2.2.2.2, hb.2.2.2.2, hc.2.2.2.2, hd.2.2.2.2]
+    calc
+      (scalarPositivePart a + scalarNegativePart a) +
+            (scalarPositivePart b + scalarNegativePart b) +
+          (scalarPositivePart c + scalarNegativePart c) +
+        (scalarPositivePart d + scalarNegativePart d) =
+          (scalarPositivePart a + scalarPositivePart b +
+              scalarPositivePart c + scalarPositivePart d) +
+            (scalarNegativePart a + scalarNegativePart b +
+              scalarNegativePart c + scalarNegativePart d) := by ring
+      _ = (scalarPositivePart a + scalarPositivePart b +
+            scalarPositivePart c + scalarPositivePart d) +
+          (scalarPositivePart a + scalarPositivePart b +
+            scalarPositivePart c + scalarPositivePart d) := by rw [← hP]
+      _ = 2 * (scalarPositivePart a + scalarPositivePart b +
+          scalarPositivePart c + scalarPositivePart d) := by ring
+  rw [hAbs]
+  calc
+    2 * (a ^ 2 + b ^ 2 + c ^ 2 + d ^ 2) ≤
+        2 * (2 * (scalarPositivePart a + scalarPositivePart b +
+          scalarPositivePart c + scalarPositivePart d) ^ 2) :=
+      mul_le_mul_of_nonneg_left hSq (by norm_num)
+    _ = (2 * (scalarPositivePart a + scalarPositivePart b +
+        scalarPositivePart c + scalarPositivePart d)) ^ 2 := by ring
 
 theorem two_frobSq_le_traceNorm_sq_fin4
     {B : Matrix (Fin 4) (Fin 4) ℂ}
@@ -216,6 +290,14 @@ lemma frobSq_gramDeviation_four
     gramDeviation_diag_zero x hunit (idx b r)
   rw [frobSq_fin4_of_diag_zero
     ((gramDeviation_isHermitian x).submatrix (idx b)) hdiag]
+  change 2 *
+      (‖gramDeviation x (idx b 0) (idx b 1)‖ ^ 2 +
+          ‖gramDeviation x (idx b 0) (idx b 2)‖ ^ 2 +
+          ‖gramDeviation x (idx b 0) (idx b 3)‖ ^ 2 +
+          ‖gramDeviation x (idx b 1) (idx b 2)‖ ^ 2 +
+          ‖gramDeviation x (idx b 1) (idx b 3)‖ ^ 2 +
+          ‖gramDeviation x (idx b 2) (idx b 3)‖ ^ 2) =
+        2 * fourCorrelationEnergy x idx b
   rw [gramDeviation_offdiag x (hlocalNe (by norm_num : (0 : Fin 4) ≠ 1)),
     gramDeviation_offdiag x (hlocalNe (by norm_num : (0 : Fin 4) ≠ 2)),
     gramDeviation_offdiag x (hlocalNe (by norm_num : (0 : Fin 4) ≠ 3)),
@@ -352,9 +434,8 @@ theorem sum_le_four_mul_fourCount_add_three_card
     ∑ b, occupancy b ≤ ∑ b, (4 * (occupancy b / 4) + 3) :=
       Finset.sum_le_sum fun b _ => le_four_mul_div_four_add_three (occupancy b)
     _ = 4 * (∑ b, occupancy b / 4) + 3 * Fintype.card B := by
-      simp only [Finset.sum_add_distrib, ← Finset.mul_sum,
-        Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
-      ring
+      simp [Finset.sum_add_distrib, ← Finset.mul_sum,
+        Finset.sum_const, Finset.card_univ, mul_comm]
 
 theorem fourCount_ge_width_six_target
     {B : Type*} [Fintype B] [DecidableEq B]
