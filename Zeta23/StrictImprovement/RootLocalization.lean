@@ -35,16 +35,17 @@ theorem hasDerivAt_offsetNumerator (n : ℕ) (e : ℝ) :
     simpa using (hasDerivAt_id e).div_const 2
   have hsin : HasDerivAt (fun y : ℝ => Real.sin (y / 2))
       (Real.cos (e / 2) * (1 / 2)) e := by
-    convert (Real.hasDerivAt_sin (e / 2)).comp e harg using 1 <;> ring
+    convert (Real.hasDerivAt_sin (e / 2)).comp e harg using 1
   have hcos : HasDerivAt (fun y : ℝ => Real.cos (y / 2))
       (-Real.sin (e / 2) * (1 / 2)) e := by
-    convert (Real.hasDerivAt_cos (e / 2)).comp e harg using 1 <;> ring
+    convert (Real.hasDerivAt_cos (e / 2)).comp e harg using 1
   have hcoef : HasDerivAt
       (fun y : ℝ => 2 * Real.pi * (n : ℝ) + y) 1 e := by
     convert (hasDerivAt_id e).add_const (2 * Real.pi * (n : ℝ)) using 1 <;> ring
   unfold offsetNumerator offsetNumeratorDerivative
   have h := (hcoef.mul hsin).sub (hcos.const_mul endpointKappa)
-  simpa only [id_eq] using h.congr_deriv (by ring)
+  simp only [id_eq] at h
+  exact h.congr_deriv (by ring)
 
 /-- On the whole positive zero interval the continuous numerator is strictly
 increasing. -/

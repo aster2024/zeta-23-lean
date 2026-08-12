@@ -202,14 +202,15 @@ theorem hasDerivAt_endpointG (x : ℝ) :
     simpa using (hasDerivAt_id x).div_const 2
   have hsin : HasDerivAt (fun y : ℝ => Real.sin (y / 2))
       (Real.cos (x / 2) * (1 / 2)) x := by
-    convert (Real.hasDerivAt_sin (x / 2)).comp x harg using 1 <;> ring
+    convert (Real.hasDerivAt_sin (x / 2)).comp x harg using 1
   have hcos : HasDerivAt (fun y : ℝ => Real.cos (y / 2))
       (-Real.sin (x / 2) * (1 / 2)) x := by
-    convert (Real.hasDerivAt_cos (x / 2)).comp x harg using 1 <;> ring
+    convert (Real.hasDerivAt_cos (x / 2)).comp x harg using 1
   unfold endpointG
   have h := ((hasDerivAt_id x).mul hsin).sub
     (hcos.const_mul endpointKappa)
-  simpa only [id_eq] using h.congr_deriv (by ring)
+  simp only [id_eq] at h
+  exact h.congr_deriv (by ring)
 
 /-- Differentiability of the scalar root numerator. -/
 theorem differentiable_endpointG : Differentiable ℝ endpointG := by
