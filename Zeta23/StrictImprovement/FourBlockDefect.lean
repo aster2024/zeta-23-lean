@@ -294,12 +294,12 @@ lemma frobSq_gramDeviation_four
           ‖gramDeviation x (idx b 1) (idx b 3)‖ ^ 2 +
           ‖gramDeviation x (idx b 2) (idx b 3)‖ ^ 2) =
         2 * fourCorrelationEnergy x idx b
-  rw [gramDeviation_offdiag x (hlocalNe (by norm_num : (0 : Fin 4) ≠ 1)),
-    gramDeviation_offdiag x (hlocalNe (by norm_num : (0 : Fin 4) ≠ 2)),
-    gramDeviation_offdiag x (hlocalNe (by norm_num : (0 : Fin 4) ≠ 3)),
-    gramDeviation_offdiag x (hlocalNe (by norm_num : (1 : Fin 4) ≠ 2)),
-    gramDeviation_offdiag x (hlocalNe (by norm_num : (1 : Fin 4) ≠ 3)),
-    gramDeviation_offdiag x (hlocalNe (by norm_num : (2 : Fin 4) ≠ 3))]
+  rw [gramDeviation_offdiag x (hlocalNe (by decide : (0 : Fin 4) ≠ 1)),
+    gramDeviation_offdiag x (hlocalNe (by decide : (0 : Fin 4) ≠ 2)),
+    gramDeviation_offdiag x (hlocalNe (by decide : (0 : Fin 4) ≠ 3)),
+    gramDeviation_offdiag x (hlocalNe (by decide : (1 : Fin 4) ≠ 2)),
+    gramDeviation_offdiag x (hlocalNe (by decide : (1 : Fin 4) ≠ 3)),
+    gramDeviation_offdiag x (hlocalNe (by decide : (2 : Fin 4) ≠ 3))]
   rfl
 
 theorem gram_fours_traceNorm_lower
