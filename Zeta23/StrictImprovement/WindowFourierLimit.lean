@@ -5,6 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 -/
 import Zeta23.StrictImprovement.EndpointKernel
 import Zeta23.ThmD.Window
+import Zeta23.ThmD.WindowCore
 
 /-!
 # Uniform Fourier limit for the Montgomery--Taylor window
@@ -57,8 +58,9 @@ lemma re_paperFT_ofReal_eq_integral_mul_cos
     rw [Zeta23.norm_cexp_I_mul]
     simp
   have hprod : Integrable (fun u => (f u : ℂ) * e u) := by
-    exact (hf.ofReal (𝕜 := ℂ)).bdd_mul (c := 1) hec.aestronglyMeasurable
+    have hi := (hf.ofReal (𝕜 := ℂ)).bdd_mul (c := 1) hec.aestronglyMeasurable
       (ae_of_all _ fun u => by rw [henorm])
+    simpa only [Pi.mul_apply, mul_comm] using hi
   rw [paperFT_def, ← Zeta23.integral_re_C hprod]
   apply MeasureTheory.integral_congr_ae
   apply ae_of_all
@@ -79,11 +81,17 @@ lemma abs_re_paperFT_sub_le_integral_abs
   rw [re_paperFT_ofReal_eq_integral_mul_cos hf,
     re_paperFT_ofReal_eq_integral_mul_cos hg]
   have hfc : Integrable (fun u => f u * Real.cos (r * u)) :=
-    hf.bdd_mul (c := 1) (by fun_prop : Continuous fun u : ℝ => Real.cos (r * u)).aestronglyMeasurable
-      (ae_of_all _ fun u => by rw [Real.norm_eq_abs]; exact Real.abs_cos_le_one _)
+    by
+      have hi := hf.bdd_mul (c := 1)
+        (by fun_prop : Continuous fun u : ℝ => Real.cos (r * u)).aestronglyMeasurable
+        (ae_of_all _ fun u => by rw [Real.norm_eq_abs]; exact Real.abs_cos_le_one _)
+      simpa only [Pi.mul_apply, mul_comm] using hi
   have hgc : Integrable (fun u => g u * Real.cos (r * u)) :=
-    hg.bdd_mul (c := 1) (by fun_prop : Continuous fun u : ℝ => Real.cos (r * u)).aestronglyMeasurable
-      (ae_of_all _ fun u => by rw [Real.norm_eq_abs]; exact Real.abs_cos_le_one _)
+    by
+      have hi := hg.bdd_mul (c := 1)
+        (by fun_prop : Continuous fun u : ℝ => Real.cos (r * u)).aestronglyMeasurable
+        (ae_of_all _ fun u => by rw [Real.norm_eq_abs]; exact Real.abs_cos_le_one _)
+      simpa only [Pi.mul_apply, mul_comm] using hi
   rw [← MeasureTheory.integral_sub hfc hgc]
   calc
     |∫ u, f u * Real.cos (r * u) - g u * Real.cos (r * u)|
@@ -95,6 +103,7 @@ lemma abs_re_paperFT_sub_le_integral_abs
         (hf.sub hg).abs
       apply ae_of_all
       intro u
+      change |f u * Real.cos (r * u) - g u * Real.cos (r * u)| ≤ |f u - g u|
       rw [show f u * Real.cos (r * u) - g u * Real.cos (r * u) =
           (f u - g u) * Real.cos (r * u) by ring, abs_mul]
       exact mul_le_of_le_one_right (abs_nonneg _) (Real.abs_cos_le_one _)
@@ -138,6 +147,7 @@ lemma sharpW_paperFT_re_scaled
     {lam L : ℝ} (hL : 0 < L) (x : ℝ) :
     (paperFT (fun u => (ThmD.sharpW lam L u : ℂ)) (x / L)).re =
       L * endpointKAt lam x := by
+  rw [← Complex.ofReal_div]
   rw [re_paperFT_ofReal_eq_integral_mul_cos (integrable_sharpW lam hL)]
   unfold ThmD.sharpW
   rw [MeasureTheory.integral_indicator measurableSet_Icc,
@@ -206,15 +216,19 @@ theorem three_quarters_le_endpointKAt_zero
   rw [endpointKAt_zero]
   unfold ThmD.aStar
   have hconst : IntervalIntegrable (fun _ : ℝ => (3 / 4 : ℝ)) volume
-      (-(1 : ℝ) / 2) (1 / 2) := by fun_prop
+      (-(1 : ℝ) / 2) (1 / 2) := by
+    apply Continuous.intervalIntegrable
+    fun_prop
   have hv : IntervalIntegrable (ThmD.vStar lam) volume
       (-(1 : ℝ) / 2) (1 / 2) := by
     unfold ThmD.vStar
+    apply Continuous.intervalIntegrable
     fun_prop
   have hmono := intervalIntegral.integral_mono_on (by norm_num) hconst hv
     (fun s hs => by
       have habs : |s| ≤ (1 : ℝ) / 2 := abs_le.mpr ⟨by linarith [hs.1], hs.2⟩
-      exact ThmD.cos_factor_ge hlam0 hlam1 (by norm_num) habs)
+      simpa using ThmD.cos_factor_ge (lam := lam) (L := (1 : ℝ))
+        hlam0 hlam1 (by norm_num) (u := s) habs)
   norm_num at hmono ⊢
   exact hmono
 
@@ -227,10 +241,12 @@ theorem endpointKAt_abs_le_zero
   have hf : IntervalIntegrable f volume (-(1 : ℝ) / 2) (1 / 2) := by
     dsimp [f]
     unfold ThmD.vStar
+    apply Continuous.intervalIntegrable
     fun_prop
   have hv : IntervalIntegrable v volume (-(1 : ℝ) / 2) (1 / 2) := by
     dsimp [v]
     unfold ThmD.vStar
+    apply Continuous.intervalIntegrable
     fun_prop
   have habs := intervalIntegral.abs_integral_le_integral_abs
     (by norm_num : (-(1 : ℝ) / 2) ≤ 1 / 2) (f := f)
@@ -246,9 +262,9 @@ theorem endpointKAt_abs_le_zero
     dsimp [f]
     rw [abs_mul, abs_of_nonneg hv0]
     exact mul_le_of_le_one_right hv0 (Real.abs_cos_le_one _)
-  unfold endpointKAt
-  dsimp [f, v] at habs hmono ⊢
-  simpa only [zero_mul, Real.cos_zero, mul_one] using habs.trans hmono
+  change |∫ s in (-(1 : ℝ) / 2)..(1 / 2), f s| ≤
+    ∫ s in (-(1 : ℝ) / 2)..(1 / 2), v s
+  exact habs.trans hmono
 
 /-- Pointwise profile convergence as `lam -> 1-`, with a rational Lipschitz
 constant. -/
@@ -290,9 +306,12 @@ theorem endpointKAt_close_one
   have hf : IntervalIntegrable f volume (-(1 : ℝ) / 2) (1 / 2) := by
     dsimp [f]
     unfold ThmD.vStar
+    apply Continuous.intervalIntegrable
     fun_prop
   have hconst : IntervalIntegrable (fun _ : ℝ => 1 - lam) volume
-      (-(1 : ℝ) / 2) (1 / 2) := by fun_prop
+      (-(1 : ℝ) / 2) (1 / 2) := by
+    apply Continuous.intervalIntegrable
+    fun_prop
   have habs :
       |(∫ s in (-(1 : ℝ) / 2)..(1 / 2), f s)| ≤
         ∫ s in (-(1 : ℝ) / 2)..(1 / 2), |f s| :=
@@ -352,7 +371,7 @@ lemma normalized_quotient_close
         calc
           |B| * |a - b| / (a * b) ≤ b * eDen / (a * b) := by
             gcongr
-          _ = eDen / a := by field_simp [ha.ne', hb.ne']; ring
+          _ = eDen / a := by field_simp [ha.ne', hb.ne']
     _ = (eNum + eDen) / a := by ring
 
 /-- Uniform normalized fixed-`lam` to endpoint comparison. -/
