@@ -400,7 +400,7 @@ theorem wider_last_zero_free_far_G_lower
   have hefar : e ≤ -(1 : ℝ) / 8 := by
     rw [show widerRadius = (1 : ℝ) / 8 by rfl] at hfar
     dsimp [e]
-    exact hfar
+    convert hfar using 1 <;> ring
   have hu0 : (1 : ℝ) / 16 ≤ u := by
     dsimp [u]
     linarith
@@ -419,10 +419,18 @@ theorem wider_last_zero_free_far_G_lower
     ring
   have hsinShift : Real.sin (x / 2) = -Real.sin u := by
     rw [harg]
-    simpa using (Real.sin_add_nat_mul_pi (-u) 6)
+    calc
+      Real.sin (-u + 6 * Real.pi) =
+          (-1 : ℝ) ^ 6 * Real.sin (-u) :=
+        Real.sin_add_nat_mul_pi (-u) 6
+      _ = -Real.sin u := by norm_num [Real.sin_neg]
   have hcosShift : Real.cos (x / 2) = Real.cos u := by
     rw [harg]
-    simpa using (Real.cos_add_nat_mul_pi (-u) 6)
+    calc
+      Real.cos (-u + 6 * Real.pi) =
+          (-1 : ℝ) ^ 6 * Real.cos (-u) :=
+        Real.cos_add_nat_mul_pi (-u) 6
+      _ = Real.cos u := by norm_num [Real.cos_neg]
   have hx33 : 33 < x := by
     nlinarith [hx.1, Real.pi_gt_three]
   have hxpos : 0 < x := by linarith
@@ -501,7 +509,8 @@ theorem wider_last_zero_free_short_G_lower
     · exact sub_nonpos.mpr hx.2
   have heps := firstSixOffset_mem 5
   have hrootEq : firstSixRoot 5 = 12 * Real.pi + eps := by
-    simpa [eps, firstSixIndex] using firstSixRoot_eq 5
+    convert firstSixRoot_eq 5 using 1 <;>
+      simp [eps, firstSixIndex] <;> ring
   have hdistEq : x - firstSixRoot 5 = e - eps := by
     rw [hrootEq]
     dsimp [e]
@@ -509,11 +518,11 @@ theorem wider_last_zero_free_short_G_lower
   have heroot : e ≤ eps := by nlinarith [he.2, heps.1]
   have hfar' := hfar
   rw [hdistEq, abs_of_nonpos (sub_nonpos.mpr heroot)] at hfar'
-  have hlen : widerRadius ≤ eps - e := hfar'
+  have hlen : widerRadius ≤ eps - e := by nlinarith [hfar']
   have helow : -(1 : ℝ) / 8 ≤ e := by
     rw [show widerRadius = (1 : ℝ) / 8 by rfl] at hnearLeft
     dsimp [e]
-    exact hnearLeft.le
+    convert hnearLeft.le using 1 <;> ring
   have heupper : eps ≤ (21 : ℝ) / 40 := by nlinarith [heps.2]
   have hLpos : 0 < L := by
     simpa [L, firstSixIndex] using widerDerivativeLower_pos (5 : Fin 6)
@@ -546,8 +555,9 @@ theorem wider_last_zero_free_short_G_lower
     ring
   have hGid := endpointG_abs_eq_offsetNumerator_abs 6 e
   have hcoord : 2 * Real.pi * (6 : ℝ) + e = x := by
-    rw [hxrepr]
-    ring
+    calc
+      2 * Real.pi * (6 : ℝ) + e = 12 * Real.pi + e := by ring
+      _ = x := hxrepr
   rw [hcoord] at hGid
   rw [hGid]
   simpa [L] using hnum

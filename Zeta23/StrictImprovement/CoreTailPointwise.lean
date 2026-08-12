@@ -191,7 +191,7 @@ lemma finiteCoreWeight_eq_one_sub_rho_div
     rw [hL0, zero_pow (by norm_num), mul_zero] at hc
     exact (lt_irrefl 0 hc)
   field_simp [ha, hL]
-  rfl
+  ring
 
 /-- A strict pointwise tail bound is exactly what is needed to justify unit
 normalization of a core vector. -/
