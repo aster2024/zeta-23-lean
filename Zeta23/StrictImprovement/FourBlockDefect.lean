@@ -371,14 +371,14 @@ abbrev PackedFour
 def packedFourIndex
     {S B : Type*} [Fintype B] (E : BinnedEnumeration S B)
     (q : PackedFour E) (k : Fin 4) : S :=
-  E.at q.1 (fourSlot (E.occupancy q.1) q.2 k)
+  E.entry q.1 (fourSlot (E.occupancy q.1) q.2 k)
 
 theorem packedFourIndex_injective
     {S B : Type*} [Fintype B] (E : BinnedEnumeration S B) :
     Function.Injective
       (fun qk : PackedFour E × Fin 4 => packedFourIndex E qk.1 qk.2) := by
   rintro ⟨⟨b, q⟩, k⟩ ⟨⟨b', q'⟩, k'⟩ h
-  have hlocal := E.at_injective h
+  have hlocal := E.entry_injective h
   have hb : b = b' := hlocal.1
   subst b'
   have hv : 4 * q.val + k.val = 4 * q'.val + k'.val := hlocal.2

@@ -47,8 +47,8 @@ noncomputable def fiberBinnedEnumeration
     {S B : Type*} [Fintype S] [Fintype B] (bin : S → B) :
     BinnedEnumeration S B where
   occupancy := fiberOccupancy bin
-  at := fun b i => ((fiberEquivFin bin b).symm i).1
-  at_injective := by
+  entry := fun b i => ((fiberEquivFin bin b).symm i).1
+  entry_injective := by
     intro b b' p q h
     have hb : b = b' := by
       calc
@@ -66,7 +66,7 @@ noncomputable def fiberBinnedEnumeration
     {S B : Type*} [Fintype S] [Fintype B]
     (bin : S → B) (b : B)
     (i : Fin ((fiberBinnedEnumeration bin).occupancy b)) :
-    bin ((fiberBinnedEnumeration bin).at b i) = b := by
+    bin ((fiberBinnedEnumeration bin).entry b i) = b := by
   exact ((fiberEquivFin bin b).symm i).2
 
 /-- Fiber enumeration covers the source type exactly. -/

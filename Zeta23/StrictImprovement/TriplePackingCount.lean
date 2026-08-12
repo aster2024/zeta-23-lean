@@ -41,9 +41,8 @@ theorem sum_le_three_mul_tripleCount_add_two_card
     ∑ b, occupancy b ≤ ∑ b, (3 * (occupancy b / 3) + 2) :=
       Finset.sum_le_sum fun b _ => le_three_mul_div_three_add_two (occupancy b)
     _ = 3 * (∑ b, occupancy b / 3) + 2 * Fintype.card B := by
-      simp only [Finset.sum_add_distrib, ← Finset.mul_sum,
-        Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
-      ring
+      simp [Finset.sum_add_distrib, ← Finset.mul_sum,
+        Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_comm]
 
 /-- Real-cast form of the same exact count, avoiding truncated subtraction. -/
 theorem cast_total_le_three_cast_tripleCount_add_two_card
@@ -86,9 +85,10 @@ bins.  Coverage is intentionally not part of this structure: the zeta caller
 will separately identify the core label type with the union of these bins. -/
 structure BinnedEnumeration (S B : Type*) [Fintype B] where
   occupancy : B → ℕ
-  at : (b : B) → Fin (occupancy b) → S
-  at_injective : ∀ {b b' : B} {p : Fin (occupancy b)} {q : Fin (occupancy b')},
-    at b p = at b' q → b = b' ∧ p.val = q.val
+  entry : (b : B) → Fin (occupancy b) → S
+  entry_injective :
+    ∀ {b b' : B} {p : Fin (occupancy b)} {q : Fin (occupancy b')},
+      entry b p = entry b' q → b = b' ∧ p.val = q.val
 
 /-- The `q`-th complete triple in a bin uses local slots `3q,3q+1,3q+2`. -/
 def tripleSlot (r : ℕ) (q : Fin (r / 3)) (k : Fin 3) : Fin r :=
@@ -121,7 +121,7 @@ abbrev PackedTriple
 def packedTripleIndex
     {S B : Type*} [Fintype B] (E : BinnedEnumeration S B)
     (q : PackedTriple E) (k : Fin 3) : S :=
-  E.at q.1 (tripleSlot (E.occupancy q.1) q.2 k)
+  E.entry q.1 (tripleSlot (E.occupancy q.1) q.2 k)
 
 /-- Distinct bin/triple/slot coordinates always select distinct labels. -/
 theorem packedTripleIndex_injective
@@ -129,7 +129,7 @@ theorem packedTripleIndex_injective
     Function.Injective
       (fun qk : PackedTriple E × Fin 3 => packedTripleIndex E qk.1 qk.2) := by
   rintro ⟨⟨b, q⟩, k⟩ ⟨⟨b', q'⟩, k'⟩ h
-  have hlocal := E.at_injective h
+  have hlocal := E.entry_injective h
   have hb : b = b' := hlocal.1
   subst b'
   have hv : 3 * q.val + k.val = 3 * q'.val + k'.val := hlocal.2
@@ -166,7 +166,7 @@ theorem card_packedTriple_ge_hyperbolic_target
 triple trace-norm theorem. -/
 theorem binned_gram_triples_traceNorm_lower
     {S B d : Type*} [Fintype S] [DecidableEq S]
-    [Fintype B] [DecidableEq B] [Fintype d]
+    [Fintype B] [DecidableEq B] [Fintype d] [DecidableEq d]
     (E : BinnedEnumeration S B)
     (x : S → d → ℂ) (hunit : ∀ i, ∑ k, ‖x i k‖ ^ 2 = 1)
     {delta : ℝ} (hdelta : 0 ≤ delta)

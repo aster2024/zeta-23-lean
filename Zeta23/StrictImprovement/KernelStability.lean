@@ -37,7 +37,7 @@ lemma sq_sub_two_eps_le_sq_of_close
     x ^ 2 - 2 * eps ≤ y ^ 2 := by
   have hsum : |y + x| ≤ 2 := by
     calc
-      |y + x| ≤ |y| + |x| := abs_add y x
+      |y + x| ≤ |y| + |x| := abs_add_le y x
       _ ≤ 2 := by linarith
   have hprod : |y - x| * |y + x| ≤ eps * 2 :=
     mul_le_mul hclose hsum (abs_nonneg (y + x)) heps
@@ -98,7 +98,7 @@ theorem endpoint_threePointEnergy_half
     (eps := (1 : ℝ) / (12 * 772641)) (by norm_num)
     ha hb hab hS hclose
   norm_num [explicitDeltaLower] at h ⊢
-  exact h
+  nlinarith
 
 end StrictImprovement
 end Zeta23

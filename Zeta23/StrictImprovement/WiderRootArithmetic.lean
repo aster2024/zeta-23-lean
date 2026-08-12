@@ -48,11 +48,13 @@ theorem eleven_sixtieths_lt_epsilonTwo :
     norm_num at h ⊢
     linarith
   have htanPos : 0 < Real.tan ((11 : ℝ) / 120) := by
-    apply Real.lt_tan
-    · norm_num
-    · nlinarith [Real.pi_gt_three]
+    have hlt : (11 : ℝ) / 120 < Real.tan ((11 : ℝ) / 120) := by
+      apply Real.lt_tan
+      · norm_num
+      · nlinarith [Real.pi_gt_three]
+    nlinarith
   have hcoef :
-      4 * Real.pi + (11 : ℝ) / 60 <
+      2 * Real.pi * (2 : ℝ) + (11 : ℝ) / 60 <
         (88 : ℝ) / 7 + 11 / 60 := by
     nlinarith
   have hcoefNonneg : 0 ≤ (88 : ℝ) / 7 + 11 / 60 := by norm_num
@@ -62,7 +64,6 @@ theorem eleven_sixtieths_lt_epsilonTwo :
       (2 * Real.pi * (2 : ℝ) + 11 / 60) * Real.tan ((11 / 60) / 2)
           < ((88 : ℝ) / 7 + 11 / 60) *
               Real.tan ((11 : ℝ) / 120) := by
-            norm_num
             exact mul_lt_mul_of_pos_right hcoef htanPos
       _ ≤ ((88 : ℝ) / 7 + 11 / 60) *
               ((11 : ℝ) / 120 / (1 - ((11 : ℝ) / 120) ^ 2 / 2)) :=

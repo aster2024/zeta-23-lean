@@ -145,6 +145,12 @@ jobs:
             gram-defect-lower-build.log "Gram defect lower preflight failure"
           run_preflight Zeta23.StrictImprovement.RootLocalization \
             root-localization-build.log "Root localization preflight failure"
+          run_preflight Zeta23.StrictImprovement.KernelStability \
+            kernel-stability-build.log "Kernel stability preflight failure"
+          run_preflight Zeta23.StrictImprovement.TriplePackingCount \
+            triple-packing-count-build.log "Triple packing count preflight failure"
+          run_preflight Zeta23.StrictImprovement.WiderRootArithmetic \
+            wider-root-arithmetic-build.log "Wider root arithmetic preflight failure"
 
           lake build \
             Zeta23.StrictImprovement.ZetaWiderEndpointPassage \
@@ -211,6 +217,9 @@ jobs:
             window-fourier-limit-build.log
             gram-defect-lower-build.log
             root-localization-build.log
+            kernel-stability-build.log
+            triple-packing-count-build.log
+            wider-root-arithmetic-build.log
             build-commit.txt
             lean-version.txt
             lake-version.txt
