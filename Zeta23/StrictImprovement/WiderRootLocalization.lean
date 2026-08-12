@@ -701,8 +701,9 @@ theorem small_endpointK_localizes_first_six
     change |x - firstSixRoot (1 : Fin 6)| < widerRadius
     exact wider_positive_half_interval_localizes
       (i := (1 : Fin 5)) (by
-        convert (show x ∈ Set.Icc (4 * Real.pi) (5 * Real.pi) from
-          ⟨h4pi, h5⟩) using 1 <;> norm_num) hsmall
+        constructor
+        · convert h4pi using 1 <;> norm_num <;> ring
+        · convert h5 using 1 <;> norm_num <;> ring) hsmall
   have h5pi : 5 * Real.pi ≤ x := (not_le.mp h5).le
   by_cases h6 : x ≤ 6 * Real.pi
   · have hgap := wider_zero_free_interval_K_lower
@@ -717,8 +718,9 @@ theorem small_endpointK_localizes_first_six
     change |x - firstSixRoot (2 : Fin 6)| < widerRadius
     exact wider_positive_half_interval_localizes
       (i := (2 : Fin 5)) (by
-        convert (show x ∈ Set.Icc (6 * Real.pi) (7 * Real.pi) from
-          ⟨h6pi, h7⟩) using 1 <;> norm_num) hsmall
+        constructor
+        · convert h6pi using 1 <;> norm_num <;> ring
+        · convert h7 using 1 <;> norm_num <;> ring) hsmall
   have h7pi : 7 * Real.pi ≤ x := (not_le.mp h7).le
   by_cases h8 : x ≤ 8 * Real.pi
   · have hgap := wider_zero_free_interval_K_lower
@@ -733,8 +735,9 @@ theorem small_endpointK_localizes_first_six
     change |x - firstSixRoot (3 : Fin 6)| < widerRadius
     exact wider_positive_half_interval_localizes
       (i := (3 : Fin 5)) (by
-        convert (show x ∈ Set.Icc (8 * Real.pi) (9 * Real.pi) from
-          ⟨h8pi, h9⟩) using 1 <;> norm_num) hsmall
+        constructor
+        · convert h8pi using 1 <;> norm_num <;> ring
+        · convert h9 using 1 <;> norm_num <;> ring) hsmall
   have h9pi : 9 * Real.pi ≤ x := (not_le.mp h9).le
   by_cases h10 : x ≤ 10 * Real.pi
   · have hgap := wider_zero_free_interval_K_lower
@@ -749,8 +752,9 @@ theorem small_endpointK_localizes_first_six
     change |x - firstSixRoot (4 : Fin 6)| < widerRadius
     exact wider_positive_half_interval_localizes
       (i := (4 : Fin 5)) (by
-        convert (show x ∈ Set.Icc (10 * Real.pi) (11 * Real.pi) from
-          ⟨h10pi, h11⟩) using 1 <;> norm_num) hsmall
+        constructor
+        · convert h10pi using 1 <;> norm_num <;> ring
+        · convert h11 using 1 <;> norm_num <;> ring) hsmall
   have h11pi : 11 * Real.pi ≤ x := (not_le.mp h11).le
   refine ⟨5, ?_⟩
   change |x - firstSixRoot (5 : Fin 6)| < widerRadius
