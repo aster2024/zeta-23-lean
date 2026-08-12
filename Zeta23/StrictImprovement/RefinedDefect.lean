@@ -153,7 +153,7 @@ theorem rank_trace_ineq_two_refined_dimension
                 + unitDefect (p k)) := by
               simp only [Finset.sum_add_distrib, Finset.sum_sub_distrib,
                 ← Finset.mul_sum, Finset.sum_const, Finset.card_univ,
-                nsmul_eq_mul]
+                Fintype.card_fin, nsmul_eq_mul]
               ring
       _ ≤ ∑ k, (p k - m k) ^ 2 := hsum
 

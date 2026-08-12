@@ -76,7 +76,11 @@ lemma endpointK_eq_average_integrals (x : ℝ) :
     ← intervalIntegral.integral_div]
   apply intervalIntegral.integral_congr
   intro s _
-  rw [show (Real.sqrt 2 - x) * s = Real.sqrt 2 * s - x * s by ring,
+  change Real.cos (Real.sqrt 2 * 1 * s) * Real.cos (x * s) =
+    (Real.cos ((Real.sqrt 2 - x) * s) +
+      Real.cos ((Real.sqrt 2 + x) * s)) / 2
+  rw [show Real.sqrt 2 * 1 * s = Real.sqrt 2 * s by ring,
+    show (Real.sqrt 2 - x) * s = Real.sqrt 2 * s - x * s by ring,
     show (Real.sqrt 2 + x) * s = Real.sqrt 2 * s + x * s by ring,
     Real.cos_sub, Real.cos_add]
   ring
@@ -122,7 +126,11 @@ theorem endpointK_closed
   rw [harg_minus, harg_plus, Real.sin_sub, Real.sin_add]
   field_simp
   ring_nf at hsqrt_sq ⊢
-  rw [hsqrt_sq]
+  have hsqrt_cube : Real.sqrt 2 ^ 3 = 2 * Real.sqrt 2 := by
+    calc
+      Real.sqrt 2 ^ 3 = Real.sqrt 2 ^ 2 * Real.sqrt 2 := by ring
+      _ = 2 * Real.sqrt 2 := by rw [hsqrt_sq]
+  rw [hsqrt_sq, hsqrt_cube]
   ring
 
 /-- Paper form of the closed expression, with the positive cosine factor and
