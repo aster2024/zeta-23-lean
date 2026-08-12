@@ -306,7 +306,7 @@ theorem sum_traceNorm_principal_le
             exact hinj hab
       _ ≤ (Finset.univ : Finset n).sum e :=
         Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _)
-          (fun i _ _ => sq_nonneg (e i))
+          (fun _ _ _ => sq_nonneg _)
       _ = ∑ i, e i := rfl
   have hcol : ∀ k, ∑ i, ‖U i k‖ ^ 2 = 1 := by
     have hDS := normSqMatrix_mem_doublyStochastic_of_unitary
