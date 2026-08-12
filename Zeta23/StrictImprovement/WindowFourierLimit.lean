@@ -60,7 +60,11 @@ lemma re_paperFT_ofReal_eq_integral_mul_cos
   have hprod : Integrable (fun u => (f u : ℂ) * e u) := by
     have hi := (hf.ofReal (𝕜 := ℂ)).bdd_mul (c := 1) hec.aestronglyMeasurable
       (ae_of_all _ fun u => by rw [henorm])
-    simpa only [Pi.mul_apply, mul_comm] using hi
+    have hmul : (fun u => (f u : ℂ) * e u) = fun u => e u * (f u : ℂ) := by
+      funext u
+      exact mul_comm _ _
+    rw [hmul]
+    exact hi
   rw [paperFT_def, ← Zeta23.integral_re_C hprod]
   apply MeasureTheory.integral_congr_ae
   apply ae_of_all
@@ -150,7 +154,14 @@ lemma sharpW_paperFT_re_scaled
   rw [← Complex.ofReal_div]
   rw [re_paperFT_ofReal_eq_integral_mul_cos (integrable_sharpW lam hL)]
   unfold ThmD.sharpW
-  rw [MeasureTheory.integral_indicator measurableSet_Icc,
+  have hind :
+      (fun u => (Icc (-(L / 2)) (L / 2)).indicator
+          (fun u => ThmD.vStar lam (u / L)) u * Real.cos (x / L * u)) =
+        (Icc (-(L / 2)) (L / 2)).indicator
+          (fun u => ThmD.vStar lam (u / L) * Real.cos (x / L * u)) := by
+    funext u
+    by_cases hu : u ∈ Icc (-(L / 2)) (L / 2) <;> simp [hu]
+  rw [hind, MeasureTheory.integral_indicator measurableSet_Icc,
     MeasureTheory.integral_Icc_eq_integral_Ioc,
     ← intervalIntegral.integral_of_le (by linarith : -(L / 2) ≤ L / 2)]
   have hscale := intervalIntegral.integral_comp_div
@@ -183,7 +194,6 @@ theorem phiD_VPhiR_scaled_close_endpointKAt
     (integrable_sharpW lam hL) (x / L)
   have hL1 := ThmD.integral_abs_phiDsq_sub_sharp
     hrho hlam0 hlam1 hw0 hwL
-  unfold AdmWindow.VPhiR AdmWindow.VPhi at hfourier
   rw [sharpW_paperFT_re_scaled hL] at hfourier
   have hraw :
       |AdmWindow.VPhiR (ThmD.phiD rho lam L w) (x / L) -
@@ -249,7 +259,7 @@ theorem endpointKAt_abs_le_zero
     apply Continuous.intervalIntegrable
     fun_prop
   have habs := intervalIntegral.abs_integral_le_integral_abs
-    (by norm_num : (-(1 : ℝ) / 2) ≤ 1 / 2) (f := f)
+    (μ := volume) (by norm_num : (-(1 : ℝ) / 2) ≤ 1 / 2) (f := f)
   have hmono :
       (∫ s in (-(1 : ℝ) / 2)..(1 / 2), |f s|) ≤
         ∫ s in (-(1 : ℝ) / 2)..(1 / 2), v s := by
@@ -448,7 +458,10 @@ theorem phiDNormalizedKernel_close_endpointRAt
       have ht0 : 0 ≤ w / L := div_nonneg hw0.le hL.le
       have hmul : 0 ≤ (w / L) * (aD - 1 / 2) :=
         mul_nonneg ht0 (sub_nonneg.mpr haHalf)
-      nlinarith
+      calc
+        2 * w / L + 4 * w / L = 6 * (w / L) := by ring
+        _ ≤ 12 * (w / L) * aD := by nlinarith [hmul]
+        _ = 12 * w / L * aD := by ring
 
 end StrictImprovement
 end Zeta23
