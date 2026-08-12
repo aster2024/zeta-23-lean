@@ -51,13 +51,10 @@ theorem wider_quadratic_core_gain_lower
     delta₀ * q ^ 2 / (8 * u) * N * (8 * s)
         = delta₀ * q ^ 2 * N * s / u := by
             field_simp [hu.ne']
-            ring
     _ ≤ delta₀ * q ^ 2 * N * (u * N) / u := by
           gcongr
-          positivity
     _ = delta₀ * (q * N) ^ 2 := by
           field_simp [hu.ne']
-          ring
     _ ≤ delta * (s - D / 2 - 3) ^ 2 := hnum
 
 end StrictImprovement
