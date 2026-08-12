@@ -260,11 +260,36 @@ jobs:
 
       - name: Compare baseline and wider axiom sets
         run: |
-          set -euo pipefail
+          set -uo pipefail
           lake env lean comparator/PrintAxioms/StrictImprovement.lean \
             2>&1 | tee baseline-axioms.txt
+          baseline_status=${PIPESTATUS[0]}
           lake env lean comparator/PrintAxioms/WiderStrictImprovement.lean \
             2>&1 | tee wider-axioms.txt
+          wider_status=${PIPESTATUS[0]}
+
+          if [[ "${baseline_status}" -ne 0 || "${wider_status}" -ne 0 ]]; then
+            for item in \
+              "baseline:${baseline_status}:baseline-axioms.txt" \
+              "wider:${wider_status}:wider-axioms.txt"; do
+              IFS=: read -r label status log_file <<< "${item}"
+              if [[ "${status}" -ne 0 ]]; then
+                tail_text=$(tail -80 "${log_file}")
+                escaped=${tail_text//'%'/'%25'}
+                escaped=${escaped//$'\r'/'%0D'}
+                escaped=${escaped//$'\n'/'%0A'}
+                printf '::error title=%s axiom comparator failure::%s\n' \
+                  "${label}" "${escaped}"
+                {
+                  printf '### %s axiom comparator failure\n\n```text\n' "${label}"
+                  printf '%s\n' "${tail_text}"
+                  printf '```\n'
+                } >> "${GITHUB_STEP_SUMMARY}"
+              fi
+            done
+            exit 1
+          fi
+          set -e
 
           forbidden_matches=$(grep -E 'sorryAx|unsafeAx' wider-axioms.txt || true)
           if [[ -n "${forbidden_matches}" ]]; then
