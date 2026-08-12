@@ -69,11 +69,35 @@ jobs:
           publish_failure() {
             local log_file=$1
             local title=$2
-            grep -n -B 5 -A 20 -E \
-              '(^|[[:space:]])error:|✖|failed to build|unknown declaration|declaration has metavariables|unsolved goals|type mismatch' \
-              "${log_file}" > lean-failure-diagnostics.txt ||
-              tail -n 160 "${log_file}" > lean-failure-diagnostics.txt
-            tail -n 240 lean-failure-diagnostics.txt \
+            python3 - "${log_file}" <<'PY'
+          import re
+          import sys
+
+          path = sys.argv[1]
+          with open(path, encoding="utf-8", errors="replace") as stream:
+              lines = stream.read().splitlines()
+          signal = re.compile(
+              r"(?:^|\s)error:|✖|failed to build|unknown declaration|"
+              r"declaration has metavariables|unsolved goals|type mismatch"
+          )
+          selected = set()
+          for index, line in enumerate(lines):
+              if signal.search(line):
+                  selected.update(range(max(0, index - 8), min(len(lines), index + 31)))
+          if not selected:
+              selected.update(range(max(0, len(lines) - 160), len(lines)))
+          with open("lean-failure-diagnostics.txt", "w", encoding="utf-8") as out:
+              previous = None
+              for index in sorted(selected):
+                  line = lines[index]
+                  if line.startswith("trace: "):
+                      continue
+                  if previous is not None and index > previous + 1:
+                      out.write("-- omitted --\n")
+                  out.write(f"{index + 1}:{line[:1200]}\n")
+                  previous = index
+          PY
+            head -n 400 lean-failure-diagnostics.txt \
               > lean-failure-diagnostics-bounded.txt
             {
               printf '### %s\n\n```text\n' "${title}"

@@ -76,7 +76,9 @@ lemma endpointK_eq_average_integrals (x : ℝ) :
     ← intervalIntegral.integral_div]
   apply intervalIntegral.integral_congr
   intro s _
-  rw [Real.cos_sub, Real.cos_add]
+  rw [show (Real.sqrt 2 - x) * s = Real.sqrt 2 * s - x * s by ring,
+    show (Real.sqrt 2 + x) * s = Real.sqrt 2 * s + x * s by ring,
+    Real.cos_sub, Real.cos_add]
   ring
 
 /-- Sine-fraction form of the endpoint kernel away from its two removable

@@ -114,14 +114,16 @@ theorem traceNorm_le_of_hasSum_vecMulVec_two
       (fun j _ => hF_nonneg j ρ) (mem_univ i)
   have hbound : ∀ i, |hE.eigenvalues i| ≤ ∑' ρ, F i ρ := by
     intro i
-    have h := HasSum.norm_le_of_bounded (hlam i) (hF_summable i).hasSum
-      (fun ρ => ?_)
-    · simpa only [Complex.norm_real, Real.norm_eq_abs] using h
-    · rw [norm_mul, norm_mul, norm_star, Complex.norm_real,
+    have hterm : ∀ ρ,
+        ‖((c ρ : ℝ) : ℂ) * (α i ρ * star (β i ρ))‖ ≤ F i ρ := by
+      intro ρ
+      rw [norm_mul, norm_mul, norm_star, Complex.norm_real,
         Real.norm_of_nonneg (hc ρ)]
       simp only [hF]
       exact mul_le_mul_of_nonneg_left
-        (by nlinarith [sq_nonneg (‖α i ρ‖ - ‖β i ρ‖)]) (hc ρ)
+        (mul_le_half_sq_add_sq _ _) (hc ρ)
+    have h := HasSum.norm_le_of_bounded (hlam i) (hF_summable i).hasSum hterm
+    simpa only [Complex.norm_real, Real.norm_eq_abs] using h
   calc
     Tail.traceNorm hE = ∑ i, |hE.eigenvalues i| := rfl
     _ ≤ ∑ i, ∑' ρ, F i ρ := sum_le_sum fun i _ => hbound i
