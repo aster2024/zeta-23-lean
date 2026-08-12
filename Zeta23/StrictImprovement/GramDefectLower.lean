@@ -67,7 +67,7 @@ lemma sum_spec_vecMulVec_eq
   unfold specMap
   ext i j
   rw [Unitary.conjStarAlgAut_apply, Matrix.mul_apply]
-  simp only [Finset.sum_apply]
+  simp only [Matrix.sum_apply]
   apply Finset.sum_congr rfl
   intro k _
   rw [mul_diagonal, Matrix.star_apply]
