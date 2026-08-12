@@ -50,8 +50,9 @@ theorem fullCoreCorrelation_atD_eq_phiDNormalizedKernel
     fullCoreCorrelation Z T (P.atD T) z z' =
       phiDNormalizedKernel P.ϱ P.lam (P.L T) P.w
         (coreScaledOrdinate Z T 3 P z - coreScaledOrdinate Z T 3 P z') := by
+  unfold fullCoreCorrelation
   rw [show (P.atD T).localFun T = P.localFunD T from Params.atD_localFun T hP]
-  unfold fullCoreCorrelation PrimeSide.Kinf phiDNormalizedKernel
+  unfold PrimeSide.Kinf phiDNormalizedKernel
   rw [Params.atD_a T hP]
   unfold Params.localFunD AdmWindow.localFun AdmWindow.av
   simp only [Params.atD_toSetting, Params.toSetting_L, Params.atD_L,

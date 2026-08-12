@@ -201,6 +201,15 @@ jobs:
           run_preflight Zeta23.StrictImprovement.WiderFourPointEnergy \
             wider-four-point-energy-build.log \
             "Wider four-point energy preflight failure"
+          run_preflight Zeta23.StrictImprovement.WiderFixedInterfaceCeiling \
+            wider-fixed-interface-ceiling-build.log \
+            "Wider fixed-interface ceiling preflight failure"
+          run_preflight Zeta23.StrictImprovement.WiderThreeCoordinateEnergy \
+            wider-three-coordinate-energy-build.log \
+            "Wider three-coordinate energy preflight failure"
+          run_preflight Zeta23.StrictImprovement.ZetaAtDCorrelation \
+            zeta-at-d-correlation-build.log \
+            "Zeta at-D correlation preflight failure"
           run_preflight Zeta23.StrictImprovement.IntervalBinning \
             interval-binning-build.log "Interval binning preflight failure"
           run_preflight Zeta23.StrictImprovement.ZetaCoreBinning \
@@ -289,6 +298,9 @@ jobs:
             wider-root-localization-build.log
             core-triple-energy-build.log
             wider-four-point-energy-build.log
+            wider-fixed-interface-ceiling-build.log
+            wider-three-coordinate-energy-build.log
+            zeta-at-d-correlation-build.log
             interval-binning-build.log
             zeta-core-binning-build.log
             four-block-defect-build.log

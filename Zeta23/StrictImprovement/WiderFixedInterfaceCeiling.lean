@@ -95,8 +95,8 @@ theorem widerFixedBudget_special :
     widerFixedBudget (0 : Fin 6) (4 : Fin 6) (5 : Fin 6) =
       widerFixedDeltaCeiling := by
   norm_num [widerFixedBudget, widerFixedDeltaCeiling,
-    widerExactSlopeDenominator, widerExactSlope,
-    widerSeparationFloor, firstSixIndex]
+    widerWeightedBudgetCeiling, widerExactSlopeDenominator,
+    widerSlopeDenominator, widerSeparationFloor, firstSixIndex]
 
 /-- Two-sided method ceiling for the explicitly frozen finite interface. -/
 theorem common_budget_iff_le_widerFixedDeltaCeiling {delta : ℝ} :
@@ -113,7 +113,8 @@ theorem common_budget_iff_le_widerFixedDeltaCeiling {delta : ℝ} :
 localization, rather than the finite budget, is now the active bottleneck. -/
 theorem widerLocalizationSq_lt_fixedDeltaCeiling :
     widerCorrelationThreshold ^ 2 < widerFixedDeltaCeiling := by
-  norm_num [widerFixedDeltaCeiling, widerCorrelationThreshold]
+  norm_num [widerFixedDeltaCeiling, widerWeightedBudgetCeiling,
+    widerCorrelationThreshold]
 
 /-- Supremum of local energy constants permitted by the strict localization
 gate in this frozen interface.  It is not itself admissible because the gate is
