@@ -47,7 +47,7 @@ lemma offsetNumerator_eq_zero_iff
   unfold offsetNumerator offsetEquation
   rw [Real.tan_eq_sin_div_cos]
   field_simp [hcos]
-  ring
+  constructor <;> intro h <;> linarith
 
 lemma offsetNumerator_zero (n : ℕ) : offsetNumerator n 0 = -endpointKappa := by
   simp [offsetNumerator]
@@ -61,15 +61,19 @@ certificate.  The proof is the exact tangent subtraction identity. -/
 lemma tan_half_strictMonoOn :
     StrictMonoOn (fun e : ℝ => Real.tan (e / 2)) (Set.Icc 0 ((2 : ℝ) / 5)) := by
   intro a ha b hb hab
+  have ha0 : 0 ≤ a := ha.1
+  have ha2 : a ≤ (2 : ℝ) / 5 := ha.2
+  have hb0 : 0 ≤ b := hb.1
+  have hb2 : b ≤ (2 : ℝ) / 5 := hb.2
   have hca_pos : 0 < Real.cos (a / 2) := by
     apply Real.cos_pos_of_mem_Ioo
     constructor
-    · nlinarith [Real.pi_gt_three]
+    · nlinarith [Real.pi_pos]
     · nlinarith [Real.pi_gt_three]
   have hcb_pos : 0 < Real.cos (b / 2) := by
     apply Real.cos_pos_of_mem_Ioo
     constructor
-    · nlinarith [Real.pi_gt_three]
+    · nlinarith [Real.pi_pos]
     · nlinarith [Real.pi_gt_three]
   have hdiff_pos : 0 < b / 2 - a / 2 := by linarith
   have hdiff_lt_pi : b / 2 - a / 2 < Real.pi := by
@@ -83,17 +87,22 @@ lemma tan_half_strictMonoOn :
     rw [Real.tan_eq_sin_div_cos, Real.tan_eq_sin_div_cos,
       Real.sin_sub]
     field_simp [ne_of_gt hca_pos, ne_of_gt hcb_pos]
-    ring
-  rw [hid]
-  positivity
+  have hdiff_tan : 0 < Real.tan (b / 2) - Real.tan (a / 2) := by
+    rw [hid]
+    positivity
+  change Real.tan (a / 2) < Real.tan (b / 2)
+  linarith
 
 /-- The full offset equation is strictly increasing on `[0,2/5]`. -/
 lemma offsetEquation_strictMonoOn (n : ℕ) (hn : 1 ≤ n) :
     StrictMonoOn (offsetEquation n) (Set.Icc 0 ((2 : ℝ) / 5)) := by
   intro a ha b hb hab
   have htan_lt := tan_half_strictMonoOn ha hb hab
+  have ha0 : 0 ≤ a := ha.1
+  have ha2 : a ≤ (2 : ℝ) / 5 := ha.2
+  have hb0 : 0 ≤ b := hb.1
   have htan_a_nonneg : 0 ≤ Real.tan (a / 2) := by
-    have h := Real.le_tan (x := a / 2) (by linarith)
+    have h := Real.le_tan (x := a / 2) (by nlinarith)
       (by nlinarith [Real.pi_gt_three])
     linarith
   have hcoef :
@@ -137,7 +146,6 @@ lemma offsetNumerator_two_fifths_pos (n : ℕ) (hn : 1 ≤ n) :
     unfold offsetNumerator
     rw [Real.tan_eq_sin_div_cos]
     field_simp [ne_of_gt hcos_pos]
-    ring
   rw [hid]
   positivity
 
@@ -176,13 +184,18 @@ theorem existsUnique_offset_root (n : ℕ) (hn : 1 ≤ n) :
   have hcos_e : Real.cos (e / 2) ≠ 0 := by
     apply ne_of_gt
     apply Real.cos_pos_of_mem_Ioo
-    constructor <;> nlinarith [Real.pi_gt_three]
+    constructor
+    · nlinarith [he.1, Real.pi_pos]
+    · nlinarith [he.2, Real.pi_gt_three]
   have hcos_y : Real.cos (y / 2) ≠ 0 := by
     apply ne_of_gt
     apply Real.cos_pos_of_mem_Ioo
-    constructor <;> nlinarith [Real.pi_gt_three]
+    constructor
+    · nlinarith [hy.1.1, Real.pi_pos]
+    · nlinarith [hy.1.2, Real.pi_gt_three]
   have heq_e := (offsetNumerator_eq_zero_iff hcos_e).mp he0
   have heq_y := (offsetNumerator_eq_zero_iff hcos_y).mp hy.2
+  symm
   apply (offsetEquation_strictMonoOn n hn).injOn
     (Set.mem_Icc.mpr ⟨he.1.le, he.2.le⟩)
     (Set.mem_Icc.mpr ⟨hy.1.1.le, hy.1.2.le⟩)
@@ -195,11 +208,11 @@ noncomputable def rootOffset (n : ℕ) (hn : 1 ≤ n) : ℝ :=
 
 theorem rootOffset_mem (n : ℕ) (hn : 1 ≤ n) :
     rootOffset n hn ∈ Set.Ioo (0 : ℝ) (2 / 5) :=
-  (Classical.choose_spec (existsUnique_offset_root n hn)).1
+  (Classical.choose_spec (existsUnique_offset_root n hn)).1.1
 
 theorem rootOffset_numerator_zero (n : ℕ) (hn : 1 ≤ n) :
     offsetNumerator n (rootOffset n hn) = 0 :=
-  (Classical.choose_spec (existsUnique_offset_root n hn)).2
+  (Classical.choose_spec (existsUnique_offset_root n hn)).1.2
 
 theorem rootOffset_equation (n : ℕ) (hn : 1 ≤ n) :
     offsetEquation n (rootOffset n hn) = endpointKappa := by
@@ -207,7 +220,9 @@ theorem rootOffset_equation (n : ℕ) (hn : 1 ≤ n) :
   apply ne_of_gt
   apply Real.cos_pos_of_mem_Ioo
   have hmem := rootOffset_mem n hn
-  constructor <;> nlinarith [Real.pi_gt_three]
+  constructor
+  · nlinarith [hmem.1, Real.pi_pos]
+  · nlinarith [hmem.2, Real.pi_gt_three]
 
 /-- Offset roots decrease strictly with the interval index. -/
 theorem rootOffset_strictAnti
@@ -219,9 +234,14 @@ theorem rootOffset_strictAnti
   have heq := rootOffset_mem q (hp.trans hpq.le)
   have hpEq := rootOffset_equation p hp
   have hqEq := rootOffset_equation q (hp.trans hpq.le)
+  have hpEq' : offsetEquation p ep = endpointKappa := by
+    simpa [ep] using hpEq
+  have hqEq' : offsetEquation q eq = endpointKappa := by
+    simpa [eq] using hqEq
   have hpqreal : (p : ℝ) < q := by exact_mod_cast hpq
   have htan_ep_pos : 0 < Real.tan (ep / 2) := by
-    have h := Real.le_tan (x := ep / 2) (by simpa [ep] using hep.1.le)
+    have h := Real.le_tan (x := ep / 2)
+      (by have := hep.1; nlinarith)
       (by have := hep.2; nlinarith [Real.pi_gt_three])
     have : 0 < ep := by simpa [ep] using hep.1
     nlinarith
@@ -232,15 +252,16 @@ theorem rootOffset_strictAnti
   by_contra hnot
   have hle : ep ≤ eq := not_lt.mp hnot
   rcases eq_or_lt_of_le hle with heqeq | hlt
-  · subst eq
-    linarith
+  · have hq_at_ep : offsetEquation q ep = endpointKappa := by
+      rw [heqeq]
+      exact hqEq'
+    linarith [hcompare, hpEq', hq_at_ep]
   · have hmono := offsetEquation_strictMonoOn q (hp.trans hpq.le)
         (Set.mem_Icc.mpr ⟨(by simpa [ep] using hep.1.le),
           (by simpa [ep] using hep.2.le)⟩)
         (Set.mem_Icc.mpr ⟨(by simpa [eq] using heq.1.le),
           (by simpa [eq] using heq.2.le)⟩) hlt
-    dsimp [ep, eq] at hpEq hqEq hcompare hmono
-    linarith
+    linarith [hcompare, hpEq', hqEq', hmono]
 
 /-! ## The first three certified offsets -/
 
@@ -268,7 +289,8 @@ theorem epsilonThree_lt_epsilonTwo : epsilonThree < epsilonTwo := by
 /-- The third offset lies to the right of the exact test point `1/8`. -/
 theorem one_eighth_lt_epsilonThree : (1 : ℝ) / 8 < epsilonThree := by
   have htest : offsetEquation 3 ((1 : ℝ) / 8) < endpointKappa := by
-    simpa [offsetEquation] using third_root_test_lt_endpointKappa
+    unfold offsetEquation
+    convert third_root_test_lt_endpointKappa using 1 <;> ring
   have hroot : offsetEquation 3 epsilonThree = endpointKappa := by
     simpa [epsilonThree] using rootOffset_equation 3 (by norm_num)
   have htest_mem : (1 : ℝ) / 8 ∈ Set.Icc (0 : ℝ) (2 / 5) := by norm_num
