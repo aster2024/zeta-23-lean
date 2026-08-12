@@ -43,6 +43,7 @@ lemma widerSeparationFloor_pos (i j k : Fin 6) :
 
 /-- Exact root separation.  The exhaustive split is over 216 symbolic index
 triples, not over sampled root values. -/
+set_option maxHeartbeats 2000000 in
 theorem firstSixRoot_separation_floor (i j k : Fin 6) :
     widerSeparationFloor i j k ≤
       |firstSixRoot i + firstSixRoot j - firstSixRoot k| := by
@@ -139,10 +140,8 @@ theorem firstSixRoot_separation_floor (i j k : Fin 6) :
     simp [widerSeparationFloor, firstSixIndex, hz0, hz1, hz2, hz3, hz4,
       hz5] <;>
     first
-    | rw [abs_of_pos (by nlinarith [Real.pi_gt_three])]
-      nlinarith
-    | rw [abs_of_neg (by nlinarith [Real.pi_gt_three])]
-      nlinarith
+    | exact le_trans (by linarith [Real.pi_gt_three]) (le_abs_self _)
+    | exact le_trans (by linarith [Real.pi_gt_three]) (neg_le_abs _)
 
 set_option maxHeartbeats 2000000 in
 /-- The exact minimum of the complete 216-row weighted-Cauchy budget. -/
@@ -298,7 +297,8 @@ theorem wider_endpoint_three_point_energy_lower
       u ^ 2 / di ^ 2 + v ^ 2 / dj ^ 2 + w ^ 2 / dk ^ 2 ≤
         endpointR a ^ 2 + endpointR b ^ 2 + endpointR (a + b) ^ 2 := by
     linarith
-  have hcauchy := weighted_three_cauchy hdi hdj hdk
+  have hcauchy := weighted_three_cauchy
+    (u := u) (v := v) (w := w) hdi hdj hdk
   have hrootId :
       (firstSixRoot i + firstSixRoot j - firstSixRoot k) ^ 2 =
         (u + v - w) ^ 2 := by
