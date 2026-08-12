@@ -74,13 +74,12 @@ theorem N0s_le_coreCard_add_excluded
       Fintype.card (CoreSimpleLabel Z T C) + excludedSimpleCount Z T C := by
   have hs1main : Z.N0s T (2 * T) ≤ Z.s1 T := by
     have hs1 : Z.s1 T = Z.N0s (T - D0 T) (2 * T + D0 T) := rfl
+    have hD0 : 0 ≤ D0 T := Real.sqrt_nonneg T
     rw [hs1,
       Assembly.N0s_add Z (a := T - D0 T) (b := T)
-        (c := 2 * T + D0 T) (by linarith [Real.sqrt_nonneg T])
-          (by linarith [Real.sqrt_nonneg T]),
+        (c := 2 * T + D0 T) (by linarith) (by linarith),
       Assembly.N0s_add Z (a := T) (b := 2 * T)
-        (c := 2 * T + D0 T) (by linarith)
-          (by linarith [Real.sqrt_nonneg T])]
+        (c := 2 * T + D0 T) (by linarith) (by linarith)]
     omega
   rw [coreCard_add_excluded_eq_s1 Z T C P hconj]
   exact hs1main
@@ -151,7 +150,12 @@ theorem excludedSimpleCount_le_two_windows
     rw [Set.ncard_coe_finset] at hhi0
     exact hhi0.trans (by simpa [ZeroConfig.N] using hhi1)
   rw [← card_excludedSimpleComplex Z T C]
-  omega
+  change #S ≤ Z.N (T - D0 T) (T + C) +
+    Z.N (2 * T - C) (2 * T + D0 T)
+  calc
+    #S = #Slo + #Shi := hsplit.symm
+    _ ≤ Z.N (T - D0 T) (T + C) +
+        Z.N (2 * T - C) (2 * T + D0 T) := Nat.add_le_add hlo hhi
 
 /-- The two interior strips of width three contain at most six unit-window
 local counts. -/
@@ -171,16 +175,26 @@ theorem interior_three_count_le
     exact mul_le_mul_of_nonneg_left
       (Real.log_le_log (by positivity) huT) (by linarith)
   have h0 := (hloc T).trans (hlog T (by linarith) (by linarith))
-  have h1 := (hloc (T + 1)).trans
-    (hlog (T + 1) (by linarith) (by linarith))
-  have h2 := (hloc (T + 2)).trans
-    (hlog (T + 2) (by linarith) (by linarith))
-  have h3 := (hloc (2 * T - 3)).trans
-    (hlog (2 * T - 3) (by linarith) (by linarith))
-  have h4 := (hloc (2 * T - 2)).trans
-    (hlog (2 * T - 2) (by linarith) (by linarith))
-  have h5 := (hloc (2 * T - 1)).trans
-    (hlog (2 * T - 1) (by linarith) (by linarith))
+  have h1 : (Z.N (T + 1) (T + 2) : ℝ) ≤
+      A₀ * Real.log (4 * T) := by
+    convert (hloc (T + 1)).trans
+      (hlog (T + 1) (by linarith) (by linarith)) using 1 <;> ring
+  have h2 : (Z.N (T + 2) (T + 3) : ℝ) ≤
+      A₀ * Real.log (4 * T) := by
+    convert (hloc (T + 2)).trans
+      (hlog (T + 2) (by linarith) (by linarith)) using 1 <;> ring
+  have h3 : (Z.N (2 * T - 3) (2 * T - 2) : ℝ) ≤
+      A₀ * Real.log (4 * T) := by
+    convert (hloc (2 * T - 3)).trans
+      (hlog (2 * T - 3) (by linarith) (by linarith)) using 1 <;> ring
+  have h4 : (Z.N (2 * T - 2) (2 * T - 1) : ℝ) ≤
+      A₀ * Real.log (4 * T) := by
+    convert (hloc (2 * T - 2)).trans
+      (hlog (2 * T - 2) (by linarith) (by linarith)) using 1 <;> ring
+  have h5 : (Z.N (2 * T - 1) (2 * T) : ℝ) ≤
+      A₀ * Real.log (4 * T) := by
+    convert (hloc (2 * T - 1)).trans
+      (hlog (2 * T - 1) (by linarith) (by linarith)) using 1 <;> ring
   have hleft :
       (Z.N T (T + 3) : ℝ) =
         Z.N T (T + 1) + Z.N (T + 1) (T + 2) + Z.N (T + 2) (T + 3) := by
@@ -213,10 +227,11 @@ theorem excludedSimpleCount_three_le
     (excludedSimpleCount Z T 3 : ℝ) ≤
       9 * A₀ * Real.sqrt T * Real.log (4 * T) := by
   have hexact := excludedSimpleCount_le_two_windows Z T 3
+  have hD0 : 0 ≤ D0 T := Real.sqrt_nonneg T
   rw [Assembly.N_add Z (a := T - D0 T) (b := T) (c := T + 3)
-      (by positivity) (by norm_num),
+      (by linarith) (by norm_num),
     Assembly.N_add Z (a := 2 * T - 3) (b := 2 * T) (c := 2 * T + D0 T)
-      (by norm_num) (by positivity)] at hexact
+      (by norm_num) (by linarith)] at hexact
   have hexactNat :
       excludedSimpleCount Z T 3 ≤
         Assembly.NII Z T +
