@@ -121,9 +121,32 @@ theorem posIndex_scaledBlockA_sub_weightedCore_le
       excludedSimpleCount Z T C + Z.s2 T + Z.p T := by
   dsimp only
   have h := posIndex_scaledBlockA_sub_core_le Z T C P hconj hc
-  rw [selectedHatPart_eq_weighted_normalizedCore Z T C P hconj hc hpos] at h
-  exact h
+  have hselected := (D Z T P hconj).selectedHatPart_posSemidef
+    (coreSimple Z T C)
+    ((coreSimple_subset_blockData_S₁ Z T C P hconj).trans
+      (D Z T P hconj).S₁_subset_onLine) hc
+  have hweighted := weightedProjectorSum_posSemidef
+    (normalizedCoreVec Z T C P hconj)
+    (finiteCoreWeight Z T C P hconj)
+    (finiteCoreWeight_nonneg Z T C P hconj)
+  have hA := ZeroSide.ZeroBlockData.isHermitian_real_smul
+    (D Z T P hconj).blockA_isHermitian
+    ((P.a T * P.L T ^ 2)⁻¹ : ℝ)
+  have hEq :
+      (((((P.a T * P.L T ^ 2)⁻¹ : ℝ) : ℂ) •
+          (D Z T P hconj).blockA) -
+        weightedProjectorSum (normalizedCoreVec Z T C P hconj)
+          (finiteCoreWeight Z T C P hconj)) =
+      (((((P.a T * P.L T ^ 2)⁻¹ : ℝ) : ℂ) •
+          (D Z T P hconj).blockA) -
+        (D Z T P hconj).selectedHatPart (coreSimple Z T C)
+          (P.a T * P.L T ^ 2)) := by
+    rw [selectedHatPart_eq_weighted_normalizedCore Z T C P hconj hc hpos]
+  calc
+    posIndex (hA.sub hweighted.isHermitian) =
+        posIndex (hA.sub hselected.isHermitian) :=
+      ZeroSide.ZeroBlockData.posIndex_congr _ _ hEq
+    _ ≤ excludedSimpleCount Z T C + Z.s2 T + Z.p T := h
 
 end StrictImprovement
 end Zeta23
-

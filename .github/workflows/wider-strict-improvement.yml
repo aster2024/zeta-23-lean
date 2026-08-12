@@ -44,6 +44,15 @@ jobs:
           lint: false
           use-mathlib-cache: true
 
+      - name: Restore the project Lean build cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: .lake/build
+          key: >-
+            zeta23-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
+          restore-keys: |
+            zeta23-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+
       - name: Record the exact build identity
         run: |
           set -euo pipefail
@@ -163,6 +172,9 @@ jobs:
             core-complement-build.log "Core complement preflight failure"
           run_preflight Zeta23.StrictImprovement.ZetaCore \
             zeta-core-build.log "Zeta core preflight failure"
+          run_preflight Zeta23.StrictImprovement.ZetaFiniteNormalization \
+            zeta-finite-normalization-build.log \
+            "Zeta finite normalization preflight failure"
 
           lake build \
             Zeta23.StrictImprovement.ZetaWiderEndpointPassage \
@@ -238,6 +250,7 @@ jobs:
             wider-root-neighborhood-build.log
             core-complement-build.log
             zeta-core-build.log
+            zeta-finite-normalization-build.log
             build-commit.txt
             lean-version.txt
             lake-version.txt
