@@ -70,7 +70,7 @@ theorem hatAz_mult2_with_core_gain
   have hbins :
       (Fintype.card (Fin (intervalBinCount (coreBinD T P))) : ℝ) ≤
         coreBinD T P / 4 + 1 :=
-    coreIntervalBin_card_le T 3 P hL hT
+    coreIntervalBin_card_le T P hL hT
   have hunit : ∀ z, ∑ k, ‖x z k‖ ^ 2 = 1 := by
     intro z
     dsimp [x]
@@ -92,18 +92,11 @@ theorem hatAz_mult2_with_core_gain
     rtrace_projectorSum_of_unit x hunit
   have hAeq : A = P.hat T (Z.Az P T) := by
     dsimp [A, D]
-    rw [← ZeroSide.Az_eq_blockA Z T P hconj,
-      ← ZeroSide.hat_eq T P (Z.Az P T)]
+    rw [← ZeroSide.Az_eq_blockA Z T P hconj]
+    exact (ZeroSide.hat_eq T P (Z.Az P T)).symm
   have hsplit := coreCard_add_excluded_eq_s1 Z T 3 P hconj
-  have hcountBase :=
-    (blockData Z T P hconj).s₁_add_two_s₂_add_two_p_le_Ncount
-      (mkPairReps Z T (evalVec Z T P) (evalVec_reflect hconj))
   have hcountZ : Z.s1 T + 2 * Z.s2 T + 2 * Z.p T ≤ Z.NIprime T := by
-    simpa only [← ZeroSide.s1_eq_mk Z T (evalVec Z T P) (evalVec_reflect hconj),
-      ← ZeroSide.s2_eq_mk Z T (evalVec Z T P) (evalVec_reflect hconj),
-      ← ZeroSide.p_eq_mk Z T (evalVec Z T P) (evalVec_reflect hconj),
-      ← ZeroSide.NIprime_eq_mk Z T (evalVec Z T P) (evalVec_reflect hconj)]
-      using hcountBase
+    exact ZeroSide.s1_add_two_s2_add_two_p_le_NIprime Z T
   have hcountNat :
       3 * Fintype.card (CoreSimpleLabel Z T 3) +
           4 * (excludedSimpleCount Z T 3 + Z.s2 T + Z.p T) ≤
@@ -116,7 +109,6 @@ theorem hatAz_mult2_with_core_gain
           excludedSimpleCount Z T 3 := by
     exact_mod_cast hcountNat
   rw [rtrace_sub, htr, hAeq] at hmain
-  dsimp [E, x, wgt, A] at hmain
   linarith
 
 end StrictImprovement
