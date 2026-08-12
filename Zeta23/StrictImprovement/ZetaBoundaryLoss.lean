@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 SPDX-License-Identifier: Apache-2.0
 -/
 import Zeta23.StrictImprovement.ZetaCore
+import Zeta23.Assembly
 import Zeta23.Tail
 
 /-!
@@ -23,11 +24,13 @@ This is a source draft pending the pinned Lean build.
 
 noncomputable section
 
-open Filter Asymptotics Real Set
+open Filter Asymptotics Real Set Finset
 open scoped BigOperators
 
 namespace Zeta23
 namespace StrictImprovement
+
+open ZeroSide
 
 /-- The coercion from the finite enlarged-window label type to `ℂ`, as an
 explicit embedding so that `Finset.map` preserves cardinality. -/
@@ -157,6 +160,7 @@ theorem interior_three_count_le
     (Z.N T (T + 3) : ℝ) + (Z.N (2 * T - 3) (2 * T) : ℝ) ≤
       6 * A₀ * Real.log (4 * T) := by
   have hT0 : 0 < T := Tail.T₀_pos.trans_le hT
+  have hT300 : (300 : ℝ) ≤ T := hT
   have hlog : ∀ u : ℝ, 0 ≤ u → u + 3 ≤ 4 * T →
       A₀ * Real.log (|u| + 3) ≤ A₀ * Real.log (4 * T) := by
     intro u hu huT
