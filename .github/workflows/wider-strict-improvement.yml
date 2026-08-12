@@ -63,27 +63,49 @@ jobs:
             LC_ALL=C sort -u |
             xargs sha256sum > build-inputs.sha256
 
-      - name: Build the default root including the wider endpoint
+      - name: Build the wider targets and default root
         run: |
           set -uo pipefail
-          set +e
-          lake build --wfail 2>&1 | tee wider-build.log
-          build_status=${PIPESTATUS[0]}
-          set -e
-          if [[ "${build_status}" -ne 0 ]]; then
+          publish_failure() {
+            local log_file=$1
+            local title=$2
+            grep -n -B 5 -A 20 -E \
+              '(^|[[:space:]])error:|✖|failed to build|unknown declaration|declaration has metavariables|unsolved goals|type mismatch' \
+              "${log_file}" > lean-failure-diagnostics.txt ||
+              tail -n 160 "${log_file}" > lean-failure-diagnostics.txt
+            tail -n 240 lean-failure-diagnostics.txt \
+              > lean-failure-diagnostics-bounded.txt
             {
-              printf '### Lean build failure tail\n\n```text\n'
-              tail -n 240 wider-build.log
+              printf '### %s\n\n```text\n' "${title}"
+              cat lean-failure-diagnostics-bounded.txt
               printf '```\n'
             } >> "${GITHUB_STEP_SUMMARY}"
 
-            diagnostic=$(tail -n 120 wider-build.log)
+            diagnostic=$(cat lean-failure-diagnostics-bounded.txt)
             diagnostic=${diagnostic//'%'/'%25'}
             diagnostic=${diagnostic//$'\r'/'%0D'}
             diagnostic=${diagnostic//$'\n'/'%0A'}
-            printf '::error title=Lean build failure tail::%s\n' "${diagnostic}"
+            printf '::error title=%s::%s\n' "${title}" "${diagnostic}"
+          }
+
+          set +e
+          lake build \
+            Zeta23.StrictImprovement.ZetaWiderEndpointPassage \
+            Zeta23.StrictImprovement.WiderFixedInterfaceCeiling \
+            2>&1 | tee wider-target-build.log
+          target_status=${PIPESTATUS[0]}
+          if [[ "${target_status}" -ne 0 ]]; then
+            publish_failure wider-target-build.log "Wider target build failure"
+            exit "${target_status}"
+          fi
+
+          lake build 2>&1 | tee wider-build.log
+          build_status=${PIPESTATUS[0]}
+          if [[ "${build_status}" -ne 0 ]]; then
+            publish_failure wider-build.log "Default-root build failure"
             exit "${build_status}"
           fi
+          set -e
 
       - name: Compare baseline and wider axiom sets
         run: |
@@ -119,6 +141,9 @@ jobs:
           name: wider-strict-improvement-receipts
           path: |
             wider-build.log
+            wider-target-build.log
+            lean-failure-diagnostics.txt
+            lean-failure-diagnostics-bounded.txt
             build-commit.txt
             lean-version.txt
             lake-version.txt
