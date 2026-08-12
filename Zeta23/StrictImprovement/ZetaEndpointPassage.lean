@@ -138,7 +138,7 @@ theorem tendsto_endpointQ :
     ThmD.HD (endpointLam n) - endpointStep n -
       (endpointLam n + endpointStep n) / 2 - endpointStep n)
     atTop (nhds (ThmD.HD 1 - 1 / 2))
-  exact h
+  simpa only [sub_zero, add_zero] using h
 
 /-- The strict fixed-window coefficient converges to the endpoint coefficient;
 no window parameter depends on `T` in the theorem invocation. -/
