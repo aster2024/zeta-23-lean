@@ -105,24 +105,33 @@ theorem gramMatrix_normalizedCoreVec_eq_finiteCorrelation
   have hz'root :
       (Real.sqrt (finiteCoreWeight Z T 3 P hconj z') : ℂ) ≠ 0 := by
     exact_mod_cast (Real.sqrt_pos.mpr (hpos z')).ne'
-  have ha : P.a T ≠ 0 := by
-    intro ha
-    apply hc.ne'
-    simp [mass, ha]
-  have hL : P.L T ≠ 0 := by
-    intro hL
-    apply hc.ne'
-    simp [mass, hL]
+  have hmassc : (mass T P : ℂ) ≠ 0 := by
+    exact_mod_cast hc.ne'
   have hmassroot :
       ((Real.sqrt (P.a T * P.L T ^ 2) : ℂ)) ^ 2 =
         (mass T P : ℂ) := by
     change ((Real.sqrt (P.a T * P.L T ^ 2) : ℂ)) ^ 2 =
       ((P.a T * P.L T ^ 2 : ℝ) : ℂ)
     rw [sq, ← Complex.ofReal_mul, Real.mul_self_sqrt hc.le]
+  have hterm (k : Fin (P.d T)) :
+      ((P.phiHatR T ((z : ℂ).im - P.tau T k) : ℂ) /
+          (Real.sqrt (mass T P) : ℂ) /
+          (Real.sqrt (finiteCoreWeight Z T 3 P hconj z) : ℂ)) *
+        ((P.phiHatR T ((z' : ℂ).im - P.tau T k) : ℂ) /
+          (Real.sqrt (mass T P) : ℂ) /
+          (Real.sqrt (finiteCoreWeight Z T 3 P hconj z') : ℂ)) =
+      ((P.phiHatR T ((z : ℂ).im - P.tau T k) *
+          P.phiHatR T ((z' : ℂ).im - P.tau T k) : ℝ) : ℂ) /
+        ((mass T P : ℂ) *
+          (Real.sqrt (finiteCoreWeight Z T 3 P hconj z) : ℂ) *
+          (Real.sqrt (finiteCoreWeight Z T 3 P hconj z') : ℂ)) := by
+    field_simp [hcroot, hzroot, hz'root, hmassc]
+    rw [hmassroot]
+    ring
+  simp_rw [hterm]
   rw [Finset.sum_div]
-  field_simp [hcroot, hzroot, hz'root, ha, hL]
-  rw [hmassroot]
-  simp only [sub_eq_add_neg, add_comm]
+  push_cast
+  field_simp [hmassc, hzroot, hz'root]
   ring
 
 /-- The pointwise tail budget places every finite squared norm in
