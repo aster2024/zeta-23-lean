@@ -36,7 +36,8 @@ theorem hasDerivAt_offsetNumerator (n : ℕ) (e : ℝ) :
   have hcos := (Real.hasDerivAt_cos (e / 2)).comp e harg
   have hcoef : HasDerivAt
       (fun y : ℝ => 2 * Real.pi * (n : ℝ) + y) 1 e := by
-    convert (hasDerivAt_id e).add_const (2 * Real.pi * (n : ℝ)) using 1 <;> ring
+    simpa only [add_comm] using
+      (hasDerivAt_id e).add_const (2 * Real.pi * (n : ℝ))
   unfold offsetNumerator offsetNumeratorDerivative
   have h := (hcoef.mul hsin).sub (hcos.const_mul endpointKappa)
   simp only [Function.comp_apply, id_eq] at h
@@ -55,7 +56,7 @@ theorem offsetNumerator_strictMonoOn (n : ℕ) (hn : 1 ≤ n) :
   unfold offsetNumeratorDerivative
   have hsin : 0 < Real.sin (e / 2) := by
     apply Real.sin_pos_of_pos_of_lt_pi
-    · linarith
+    · exact div_pos heIoo.1 (by norm_num)
     · linarith [Real.pi_pos]
   have hcos : 0 < Real.cos (e / 2) := by
     apply Real.cos_pos_of_mem_Ioo

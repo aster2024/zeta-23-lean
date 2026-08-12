@@ -141,6 +141,10 @@ jobs:
             kernel-roots-build.log "Kernel roots preflight failure"
           run_preflight Zeta23.StrictImprovement.WindowFourierLimit \
             window-fourier-limit-build.log "Window Fourier limit preflight failure"
+          run_preflight Zeta23.StrictImprovement.GramDefectLower \
+            gram-defect-lower-build.log "Gram defect lower preflight failure"
+          run_preflight Zeta23.StrictImprovement.RootLocalization \
+            root-localization-build.log "Root localization preflight failure"
 
           lake build \
             Zeta23.StrictImprovement.ZetaWiderEndpointPassage \
@@ -205,6 +209,8 @@ jobs:
             wider-quadratic-gain-build.log
             kernel-roots-build.log
             window-fourier-limit-build.log
+            gram-defect-lower-build.log
+            root-localization-build.log
             build-commit.txt
             lean-version.txt
             lake-version.txt

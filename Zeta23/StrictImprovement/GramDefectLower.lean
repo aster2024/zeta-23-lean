@@ -67,6 +67,7 @@ lemma sum_spec_vecMulVec_eq
   unfold specMap
   ext i j
   rw [Unitary.conjStarAlgAut_apply, Matrix.mul_apply]
+  simp only [Finset.sum_apply]
   apply Finset.sum_congr rfl
   intro k _
   rw [mul_diagonal, Matrix.star_apply]
@@ -135,8 +136,8 @@ lemma traceNorm_gramDeviation_le_sum_abs_shift
         intro k _
         by_cases hk : 0 ≤ hG.eigenvalues k - 1 <;>
           simp only [c, u, v, hk, if_true, if_false, Pi.neg_apply,
-            norm_neg, norm_star, hcol]
-        ring
+            norm_neg, norm_star, hcol] <;>
+          ring
     _ = ∑ k, |(gramMatrix_isHermitian x).eigenvalues k - 1| := rfl
 
 /-- The unit diagonal forces the sum of the eigenvalue displacements from
