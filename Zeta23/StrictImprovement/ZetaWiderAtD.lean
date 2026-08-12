@@ -72,15 +72,18 @@ theorem packedCoreFour_atD_local_energy
   have hL : 0 < (P.atD T).L T := by
     simpa using (show 0 < P.L T by linarith [hP.one_le_w])
   have heps : 0 ≤ 12 * P.w / P.L T + 3 * (1 - P.lam) := by
-    have : 0 < P.L T := by linarith [hP.one_le_w]
-    positivity
+    have hL' : 0 < P.L T := by linarith [hP.one_le_w]
+    have hw0 : 0 ≤ P.w := by linarith [hP.one_le_w]
+    have hlam0 : 0 ≤ 1 - P.lam := sub_nonneg.mpr hP.lam_le_one
+    have hfinite0 : 0 ≤ 12 * P.w / P.L T :=
+      div_nonneg (mul_nonneg (by norm_num) hw0) hL'.le
+    nlinarith
   apply packedCoreFour_local_energy Z T (P.atD T) hconj
     (ThmD.cDT P.ϱ P.lam)
     hreal hF hT hc hbudget hL hpos heps
   · intro z z'
-    simpa only [Params.atD_L] using
+    simpa only [Params.atD_L, coreScaledOrdinate] using
       (fullCoreCorrelation_atD_close_endpointR Z hP hwL z z')
-  · exact q
 
 /-- Fixed-`lam` limit of the wider local energy constant. -/
 theorem tendsto_widerAtDLocalDelta

@@ -73,7 +73,7 @@ theorem hatAz_mult2_with_wider_core_gain
   have hbins :
       (Fintype.card (Fin (widthSixBinCount (coreBinD T P))) : ℝ) ≤
         coreBinD T P / 6 + 1 :=
-    coreWidthSixBin_card_le Z T 3 P hL hT
+    coreWidthSixBin_card_le T P hL hT
   have hunit : ∀ z, ∑ k, ‖x z k‖ ^ 2 = 1 := by
     intro z
     dsimp [x]

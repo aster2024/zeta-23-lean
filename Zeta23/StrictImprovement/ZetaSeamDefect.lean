@@ -60,7 +60,7 @@ theorem seamA_mult2_with_core_gain
   have hGAE :
       P.hat T (Z.Gz P T) =
         P.hat T (Z.Az P T) + P.hat T (Z.Ez P T) := by
-    rw [← hat_add]
+    rw [← Assembly.hat_add]
     congr 1
     simp [ZeroConfig.Ez]
   have hB₀ : 0 ≤ θ₀ / (P.a T * P.L T) :=
