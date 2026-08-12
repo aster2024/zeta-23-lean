@@ -151,7 +151,6 @@ theorem endpointK_closed_kappa
     exact hcos
   rw [endpointK_closed hx, endpointKappa, Real.tan_eq_sin_div_cos, htheta]
   field_simp [hcos']
-  ring
 
 /-- The endpoint root parameter is strictly positive. -/
 theorem endpointKappa_pos : 0 < endpointKappa := by
@@ -192,7 +191,7 @@ theorem endpointG_eq_zero_iff_rootEquation
   unfold endpointG endpointRootEquation
   rw [Real.tan_eq_sin_div_cos]
   field_simp [hcos]
-  ring
+  constructor <;> intro h <;> linarith
 
 /-- Exact derivative of the scalar root numerator. -/
 theorem hasDerivAt_endpointG (x : ℝ) :
@@ -202,17 +201,20 @@ theorem hasDerivAt_endpointG (x : ℝ) :
   have harg : HasDerivAt (fun y : ℝ => y / 2) (1 / 2) x := by
     simpa using (hasDerivAt_id x).div_const 2
   have hsin : HasDerivAt (fun y : ℝ => Real.sin (y / 2))
-      (Real.cos (x / 2) * (1 / 2)) x :=
-    (Real.hasDerivAt_sin (x / 2)).comp x harg
+      (Real.cos (x / 2) * (1 / 2)) x := by
+    simpa only [Function.comp_apply] using
+      (Real.hasDerivAt_sin (x / 2)).comp x harg
   have hcos : HasDerivAt (fun y : ℝ => Real.cos (y / 2))
-      (-Real.sin (x / 2) * (1 / 2)) x :=
-    (Real.hasDerivAt_cos (x / 2)).comp x harg
+      (-Real.sin (x / 2) * (1 / 2)) x := by
+    simpa only [Function.comp_apply] using
+      (Real.hasDerivAt_cos (x / 2)).comp x harg
   unfold endpointG
   convert ((hasDerivAt_id x).mul hsin).sub
-    (hcos.const_mul endpointKappa) using 1 <;> ring
+    (hcos.const_mul endpointKappa) using 1 <;>
+      simp only [id_eq, div_eq_mul_inv, one_mul] <;> ring
 
 /-- Differentiability of the scalar root numerator. -/
-theorem differentiable_endpointG : Differentiable endpointG := by
+theorem differentiable_endpointG : Differentiable ℝ endpointG := by
   intro x
   exact (hasDerivAt_endpointG x).differentiableAt
 
@@ -326,6 +328,8 @@ theorem endpointR_abs_le_one (x : ℝ) : |endpointR x| ≤ 1 := by
   unfold endpointK
   apply intervalIntegral.integral_congr
   intro s _
+  change ThmD.vStar 1 s * Real.cos ((-x) * s) =
+    ThmD.vStar 1 s * Real.cos (x * s)
   rw [neg_mul, Real.cos_neg]
 
 /-- The normalized endpoint kernel is even. -/
