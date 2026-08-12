@@ -95,7 +95,7 @@ lemma selectedHatPart_eq_sum_vhat
   simp only [selectedHatPart, selectedOnPart, Matrix.smul_apply,
     Matrix.sum_apply, smul_eq_mul, Finset.mul_sum, rankOneProjector,
     Matrix.vecMulVec_apply]
-  rw [← Finset.sum_coe_sort S]
+  rw [Finset.sum_coe_sort S]
   refine Finset.sum_congr rfl fun z hz => ?_
   have hz₁ : z ∈ D.S₁ := hS₁ hz
   have hzon : z ∈ D.onLine := D.S₁_subset_onLine hz₁
@@ -157,7 +157,7 @@ lemma onPart_eq_selected_add_complement
   unfold ZeroBlockData.onPart selectedOnPart
   have hdiff := Finset.sum_sdiff hS
     (f := fun z => (D.m z : ℂ) • vecMulVec (D.v z) (D.v z))
-  rw [hdiff]
+  rw [← hdiff]
   abel
 
 lemma blockP_eq_selected_add_complement
@@ -167,16 +167,16 @@ lemma blockP_eq_selected_add_complement
   unfold ZeroBlockData.blockP selectedHatPart
   rw [D.onPart_eq_selected_add_complement S hS, smul_add]
 
-variable (Pr : D.PairReps)
-
 /-- Exact complement identity behind the core replacement. -/
 lemma scaledBlockA_sub_selected_eq
     (S : Finset i) (hS : S ⊆ D.onLine) (c : ℝ) :
     (((c⁻¹ : ℝ) : ℂ) • D.blockA) - D.selectedHatPart S c =
       D.selectedHatPart (D.onLine \ S) c + D.blockQ c := by
-  rw [← D.blockP_add_blockQ Pr c,
+  rw [← D.blockP_add_blockQ c,
     D.blockP_eq_selected_add_complement S hS c]
   abel
+
+variable (Pr : D.PairReps)
 
 /-- The positive index of the complement is bounded by the number of
 unselected on-line labels plus the off-line-pair count. -/
@@ -187,7 +187,7 @@ theorem posIndex_scaledBlockA_sub_selected_le
       #(D.onLine \ S) + Pr.p := by
   have hcomp := D.selectedHatPart_posSemidef (D.onLine \ S)
     Finset.sdiff_subset hc
-  have hEq := D.scaledBlockA_sub_selected_eq Pr S hS c
+  have hEq := D.scaledBlockA_sub_selected_eq S hS c
   rw [hEq]
   have hsum := posIndex_add_le hcomp.isHermitian (D.blockQ_isHermitian c)
   rw [posIndex_eq_rank_of_posSemidef hcomp] at hsum
