@@ -72,7 +72,7 @@ noncomputable def fiberBinnedEnumeration
 /-- Fiber enumeration covers the source type exactly. -/
 theorem fiberBinnedEnumeration_cover
     {S B : Type*} [Fintype S] [Fintype B]
-    [DecidableEq B] (bin : S → B) :
+    (bin : S → B) :
     ∑ b, (fiberBinnedEnumeration bin).occupancy b = Fintype.card S := by
   classical
   change ∑ b, fiberOccupancy bin b = Fintype.card S
@@ -80,7 +80,6 @@ theorem fiberBinnedEnumeration_cover
     ∑ b, fiberOccupancy bin b =
         Fintype.card (Σ b : B, {s : S // bin s = b}) := by
       simp [fiberOccupancy]
-      rfl
     _ = Fintype.card S :=
       Fintype.card_congr (Equiv.sigmaFiberEquiv bin)
 
@@ -104,7 +103,8 @@ theorem rank_trace_two_with_fiber_binning
         + 4 * RHLinalg.rtrace Q - 4 * (b : ℝ)
         + delta / (9 * (Fintype.card S : ℝ)) *
           max 0 ((Fintype.card S : ℝ) - D / 2 - 2) ^ 2
-      ≤ frobSq (columnMatrix x * Matrix.conjTranspose (columnMatrix x) + Q) := by
+      ≤ RHLinalg.frobSq
+          (columnMatrix x * Matrix.conjTranspose (columnMatrix x) + Q) := by
   exact rank_trace_two_with_binned_gram_triples
     (fiberBinnedEnumeration bin) (fiberBinnedEnumeration_cover bin)
     D hbins x hunit hdelta hlocal hQ hb
