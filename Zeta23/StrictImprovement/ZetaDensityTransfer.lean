@@ -75,7 +75,7 @@ theorem coreBinD_sub_lam_mul_N_isLittleO
       (fun T => (Z.N T (2 * T) : ℝ)) := by
   have h1 := (rvmMainError_isLittleO_N Z hR).const_mul_left (-P.lam)
   have h2 := (id_isLittleO_N Z hR).const_mul_left
-    (-P.lam * c₀ / (2 * Real.pi))
+    (-P.lam * Assembly.c₀ / (2 * Real.pi))
   refine (h1.add h2).congr_left ?_
   intro T
   unfold coreBinD Params.L
@@ -86,14 +86,14 @@ theorem coreBinD_sub_lam_mul_N_isLittleO
 theorem tendsto_coreBinD_div_N
     (Z : ZeroConfig) (hR : RiemannVonMangoldt Z) (P : Params) :
     Tendsto (fun T => coreBinD T P / (Z.N T (2 * T) : ℝ))
-      atTop (𝒩 P.lam) := by
+      atTop (𝓝 P.lam) := by
   have hNtop := Assembly.tendsto_N_atTop Z hR
   have hNpos : ∀ᶠ T in atTop, 0 < (Z.N T (2 * T) : ℝ) :=
     hNtop.eventually_gt_atTop 0
   have hzero :
       Tendsto (fun T =>
         (coreBinD T P - P.lam * (Z.N T (2 * T) : ℝ)) /
-          (Z.N T (2 * T) : ℝ)) atTop (𝒩 0) := by
+          (Z.N T (2 * T) : ℝ)) atTop (𝓝 0) := by
     apply (isLittleO_iff_tendsto' _).mp
       (coreBinD_sub_lam_mul_N_isLittleO Z hR P)
     filter_upwards [hNpos] with T hT
