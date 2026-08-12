@@ -94,9 +94,17 @@ theorem widerFixedDeltaCeiling_le_budget (i j k : Fin 6) :
 theorem widerFixedBudget_special :
     widerFixedBudget (0 : Fin 6) (4 : Fin 6) (5 : Fin 6) =
       widerFixedDeltaCeiling := by
-  norm_num [widerFixedBudget, widerFixedDeltaCeiling,
-    widerWeightedBudgetCeiling, widerExactSlopeDenominator,
-    widerSlopeDenominator, widerSeparationFloor, firstSixIndex]
+  have h0 : widerExactSlopeDenominator (0 : Fin 6) =
+      (930982144 : ℝ) / 82354251 := by rfl
+  have h4 : widerExactSlopeDenominator (4 : Fin 6) =
+      (20492495104 : ℝ) / 431174667 := by rfl
+  have h5 : widerExactSlopeDenominator (5 : Fin 6) =
+      (9782600448 : ℝ) / 172793257 := by rfl
+  have hfloor : widerSeparationFloor (0 : Fin 6) (4 : Fin 6) (5 : Fin 6) =
+      (11 : ℝ) / 60 := by
+    norm_num [widerSeparationFloor, firstSixIndex]
+  rw [widerFixedBudget, h0, h4, h5, hfloor]
+  norm_num [widerFixedDeltaCeiling, widerWeightedBudgetCeiling]
 
 /-- Two-sided method ceiling for the explicitly frozen finite interface. -/
 theorem common_budget_iff_le_widerFixedDeltaCeiling {delta : ℝ} :
