@@ -662,6 +662,8 @@ theorem small_endpointK_localizes_first_six
     {x : ℝ} (hx : x ∈ Set.Icc (0 : ℝ) (12 * Real.pi))
     (hsmall : |endpointK x| < widerCorrelationThreshold) :
     ∃ i : Fin 6, |x - firstSixRoot i| < widerRadius := by
+  -- Keep each concrete half-period explicit, then convert its endpoints to
+  -- the indexed normal form required by the two localization interfaces.
   by_cases h1 : x ≤ Real.pi
   · have hK := endpointK_initial_interval_lower ⟨hx.1, h1⟩
     have hKabs : (165 : ℝ) / 512 ≤ |endpointK x| :=
