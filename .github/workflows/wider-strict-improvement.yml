@@ -164,6 +164,12 @@ jobs:
             fi
           }
 
+          # Compile the new endpoint chain first so a local integration error
+          # is reported before replaying the full historical preflight list.
+          run_preflight Zeta23.StrictImprovement.CertificateSlackZetaEndpointPassage \
+            certificate-slack-endpoint-aggregate-build.log \
+            "Certificate-slack endpoint aggregate preflight failure"
+
           run_preflight Zeta23.StrictImprovement.LocalPinching \
             local-pinching-build.log "Local pinching preflight failure"
           run_preflight Zeta23.StrictImprovement.ExplicitDelta \
@@ -519,6 +525,7 @@ jobs:
             certificate-slack-zeta-strict-fixed-lambda-build.log
             certificate-slack-zeta-strict-concrete-build.log
             certificate-slack-zeta-endpoint-passage-build.log
+            certificate-slack-endpoint-aggregate-build.log
             build-commit.txt
             lean-version.txt
             lake-version.txt

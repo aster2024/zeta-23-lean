@@ -34,7 +34,6 @@ noncomputable def certificateSlackBin
     Fin (certificateSlackBinCount D) := by
   let q : ℝ := (coord s - base) / ((264 : ℝ) / 7)
   have hden : 0 < (264 : ℝ) / 7 := by norm_num
-  have hq0 : 0 ≤ q := div_nonneg (hrange s).1 hden.le
   have hqD : q ≤ (7 * Real.pi / 132) * D := by
     apply (div_le_iff₀ hden).2
     calc

@@ -25,6 +25,7 @@ import Zeta23.StrictImprovement.DirectZetaWiderStrictFixedLambda
 import Zeta23.StrictImprovement.DirectZetaWiderStrictConcrete
 import Zeta23.StrictImprovement.DirectZetaWiderEndpointPassage
 import Zeta23.StrictImprovement.SpectralZetaWiderEndpointPassage
+import Zeta23.StrictImprovement.CertificateSlackZetaEndpointPassage
 
 #print axioms Zeta23.StrictImprovement.zeta_wider_strict_simple_endpoint_rational
 #print axioms Zeta23.StrictImprovement.common_budget_iff_le_widerFixedDeltaCeiling
