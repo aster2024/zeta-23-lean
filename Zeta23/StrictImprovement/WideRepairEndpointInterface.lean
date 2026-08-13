@@ -166,8 +166,14 @@ theorem half_traceNorm_sub_le_card_sqrt_card_eps
         ((Fintype.card n : ℝ) * Real.sqrt (Fintype.card n : ℝ) * eps) ^ 2 =
           (Fintype.card n : ℝ) *
             ((Fintype.card n : ℝ) ^ 2 * eps ^ 2) := by
-      rw [hsqrtSq]
-      ring
+      calc
+        ((Fintype.card n : ℝ) * Real.sqrt (Fintype.card n : ℝ) * eps) ^ 2 =
+            (Fintype.card n : ℝ) ^ 2 *
+              (Real.sqrt (Fintype.card n : ℝ)) ^ 2 * eps ^ 2 := by ring
+        _ = (Fintype.card n : ℝ) *
+            ((Fintype.card n : ℝ) ^ 2 * eps ^ 2) := by
+          rw [hsqrtSq]
+          ring
     have hsq : (Tail.traceNorm hC) ^ 2 ≤
         (Fintype.card n : ℝ) *
           ((Fintype.card n : ℝ) ^ 2 * eps ^ 2) :=
@@ -263,6 +269,7 @@ theorem wideRepairThree_nearby_traceNorm_lower
     (wideEndpointDeviation_isHermitian x) heps hclose
   have hend := wideRepairThree_endpoint_traceNorm_lower hcertificate x hdist
   norm_num at hstable
+  have hlower := (abs_le.mp hstable).1
   linarith
 
 /-- The four-block uses the sharper six-edge stability constant already
@@ -287,6 +294,7 @@ theorem wideRepairFour_nearby_traceNorm_lower
     hB (endpointFourDeviation_isHermitian x) hdiagB
     (endpointFourDeviation_diag x) heps h01 h02 h03 h12 h13 h23
   have hend := wideRepairFour_endpoint_traceNorm_lower hcertificate x hdist
+  have hlower := (abs_le.mp hstable).1
   linarith
 
 theorem wideRepairFive_nearby_traceNorm_lower
@@ -303,6 +311,7 @@ theorem wideRepairFive_nearby_traceNorm_lower
     (wideEndpointDeviation_isHermitian x) heps hclose
   have hend := wideRepairFive_endpoint_traceNorm_lower hcertificate x hdist
   norm_num at hstable
+  have hlower := (abs_le.mp hstable).1
   linarith
 
 end StrictImprovement
