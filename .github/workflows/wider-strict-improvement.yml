@@ -188,6 +188,9 @@ jobs:
           run_preflight Zeta23.StrictImprovement.DirectZetaWiderSeamDefect \
             direct-zeta-wider-seam-defect-build.log \
             "Direct zeta wider seam defect preflight failure"
+          run_preflight Zeta23.StrictImprovement.DirectZetaWiderStrictSeamEventually \
+            direct-zeta-wider-strict-seam-eventually-build.log \
+            "Direct zeta wider strict seam eventually preflight failure"
           run_preflight Zeta23.StrictImprovement.KernelRoots \
             kernel-roots-build.log "Kernel roots preflight failure"
           run_preflight Zeta23.StrictImprovement.WindowFourierLimit \

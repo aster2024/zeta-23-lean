@@ -97,6 +97,14 @@ theorem eventually_directAtDLocalDelta_gt
     ∀ᶠ T in atTop, delta0 < directAtDLocalDelta T P :=
   (tendsto_directAtDLocalDelta hP).eventually (eventually_gt_nhds hdelta)
 
+/-- The direct local defect is eventually positive whenever the taper loss is
+smaller than half the certified endpoint energy. -/
+theorem eventually_directAtDLocalDelta_pos
+    {P : Params} (hP : P.Valid)
+    (hlam : 18 * (1 - P.lam) < directFourEnergyLower / 2) :
+    ∀ᶠ T in atTop, 0 < directAtDLocalDelta T P := by
+  exact eventually_directAtDLocalDelta_gt hP (by linarith)
+
 end StrictImprovement
 end Zeta23
 

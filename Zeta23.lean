@@ -24,3 +24,4 @@ import Zeta23.StrictImprovement.DirectCoreFourEnergy
 import Zeta23.StrictImprovement.DirectZetaWiderAtD
 import Zeta23.StrictImprovement.DirectZetaWiderCoreGain
 import Zeta23.StrictImprovement.DirectZetaWiderSeamDefect
+import Zeta23.StrictImprovement.DirectZetaWiderStrictSeamEventually
