@@ -182,21 +182,26 @@ theorem packedCoreWideRepairBlock_traceNorm_lower
             coord hdiamRat hB heps hedgeAll
           simpa [eps, epsFin, localCorrelationError] using hmargin3
       | inr q =>
+          have hne
+              (r t : Fin (wideRepairBlockSize (Sum.inr (Sum.inr q))))
+              (hval : r.val ≠ t.val) : r ≠ t := by
+            intro hEq
+            exact hval (congrArg Fin.val hEq)
           apply wideRepairFour_nearby_traceNorm_lower hcertificates.four
             coord hdiamRat hB hdiagB heps
           · simpa [eps, epsFin, localCorrelationError] using hmargin4
           · simpa [wideEndpointDeviation, endpointFourDeviation] using
-              hedge (by norm_num : (0 : Fin 4) ≠ 1)
+              hedge (hne 0 1 (by norm_num))
           · simpa [wideEndpointDeviation, endpointFourDeviation] using
-              hedge (by norm_num : (0 : Fin 4) ≠ 2)
+              hedge (hne 0 2 (by norm_num))
           · simpa [wideEndpointDeviation, endpointFourDeviation] using
-              hedge (by norm_num : (0 : Fin 4) ≠ 3)
+              hedge (hne 0 3 (by norm_num))
           · simpa [wideEndpointDeviation, endpointFourDeviation] using
-              hedge (by norm_num : (1 : Fin 4) ≠ 2)
+              hedge (hne 1 2 (by norm_num))
           · simpa [wideEndpointDeviation, endpointFourDeviation] using
-              hedge (by norm_num : (1 : Fin 4) ≠ 3)
+              hedge (hne 1 3 (by norm_num))
           · simpa [wideEndpointDeviation, endpointFourDeviation] using
-              hedge (by norm_num : (2 : Fin 4) ≠ 3)
+              hedge (hne 2 3 (by norm_num))
 
 end StrictImprovement
 end Zeta23
