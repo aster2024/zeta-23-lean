@@ -62,6 +62,7 @@ theorem sum_abs_re_diag_unitary_conj_le_traceNorm
     rw [hconj, Matrix.mul_apply]
     dsimp [D]
     simp only [mul_diagonal, Function.comp_apply]
+    rw [Complex.re_sum]
     apply Finset.sum_congr rfl
     intro j _hj
     rw [show W i j * (hA.eigenvalues j : ℂ) * starRingEnd ℂ (W i j) =
@@ -108,34 +109,10 @@ theorem traceNorm_eq_sum_abs_re_diag_eigenbasis
       ∑ i, |Complex.re
         ((star (hA.eigenvectorUnitary : Matrix n n ℂ) * A *
           (hA.eigenvectorUnitary : Matrix n n ℂ)) i i)| := by
-  have hdiag :
-      star (hA.eigenvectorUnitary : Matrix n n ℂ) * A *
-          (hA.eigenvectorUnitary : Matrix n n ℂ) =
-        diagonal (Complex.ofReal ∘ hA.eigenvalues) := by
-    have hspectral : A =
-        (hA.eigenvectorUnitary : Matrix n n ℂ) *
-          diagonal (Complex.ofReal ∘ hA.eigenvalues) *
-          star (hA.eigenvectorUnitary : Matrix n n ℂ) := by
-      simpa only [Unitary.conjStarAlgAut_apply] using hA.spectral_theorem
-    calc
-      star (hA.eigenvectorUnitary : Matrix n n ℂ) * A *
-            (hA.eigenvectorUnitary : Matrix n n ℂ) =
-          star (hA.eigenvectorUnitary : Matrix n n ℂ) *
-            ((hA.eigenvectorUnitary : Matrix n n ℂ) *
-              diagonal (Complex.ofReal ∘ hA.eigenvalues) *
-              star (hA.eigenvectorUnitary : Matrix n n ℂ)) *
-            (hA.eigenvectorUnitary : Matrix n n ℂ) := by rw [hspectral]
-      _ =
-          (star (hA.eigenvectorUnitary : Matrix n n ℂ) *
-              (hA.eigenvectorUnitary : Matrix n n ℂ)) *
-            diagonal (Complex.ofReal ∘ hA.eigenvalues) *
-            (star (hA.eigenvectorUnitary : Matrix n n ℂ) *
-              (hA.eigenvectorUnitary : Matrix n n ℂ)) := by
-                noncomm_ring
-      _ = diagonal (Complex.ofReal ∘ hA.eigenvalues) := by
-        rw [Unitary.star_mul_self_of_mem hA.eigenvectorUnitary.2]
-        simp
-  rw [hdiag]
+  conv_rhs => rw [hA.spectral_theorem, Unitary.conjStarAlgAut_apply]
+  simp only [Matrix.mul_assoc]
+  rw [Unitary.star_mul_self_of_mem hA.eigenvectorUnitary.2]
+  simp
   simp [traceNorm]
 
 /-- Triangle inequality for the custom Hermitian trace norm. -/
@@ -163,7 +140,7 @@ theorem traceNorm_add_le
               (U : Matrix n n ℂ)) i i) +
                 Complex.re ((star (U : Matrix n n ℂ) * B *
                   (U : Matrix n n ℂ)) i i)| ≤ _
-          exact abs_add _ _
+          exact abs_add_le _ _
     _ = (∑ i, |Complex.re ((star (U : Matrix n n ℂ) * A *
           (U : Matrix n n ℂ)) i i)|) +
         ∑ i, |Complex.re ((star (U : Matrix n n ℂ) * B *
@@ -176,18 +153,22 @@ theorem traceNorm_add_le
 theorem traceNorm_neg
     {A : Matrix n n ℂ} (hA : A.IsHermitian) :
     traceNorm hA.neg = traceNorm hA := by
+  have hconj_neg (U : Matrix.unitaryGroup n ℂ) :
+      star (U : Matrix n n ℂ) * (-A) * (U : Matrix n n ℂ) =
+        -(star (U : Matrix n n ℂ) * A * (U : Matrix n n ℂ)) := by
+    noncomm_ring
   have hle : traceNorm hA.neg ≤ traceNorm hA := by
     rw [traceNorm_eq_sum_abs_re_diag_eigenbasis hA.neg]
-    simpa only [mul_neg, neg_mul, Pi.neg_apply, map_neg,
-      abs_neg] using
+    rw [hconj_neg]
+    simpa only [Pi.neg_apply, map_neg, abs_neg] using
       (sum_abs_re_diag_unitary_conj_le_traceNorm hA
         hA.neg.eigenvectorUnitary)
   have hle' : traceNorm hA ≤ traceNorm hA.neg := by
     have h := sum_abs_re_diag_unitary_conj_le_traceNorm hA.neg
       hA.eigenvectorUnitary
+    rw [hconj_neg] at h
     rw [traceNorm_eq_sum_abs_re_diag_eigenbasis hA]
-    simpa only [mul_neg, neg_mul, Pi.neg_apply, map_neg,
-      neg_neg, abs_neg] using h
+    simpa only [Pi.neg_apply, map_neg, abs_neg] using h
   exact le_antisymm hle hle'
 
 /-- Reverse triangle inequality, stated in the exact form used by the
