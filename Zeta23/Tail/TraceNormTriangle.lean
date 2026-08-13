@@ -112,7 +112,9 @@ theorem traceNorm_eq_sum_abs_re_diag_eigenbasis
   conv_rhs => rw [hA.spectral_theorem, Unitary.conjStarAlgAut_apply]
   simp only [Matrix.mul_assoc]
   rw [Unitary.star_mul_self_of_mem hA.eigenvectorUnitary.2]
-  simp
+  simp only [mul_one]
+  rw [← Matrix.mul_assoc,
+    Unitary.star_mul_self_of_mem hA.eigenvectorUnitary.2, one_mul]
   simp [traceNorm]
 
 /-- Triangle inequality for the custom Hermitian trace norm. -/
