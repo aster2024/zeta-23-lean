@@ -6,6 +6,7 @@ SPDX-License-Identifier: Apache-2.0
 import Zeta23.StrictImprovement.WideRepairCoreBlocks
 import Zeta23.StrictImprovement.ZetaBoundaryLoss
 import Zeta23.ZeroSide.Mult
+import Zeta23.ThmD.ParamsD
 
 /-!
 # Fixed-height zero-side defect with mixed three--four--five blocks
@@ -88,6 +89,7 @@ theorem hatAz_mult2_with_wide_repair_gain
     dsimp [A, D]
     rw [← ZeroSide.Az_eq_blockA Z T P hconj]
     exact (ZeroSide.hat_eq T P (Z.Az P T)).symm
+  have hsplit := coreCard_add_excluded_eq_s1 Z T 3 P hconj
   have hcountZ : Z.s1 T + 2 * Z.s2 T + 2 * Z.p T ≤ Z.NIprime T :=
     ZeroSide.s1_add_two_s2_add_two_p_le_NIprime Z T
   have hcountNat :
