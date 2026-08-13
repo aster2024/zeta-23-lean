@@ -197,6 +197,9 @@ jobs:
           run_preflight Zeta23.StrictImprovement.DirectZetaWiderStrictConcrete \
             direct-zeta-wider-strict-concrete-build.log \
             "Direct zeta wider strict concrete preflight failure"
+          run_preflight Zeta23.StrictImprovement.DirectZetaWiderEndpointPassage \
+            direct-zeta-wider-endpoint-passage-build.log \
+            "Direct zeta wider endpoint passage preflight failure"
           run_preflight Zeta23.StrictImprovement.KernelRoots \
             kernel-roots-build.log "Kernel roots preflight failure"
           run_preflight Zeta23.StrictImprovement.WindowFourierLimit \
