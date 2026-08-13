@@ -35,7 +35,7 @@ theorem traceNorm_le_two_sqrt_frobSq_fin4
     have h := sq_sum_le_card_mul_sum_sq
       (s := Finset.univ) (f := fun i => |hA.eigenvalues i|)
     simpa [sq_abs] using h
-  have hfrob : 0 ≤ frobSq A := frobSq_nonneg A
+  have hfrob : 0 ≤ frobSq A := Assembly.frobSq_nonneg A
   have hsqrt : 0 ≤ Real.sqrt (frobSq A) := Real.sqrt_nonneg _
   have hsqrtSq : (Real.sqrt (frobSq A)) ^ 2 = frobSq A :=
     Real.sq_sqrt hfrob
@@ -86,11 +86,15 @@ theorem half_traceNorm_sub_le_two_sqrt_three_eps_fin4
   have htraceC := traceNorm_le_two_sqrt_frobSq_fin4 hC
   have hsqrt3 : 0 ≤ Real.sqrt 3 := Real.sqrt_nonneg _
   have hsqrt3Sq : (Real.sqrt 3) ^ 2 = 3 := Real.sq_sqrt (by norm_num)
-  have hsqrtFrob : 0 ≤ Real.sqrt (frobSq C) := Real.sqrt_nonneg _
-  have hsqrtFrobSq : (Real.sqrt (frobSq C)) ^ 2 = frobSq C :=
-    Real.sq_sqrt (frobSq_nonneg C)
+  have hrhs : 0 ≤ 2 * Real.sqrt 3 * eps :=
+    mul_nonneg (mul_nonneg (by norm_num) hsqrt3) heps
+  have hrhsSq : (2 * Real.sqrt 3 * eps) ^ 2 = 12 * eps ^ 2 := by
+    calc
+      (2 * Real.sqrt 3 * eps) ^ 2 =
+          4 * (Real.sqrt 3) ^ 2 * eps ^ 2 := by ring
+      _ = 12 * eps ^ 2 := by rw [hsqrt3Sq]; ring
   have hsqrtBound : Real.sqrt (frobSq C) ≤ 2 * Real.sqrt 3 * eps := by
-    nlinarith [sq_nonneg (Real.sqrt (frobSq C) - 2 * Real.sqrt 3 * eps)]
+    exact Real.sqrt_le_iff.mpr ⟨hrhs, by rwa [hrhsSq]⟩
   have hreverse := Tail.abs_traceNorm_sub_traceNorm_le hA hB
   rw [← sub_div, abs_div]
   norm_num
