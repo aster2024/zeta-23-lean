@@ -79,10 +79,10 @@ theorem packedCoreFour_atD_direct_local_energy
 theorem tendsto_directAtDLocalDelta
     {P : Params} (hP : P.Valid) :
     Tendsto (fun T => directAtDLocalDelta T P) atTop
-      (𝗑 (directFourEnergyLower / 2 - 18 * (1 - P.lam))) := by
+      (𝓝 (directFourEnergyLower / 2 - 18 * (1 - P.lam))) := by
   have herr := (tendsto_atDLocalCorrelationError hP).const_mul 6
   have hconst : Tendsto (fun _ : ℝ => directFourEnergyLower / 2) atTop
-      (𝗑 (directFourEnergyLower / 2)) := tendsto_const_nhds
+      (𝓝 (directFourEnergyLower / 2)) := tendsto_const_nhds
   have hlim := hconst.sub herr
   have hend : directFourEnergyLower / 2 - 6 * (3 * (1 - P.lam)) =
       directFourEnergyLower / 2 - 18 * (1 - P.lam) := by ring
