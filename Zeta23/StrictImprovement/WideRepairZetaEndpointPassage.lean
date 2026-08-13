@@ -47,7 +47,9 @@ def wideRepairEndpointRateLimit : ℝ :=
 
 theorem tendsto_wideRepairEndpointScale :
     Tendsto wideRepairEndpointScale atTop (nhds 1) := by
-  have h := tendsto_const_nhds.sub
+  have hconst : Tendsto (fun _ : ℕ => (1 : ℝ)) atTop (nhds 1) :=
+    tendsto_const_nhds
+  have h := hconst.sub
     (tendsto_endpointStep_zero.const_mul wideRepairEndpointReserve)
   change Tendsto
     (fun n : ℕ => 1 - wideRepairEndpointReserve * endpointStep n)
