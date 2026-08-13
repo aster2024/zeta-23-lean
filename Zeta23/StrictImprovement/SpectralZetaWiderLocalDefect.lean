@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 SPDX-License-Identifier: Apache-2.0
 -/
 import Zeta23.StrictImprovement.SpectralCoreFour
+import Zeta23.StrictImprovement.SpectralFourDefect
 import Zeta23.StrictImprovement.ZetaBoundaryLoss
 import Zeta23.ZeroSide.Mult
 
