@@ -281,6 +281,8 @@ theorem sum_wideRepairBlockReward_eq
   simp only [wideRepairBinReward, Finset.sum_add_distrib]
   simp [WideRepairBlock, WideRepairFiveBlock, WideRepairThreeResidue,
     WideRepairFourResidue, wideRepairBlockReward]
+  rw [Finset.sum_mul, ← Finset.sum_filter, ← Finset.sum_filter]
+  simp [Finset.sum_const, nsmul_eq_mul]
 
 theorem sum_wideRepairBlockReward_lower
     {S B : Type*} [Fintype B] [DecidableEq B]
@@ -295,8 +297,9 @@ theorem sum_wideRepairBlockReward_lower
         ∑ b : B, ((E.occupancy b : ℝ) / 160 - (13 : ℝ) / 800) := by
       push_cast
       simp [Finset.sum_sub_distrib, Finset.sum_const, Finset.card_univ,
-        nsmul_eq_mul] <;>
-        ring
+        nsmul_eq_mul]
+      rw [Finset.sum_mul]
+      ring
     _ ≤ ∑ b, wideRepairBinReward (E.occupancy b) :=
       Finset.sum_le_sum fun b _ => wideRepairBinReward_lower (E.occupancy b)
 
@@ -315,7 +318,6 @@ theorem mixed_blocks_traceNorm_lower
     2 * (scale * ∑ q : WideRepairBlock E, wideRepairBlockReward q) =
         ∑ q : WideRepairBlock E, 2 * (scale * wideRepairBlockReward q) := by
       rw [← Finset.mul_sum, ← Finset.mul_sum]
-      ring
     _ ≤ ∑ q : WideRepairBlock E,
         Tail.traceNorm ((gramDeviation_isHermitian x).submatrix
           (wideRepairBlockIndex E q)) :=
@@ -361,8 +363,15 @@ theorem mixed_blocks_traceNorm_target_lower
   have hmax : (1 : ℝ) / 160 *
       max 0 ((Fintype.card S : ℝ) - (13 : ℝ) / 40 * D - 13 / 5) ≤
       ∑ q : WideRepairBlock E, wideRepairBlockReward q := by
-    rw [mul_max_of_nonneg (by norm_num : (0 : ℝ) ≤ 1 / 160)]
-    exact max_le hrewards0 hbase
+    by_cases harg : 0 ≤
+        (Fintype.card S : ℝ) - (13 : ℝ) / 40 * D - 13 / 5
+    · rw [max_eq_right harg]
+      exact hbase
+    · have harg' :
+          (Fintype.card S : ℝ) - (13 : ℝ) / 40 * D - 13 / 5 ≤ 0 :=
+        le_of_not_ge harg
+      rw [max_eq_left harg']
+      simpa using hrewards0
   have hscaled := mul_le_mul_of_nonneg_left hmax hscale
   have htrace := mixed_blocks_traceNorm_lower E x hlocal
   calc
