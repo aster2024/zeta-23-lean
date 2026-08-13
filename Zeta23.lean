@@ -19,3 +19,4 @@ import Zeta23.PairCeiling.Signed
 import Zeta23.StrictImprovement.ZetaEndpointPassage
 import Zeta23.StrictImprovement.ZetaWiderEndpointPassage
 import Zeta23.StrictImprovement.WiderFixedInterfaceCeiling
+import Zeta23.StrictImprovement.DirectFourPointInterface

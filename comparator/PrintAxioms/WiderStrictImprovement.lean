@@ -15,6 +15,9 @@ formally certified.
 -/
 import Zeta23.StrictImprovement.ZetaWiderEndpointPassage
 import Zeta23.StrictImprovement.WiderFixedInterfaceCeiling
+import Zeta23.StrictImprovement.DirectFourPointInterface
 
 #print axioms Zeta23.StrictImprovement.zeta_wider_strict_simple_endpoint_rational
 #print axioms Zeta23.StrictImprovement.common_budget_iff_le_widerFixedDeltaCeiling
+#print axioms Zeta23.StrictImprovement.direct_six_edge_energy_stable
+#print axioms Zeta23.StrictImprovement.directFourEtaLower_le_endpoint_gain

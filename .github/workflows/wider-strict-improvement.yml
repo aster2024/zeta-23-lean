@@ -173,6 +173,9 @@ jobs:
             quadratic-gain-build.log "Quadratic gain preflight failure"
           run_preflight Zeta23.StrictImprovement.WiderQuadraticGain \
             wider-quadratic-gain-build.log "Wider quadratic gain preflight failure"
+          run_preflight Zeta23.StrictImprovement.DirectFourPointInterface \
+            direct-four-point-interface-build.log \
+            "Direct four-point interface preflight failure"
           run_preflight Zeta23.StrictImprovement.KernelRoots \
             kernel-roots-build.log "Kernel roots preflight failure"
           run_preflight Zeta23.StrictImprovement.WindowFourierLimit \
@@ -344,6 +347,7 @@ jobs:
             endpoint-taylor-build.log
             quadratic-gain-build.log
             wider-quadratic-gain-build.log
+            direct-four-point-interface-build.log
             kernel-roots-build.log
             window-fourier-limit-build.log
             gram-defect-lower-build.log
