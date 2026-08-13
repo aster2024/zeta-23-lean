@@ -187,12 +187,30 @@ theorem packedCoreWideRepairBlock_traceNorm_lower
                 wideEndpointDeviation coord r t‖ ≤ eps := by
             intro r t hrt
             exact hedge hrt
-          have h01 : (0 : Fin 4) ≠ 1 := by decide
-          have h02 : (0 : Fin 4) ≠ 2 := by decide
-          have h03 : (0 : Fin 4) ≠ 3 := by decide
-          have h12 : (1 : Fin 4) ≠ 2 := by decide
-          have h13 : (1 : Fin 4) ≠ 3 := by decide
-          have h23 : (2 : Fin 4) ≠ 3 := by decide
+          have h01 : (0 : Fin 4) ≠ 1 := by
+            intro hEq
+            have hv := congrArg Fin.val hEq
+            omega
+          have h02 : (0 : Fin 4) ≠ 2 := by
+            intro hEq
+            have hv := congrArg Fin.val hEq
+            omega
+          have h03 : (0 : Fin 4) ≠ 3 := by
+            intro hEq
+            have hv := congrArg Fin.val hEq
+            omega
+          have h12 : (1 : Fin 4) ≠ 2 := by
+            intro hEq
+            have hv := congrArg Fin.val hEq
+            omega
+          have h13 : (1 : Fin 4) ≠ 3 := by
+            intro hEq
+            have hv := congrArg Fin.val hEq
+            omega
+          have h23 : (2 : Fin 4) ≠ 3 := by
+            intro hEq
+            have hv := congrArg Fin.val hEq
+            omega
           apply wideRepairFour_nearby_traceNorm_lower hcertificates.four
             coord hdiamRat hB hdiagB heps
           · simpa [eps, epsFin, localCorrelationError] using hmargin4
