@@ -211,21 +211,23 @@ theorem packedCoreWideRepairBlock_traceNorm_lower
             intro hEq
             have hv := congrArg Fin.val hEq
             omega
+          have hedgeFour : ∀ {r t : Fin 4}, r ≠ t →
+              ‖(gramDeviation x).submatrix idx idx r t -
+                endpointFourDeviation coord r t‖ ≤ eps := by
+            intro r t hrt
+            rw [endpointFourDeviation_offdiag coord hrt]
+            have h := hedge4 hrt
+            rw [wideEndpointDeviation_offdiag coord hrt] at h
+            exact h
           apply wideRepairFour_nearby_traceNorm_lower hcertificates.four
             coord hdiamRat hB hdiagB heps
           · simpa [eps, epsFin, localCorrelationError] using hmargin4
-          · simpa [wideEndpointDeviation, endpointFourDeviation, h01] using
-              hedge4 h01
-          · simpa [wideEndpointDeviation, endpointFourDeviation, h02] using
-              hedge4 h02
-          · simpa [wideEndpointDeviation, endpointFourDeviation, h03] using
-              hedge4 h03
-          · simpa [wideEndpointDeviation, endpointFourDeviation, h12] using
-              hedge4 h12
-          · simpa [wideEndpointDeviation, endpointFourDeviation, h13] using
-              hedge4 h13
-          · simpa [wideEndpointDeviation, endpointFourDeviation, h23] using
-              hedge4 h23
+          · exact hedgeFour h01
+          · exact hedgeFour h02
+          · exact hedgeFour h03
+          · exact hedgeFour h12
+          · exact hedgeFour h13
+          · exact hedgeFour h23
 
 end StrictImprovement
 end Zeta23
