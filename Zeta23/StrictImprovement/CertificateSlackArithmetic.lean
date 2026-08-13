@@ -28,7 +28,7 @@ def certificateSlackMarginLower : ℝ :=
 theorem pi_lt_certificateSlackUpper :
     Real.pi <
       (314159265358979323847 : ℝ) / 100000000000000000000 := by
-  simpa using Real.pi_lt_d20
+  exact Real.pi_lt_d20.trans_eq (by norm_num)
 
 theorem certificateSlackMarginLower_lt_endpointMargin :
     certificateSlackMarginLower <
