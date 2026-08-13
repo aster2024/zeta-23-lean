@@ -174,8 +174,14 @@ theorem wideRepairBlockIndex_injective
                   have hlocal := E.entry_injective h
                   have hb : b = b' := hlocal.1
                   subst b'
+                  have hv := congrArg Fin.val hlocal.2
+                  dsimp [wideRepairResidualSlot] at hv
                   have hk : k = k' := Fin.ext (by omega)
-                  have hz : z = z' := Subsingleton.elim _ _
+                  have hres := wideRepairThreeResidue_mod ⟨b, z⟩
+                  have hzlt := z.isLt
+                  have hz'lt := z'.isLt
+                  simp [hres] at hzlt hz'lt
+                  have hz : z = z' := Fin.ext (by omega)
                   subst z'
                   subst k'
                   rfl
@@ -189,6 +195,8 @@ theorem wideRepairBlockIndex_injective
                   subst b'
                   have h3 := wideRepairThreeResidue_mod ⟨b, z⟩
                   have h4 := wideRepairFourResidue_mod ⟨b, z'⟩
+                  change E.occupancy b % 5 = 3 at h3
+                  change E.occupancy b % 5 = 4 at h4
                   omega
       | inr q =>
           cases q' with
@@ -217,6 +225,8 @@ theorem wideRepairBlockIndex_injective
                   subst b'
                   have h4 := wideRepairFourResidue_mod ⟨b, z⟩
                   have h3 := wideRepairThreeResidue_mod ⟨b, z'⟩
+                  change E.occupancy b % 5 = 4 at h4
+                  change E.occupancy b % 5 = 3 at h3
                   omega
               | inr q' =>
                   obtain ⟨b, z⟩ := q
@@ -225,8 +235,14 @@ theorem wideRepairBlockIndex_injective
                   have hlocal := E.entry_injective h
                   have hb : b = b' := hlocal.1
                   subst b'
+                  have hv := congrArg Fin.val hlocal.2
+                  dsimp [wideRepairResidualSlot] at hv
                   have hk : k = k' := Fin.ext (by omega)
-                  have hz : z = z' := Subsingleton.elim _ _
+                  have hres := wideRepairFourResidue_mod ⟨b, z⟩
+                  have hzlt := z.isLt
+                  have hz'lt := z'.isLt
+                  simp [hres] at hzlt hz'lt
+                  have hz : z = z' := Fin.ext (by omega)
                   subst z'
                   subst k'
                   rfl
@@ -254,7 +270,8 @@ theorem wideRepairBinReward_lower (n : ℕ) :
     rw [hdecomp'] <;>
     simp [wideRepairBinReward, h, wideRepairRewardThree,
       wideRepairRewardFour, wideRepairRewardFive] <;>
-    norm_num
+    norm_num <;>
+    linarith
 
 theorem sum_wideRepairBlockReward_eq
     {S B : Type*} [Fintype B] [DecidableEq B]
