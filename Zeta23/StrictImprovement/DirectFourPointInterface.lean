@@ -30,6 +30,23 @@ def directFourEnergyLower : ℝ := 1 / 4000
 product. -/
 def directFourEtaLower : ℝ := 1 / 2150796
 
+/-- The trusted boundary exposed by the external interval certificate: every
+four real coordinates of diameter at most `12*pi` have the certified six-edge
+endpoint energy.  The interval verifier proves the ordered nonnegative-gap
+simplex statement; the elementary sorting/permutation bridge supplies this
+coordinate-free form.  Keeping their conjunction as a proposition makes the
+non-kernel input visible to every downstream theorem. -/
+def DirectFourEndpointCertificate : Prop :=
+  ∀ x : Fin 4 → ℝ,
+    (∀ i j : Fin 4, |x i - x j| ≤ 12 * Real.pi) →
+      directFourEnergyLower ≤
+        endpointR (x 0 - x 1) ^ 2 +
+        endpointR (x 0 - x 2) ^ 2 +
+        endpointR (x 0 - x 3) ^ 2 +
+        endpointR (x 1 - x 2) ^ 2 +
+        endpointR (x 1 - x 3) ^ 2 +
+        endpointR (x 2 - x 3) ^ 2
+
 /-- Six independent bounded correlations lose at most `12*eps` in their
 total squared energy.  The ordering/geometry certificate is represented by
 the explicit endpoint premise. -/

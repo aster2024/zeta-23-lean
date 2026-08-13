@@ -20,3 +20,5 @@ import Zeta23.StrictImprovement.ZetaEndpointPassage
 import Zeta23.StrictImprovement.ZetaWiderEndpointPassage
 import Zeta23.StrictImprovement.WiderFixedInterfaceCeiling
 import Zeta23.StrictImprovement.DirectFourPointInterface
+import Zeta23.StrictImprovement.DirectCoreFourEnergy
+import Zeta23.StrictImprovement.DirectZetaWiderAtD

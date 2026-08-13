@@ -176,6 +176,12 @@ jobs:
           run_preflight Zeta23.StrictImprovement.DirectFourPointInterface \
             direct-four-point-interface-build.log \
             "Direct four-point interface preflight failure"
+          run_preflight Zeta23.StrictImprovement.DirectCoreFourEnergy \
+            direct-core-four-energy-build.log \
+            "Direct core four-point energy preflight failure"
+          run_preflight Zeta23.StrictImprovement.DirectZetaWiderAtD \
+            direct-zeta-wider-at-d-build.log \
+            "Direct zeta wider at-D preflight failure"
           run_preflight Zeta23.StrictImprovement.KernelRoots \
             kernel-roots-build.log "Kernel roots preflight failure"
           run_preflight Zeta23.StrictImprovement.WindowFourierLimit \
