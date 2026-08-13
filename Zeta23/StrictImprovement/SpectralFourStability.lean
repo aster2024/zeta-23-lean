@@ -23,6 +23,8 @@ open scoped ComplexOrder
 namespace Zeta23
 namespace StrictImprovement
 
+open RHLinalg
+
 /-- In dimension four, the Hermitian trace norm is at most twice the
 Frobenius norm. -/
 theorem traceNorm_le_two_sqrt_frobSq_fin4
