@@ -55,7 +55,7 @@ theorem tendsto_spectralEndpointRoot :
     (fun n : ℕ => Real.sqrt spectralFourMassLower -
       (6 * Real.sqrt 3 + 1) * endpointStep n)
     atTop (nhds (Real.sqrt spectralFourMassLower))
-  exact h
+  simpa only [mul_zero, sub_zero] using h
 
 theorem eventually_spectralEndpointRoot_pos :
     ∀ᶠ n in atTop, 0 < spectralEndpointRoot n :=
