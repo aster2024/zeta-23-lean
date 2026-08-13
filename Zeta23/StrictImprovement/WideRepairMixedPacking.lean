@@ -174,8 +174,8 @@ theorem wideRepairBlockIndex_injective
                   have hlocal := E.entry_injective h
                   have hb : b = b' := hlocal.1
                   subst b'
-                  have hv := congrArg Fin.val hlocal.2
-                  dsimp [wideRepairResidualSlot] at hv
+                  have hv : 5 * (E.occupancy b / 5) + k.val =
+                      5 * (E.occupancy b / 5) + k'.val := hlocal.2
                   have hk : k = k' := Fin.ext (by omega)
                   have hres := wideRepairThreeResidue_mod ⟨b, z⟩
                   have hzlt := z.isLt
@@ -235,8 +235,8 @@ theorem wideRepairBlockIndex_injective
                   have hlocal := E.entry_injective h
                   have hb : b = b' := hlocal.1
                   subst b'
-                  have hv := congrArg Fin.val hlocal.2
-                  dsimp [wideRepairResidualSlot] at hv
+                  have hv : 5 * (E.occupancy b / 5) + k.val =
+                      5 * (E.occupancy b / 5) + k'.val := hlocal.2
                   have hk : k = k' := Fin.ext (by omega)
                   have hres := wideRepairFourResidue_mod ⟨b, z⟩
                   have hzlt := z.isLt
@@ -278,9 +278,9 @@ theorem sum_wideRepairBlockReward_eq
     (E : BinnedEnumeration S B) :
     ∑ q : WideRepairBlock E, wideRepairBlockReward q =
       ∑ b, wideRepairBinReward (E.occupancy b) := by
+  simp only [wideRepairBinReward, Finset.sum_add_distrib]
   simp [WideRepairBlock, WideRepairFiveBlock, WideRepairThreeResidue,
-    WideRepairFourResidue, wideRepairBlockReward, wideRepairBinReward,
-    Fintype.sum_sigma']
+    WideRepairFourResidue, wideRepairBlockReward]
 
 theorem sum_wideRepairBlockReward_lower
     {S B : Type*} [Fintype B] [DecidableEq B]
@@ -289,13 +289,16 @@ theorem sum_wideRepairBlockReward_lower
         (13 : ℝ) / 800 * (Fintype.card B : ℝ) ≤
       ∑ q : WideRepairBlock E, wideRepairBlockReward q := by
   rw [sum_wideRepairBlockReward_eq E]
-  have hsum := Finset.sum_le_sum
-    (fun b (_hb : b ∈ (Finset.univ : Finset B)) =>
-      wideRepairBinReward_lower (E.occupancy b))
-  simp only [Finset.sum_sub_distrib, Finset.sum_const, Finset.card_univ,
-    nsmul_eq_mul] at hsum
-  push_cast at hsum
-  convert hsum using 1 <;> ring
+  calc
+    ((∑ b, E.occupancy b : ℕ) : ℝ) / 160 -
+          (13 : ℝ) / 800 * (Fintype.card B : ℝ) =
+        ∑ b : B, ((E.occupancy b : ℝ) / 160 - (13 : ℝ) / 800) := by
+      push_cast
+      simp [Finset.sum_sub_distrib, Finset.sum_const, Finset.card_univ,
+        nsmul_eq_mul] <;>
+        ring
+    _ ≤ ∑ b, wideRepairBinReward (E.occupancy b) :=
+      Finset.sum_le_sum fun b _ => wideRepairBinReward_lower (E.occupancy b)
 
 theorem mixed_blocks_traceNorm_lower
     {S B d : Type*} [Fintype S] [DecidableEq S]
