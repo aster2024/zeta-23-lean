@@ -24,7 +24,7 @@ namespace StrictImprovement
 
 /-- Fixed-taper positive part before truncation for the widened bins. -/
 def certificateSlackEndpointQ (n : ℕ) : ℝ :=
-  ThmD.HD (endpointLam n) -
+  ThmD.HD (endpointLam n) - endpointEps n -
     (7 * Real.pi / 44) * (endpointLam n + endpointEps n) -
     endpointEps n
 
@@ -44,9 +44,10 @@ theorem tendsto_certificateSlackEndpointQ :
       (nhds (ThmD.HD 1 - 7 * Real.pi / 44)) := by
   have hsum := tendsto_endpointLam_one.add tendsto_endpointStep_zero
   have hscaled := hsum.const_mul (7 * Real.pi / 44)
-  have h := (tendsto_endpointHD.sub hscaled).sub tendsto_endpointStep_zero
+  have h := ((tendsto_endpointHD.sub tendsto_endpointStep_zero).sub hscaled).sub
+    tendsto_endpointStep_zero
   change Tendsto
-    (fun n : ℕ => ThmD.HD (endpointLam n) -
+    (fun n : ℕ => ThmD.HD (endpointLam n) - endpointEps n -
       (7 * Real.pi / 44) * (endpointLam n + endpointEps n) -
       endpointEps n) atTop _
   simpa only [endpointEps, add_zero, mul_one, sub_zero] using h
@@ -148,10 +149,15 @@ theorem zeta_certificate_slack_spectral_endpoint_of_le_gain
     ⟨hlam0, hlam1, heps, hH, hm, hmargin, hq⟩
   obtain ⟨T0, hT0⟩ :=
     zeta_certificate_slack_spectral_strict_simple_fixed_lam
-      hcertificate hlam0 hlam1 heps hH hm hmargin hq
+      hcertificate hlam0 hlam1 heps hH hm hmargin
+        (by simpa [certificateSlackEndpointQ] using hq)
       (outer / 2) (by linarith)
   refine ⟨T0, fun T hT => ?_⟩
-  have hfixed := hT0 T hT
+  have hfixed :
+      (certificateSlackEndpointRate n - outer / 2) *
+          (Ncount T (2 * T) : ℝ) ≤ N0simple T (2 * T) := by
+    simpa [certificateSlackEndpointRate, certificateSlackEndpointQ] using
+      hT0 T hT
   have hcoef :
       ThmD.HD 1 + eta - outer ≤
         certificateSlackEndpointRate n - outer / 2 := by
@@ -174,8 +180,8 @@ theorem certificateSlack_public_le_endpoint_gain :
       certificateSlackMarginLower ^ 2 <
       spectralFourMassLower / 16 *
         (ThmD.HD 1 - 7 * Real.pi / 44) ^ 2 := by
-    exact mul_lt_mul_of_pos_left hsquare (by
-      positivity)
+    exact mul_lt_mul_of_pos_left hsquare
+      (div_pos spectralFourMassLower_pos (by norm_num))
   exact (certificateSlack_public_lt_exact_gain.le.trans hmul.le)
 
 /-- Public rational form, explicitly conditional on the retained full-domain
