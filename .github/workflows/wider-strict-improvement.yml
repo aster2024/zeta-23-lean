@@ -312,6 +312,45 @@ jobs:
             "Spectral zeta wider endpoint passage preflight failure"
           run_preflight Zeta23.StrictImprovement.WidthSixBinning \
             width-six-binning-build.log "Width-six binning preflight failure"
+          run_preflight Zeta23.StrictImprovement.CertificateSlackBinning \
+            certificate-slack-binning-build.log \
+            "Certificate-slack binning preflight failure"
+          run_preflight Zeta23.StrictImprovement.CertificateSlackArithmetic \
+            certificate-slack-arithmetic-build.log \
+            "Certificate-slack arithmetic preflight failure"
+          run_preflight Zeta23.StrictImprovement.CertificateSlackFourPointInterface \
+            certificate-slack-four-point-interface-build.log \
+            "Certificate-slack four-point interface preflight failure"
+          run_preflight Zeta23.StrictImprovement.CertificateSlackCoreFour \
+            certificate-slack-core-four-build.log \
+            "Certificate-slack core four-point preflight failure"
+          run_preflight Zeta23.StrictImprovement.CertificateSlackZetaLocalDefect \
+            certificate-slack-zeta-local-defect-build.log \
+            "Certificate-slack zeta local defect preflight failure"
+          run_preflight Zeta23.StrictImprovement.CertificateSlackZetaSeamDefect \
+            certificate-slack-zeta-seam-defect-build.log \
+            "Certificate-slack zeta seam defect preflight failure"
+          run_preflight Zeta23.StrictImprovement.CertificateSlackZetaAtD \
+            certificate-slack-zeta-at-d-build.log \
+            "Certificate-slack zeta at-D preflight failure"
+          run_preflight Zeta23.StrictImprovement.CertificateSlackZetaSeamAtD \
+            certificate-slack-zeta-seam-at-d-build.log \
+            "Certificate-slack zeta at-D seam preflight failure"
+          run_preflight Zeta23.StrictImprovement.CertificateSlackZetaCoreGain \
+            certificate-slack-zeta-core-gain-build.log \
+            "Certificate-slack zeta core gain preflight failure"
+          run_preflight Zeta23.StrictImprovement.CertificateSlackZetaStrictSeamEventually \
+            certificate-slack-zeta-strict-seam-eventually-build.log \
+            "Certificate-slack strict seam eventually preflight failure"
+          run_preflight Zeta23.StrictImprovement.CertificateSlackZetaStrictFixedLambda \
+            certificate-slack-zeta-strict-fixed-lambda-build.log \
+            "Certificate-slack strict fixed-lambda preflight failure"
+          run_preflight Zeta23.StrictImprovement.CertificateSlackZetaStrictConcrete \
+            certificate-slack-zeta-strict-concrete-build.log \
+            "Certificate-slack strict concrete preflight failure"
+          run_preflight Zeta23.StrictImprovement.CertificateSlackZetaEndpointPassage \
+            certificate-slack-zeta-endpoint-passage-build.log \
+            "Certificate-slack endpoint passage preflight failure"
 
           lake build \
             Zeta23.StrictImprovement.ZetaWiderEndpointPassage \
@@ -467,6 +506,19 @@ jobs:
             spectral-zeta-wider-strict-concrete-build.log
             spectral-zeta-wider-endpoint-passage-build.log
             width-six-binning-build.log
+            certificate-slack-binning-build.log
+            certificate-slack-arithmetic-build.log
+            certificate-slack-four-point-interface-build.log
+            certificate-slack-core-four-build.log
+            certificate-slack-zeta-local-defect-build.log
+            certificate-slack-zeta-seam-defect-build.log
+            certificate-slack-zeta-at-d-build.log
+            certificate-slack-zeta-seam-at-d-build.log
+            certificate-slack-zeta-core-gain-build.log
+            certificate-slack-zeta-strict-seam-eventually-build.log
+            certificate-slack-zeta-strict-fixed-lambda-build.log
+            certificate-slack-zeta-strict-concrete-build.log
+            certificate-slack-zeta-endpoint-passage-build.log
             build-commit.txt
             lean-version.txt
             lake-version.txt

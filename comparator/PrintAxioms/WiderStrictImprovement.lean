@@ -38,3 +38,4 @@ import Zeta23.StrictImprovement.SpectralZetaWiderEndpointPassage
 #print axioms Zeta23.StrictImprovement.zeta_direct_strict_simple_fixed_lam
 #print axioms Zeta23.StrictImprovement.zeta_direct_strict_simple_endpoint_rational
 #print axioms Zeta23.StrictImprovement.zeta_spectral_strict_simple_endpoint_rational
+#print axioms Zeta23.StrictImprovement.zeta_certificate_slack_spectral_endpoint_rational
