@@ -99,7 +99,8 @@ theorem sum_traceNorm_dependent_principal_le
     change (∑ b, ∑ r, e (idx b r)) <= ∑ i, e i
     have hSigma : (∑ b, ∑ r, e (idx b r)) =
         ∑ br : Sigma gamma, e (idx br.1 br.2) := by
-      rw [Fintype.sum_sigma_type]
+      exact (Fintype.sum_sigma'
+        (fun b r => e (idx b r))).symm
     rw [hSigma]
     calc
       (∑ br : Sigma gamma, e (idx br.1 br.2)) =

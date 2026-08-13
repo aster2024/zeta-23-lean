@@ -133,7 +133,8 @@ theorem coreWideRepairEntry_pair_distance_lt
       16 * Real.pi := by
   apply abs_coord_sub_lt_sixteen_pi_of_wideRepairBin_eq
     (coreScaledOrdinate_range Z T C P hL hC)
-  rw [coreWideRepairEntry_bin, coreWideRepairEntry_bin]
+  exact (coreWideRepairEntry_bin Z T C P hL hC b k).trans
+    (coreWideRepairEntry_bin Z T C P hL hC b t).symm
 
 end StrictImprovement
 end Zeta23
