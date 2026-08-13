@@ -106,6 +106,7 @@ theorem wideRepairBlockIndex_injective
       | inl q' =>
           obtain ⟨b, u⟩ := q
           obtain ⟨b', u'⟩ := q'
+          change Fin 5 at k k'
           have hlocal := E.entry_injective h
           have hb : b = b' := hlocal.1
           subst b'
@@ -124,6 +125,8 @@ theorem wideRepairBlockIndex_injective
           | inl q' =>
               obtain ⟨b, u⟩ := q
               obtain ⟨b', z⟩ := q'
+              change Fin 5 at k
+              change Fin 3 at k'
               have hlocal := E.entry_injective h
               have hb : b = b' := hlocal.1
               subst b'
@@ -135,6 +138,8 @@ theorem wideRepairBlockIndex_injective
           | inr q' =>
               obtain ⟨b, u⟩ := q
               obtain ⟨b', z⟩ := q'
+              change Fin 5 at k
+              change Fin 4 at k'
               have hlocal := E.entry_injective h
               have hb : b = b' := hlocal.1
               subst b'
@@ -150,6 +155,8 @@ theorem wideRepairBlockIndex_injective
           | inl q' =>
               obtain ⟨b, z⟩ := q
               obtain ⟨b', u⟩ := q'
+              change Fin 3 at k
+              change Fin 5 at k'
               have hlocal := E.entry_injective h
               have hb : b = b' := hlocal.1
               subst b'
@@ -163,6 +170,7 @@ theorem wideRepairBlockIndex_injective
               | inl q' =>
                   obtain ⟨b, z⟩ := q
                   obtain ⟨b', z'⟩ := q'
+                  change Fin 3 at k k'
                   have hlocal := E.entry_injective h
                   have hb : b = b' := hlocal.1
                   subst b'
@@ -174,6 +182,8 @@ theorem wideRepairBlockIndex_injective
               | inr q' =>
                   obtain ⟨b, z⟩ := q
                   obtain ⟨b', z'⟩ := q'
+                  change Fin 3 at k
+                  change Fin 4 at k'
                   have hlocal := E.entry_injective h
                   have hb : b = b' := hlocal.1
                   subst b'
@@ -185,6 +195,8 @@ theorem wideRepairBlockIndex_injective
           | inl q' =>
               obtain ⟨b, z⟩ := q
               obtain ⟨b', u⟩ := q'
+              change Fin 4 at k
+              change Fin 5 at k'
               have hlocal := E.entry_injective h
               have hb : b = b' := hlocal.1
               subst b'
@@ -198,6 +210,8 @@ theorem wideRepairBlockIndex_injective
               | inl q' =>
                   obtain ⟨b, z⟩ := q
                   obtain ⟨b', z'⟩ := q'
+                  change Fin 4 at k
+                  change Fin 3 at k'
                   have hlocal := E.entry_injective h
                   have hb : b = b' := hlocal.1
                   subst b'
@@ -207,6 +221,7 @@ theorem wideRepairBlockIndex_injective
               | inr q' =>
                   obtain ⟨b, z⟩ := q
                   obtain ⟨b', z'⟩ := q'
+                  change Fin 4 at k k'
                   have hlocal := E.entry_injective h
                   have hb : b = b' := hlocal.1
                   subst b'
@@ -248,7 +263,7 @@ theorem sum_wideRepairBlockReward_eq
       ∑ b, wideRepairBinReward (E.occupancy b) := by
   simp [WideRepairBlock, WideRepairFiveBlock, WideRepairThreeResidue,
     WideRepairFourResidue, wideRepairBlockReward, wideRepairBinReward,
-    Fintype.sum_sigma_type]
+    Fintype.sum_sigma']
 
 theorem sum_wideRepairBlockReward_lower
     {S B : Type*} [Fintype B] [DecidableEq B]
