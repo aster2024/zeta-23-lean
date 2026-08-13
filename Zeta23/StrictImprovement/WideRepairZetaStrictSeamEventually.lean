@@ -55,17 +55,32 @@ theorem eventually_seamA_mult2_atD_with_wide_repair_gain
             (12 * P.w / P.L T + 3 * (1 - P.lam))) atTop
       (nhds (scale * wideRepairRewardThree +
         (9 * Real.sqrt 3 / 2) * (1 - P.lam))) := by
-    have h := tendsto_const_nhds.add
-      (herr.const_mul (3 * Real.sqrt 3 / 2))
-    convert h using 1 <;> ring
+    have hconst : Tendsto
+        (fun _ : ℝ => scale * wideRepairRewardThree) atTop
+        (nhds (scale * wideRepairRewardThree)) := tendsto_const_nhds
+    have hsum := hconst.add (herr.const_mul (3 * Real.sqrt 3 / 2))
+    have hend : scale * wideRepairRewardThree +
+        (3 * Real.sqrt 3 / 2) * (3 * (1 - P.lam)) =
+          scale * wideRepairRewardThree +
+            (9 * Real.sqrt 3 / 2) * (1 - P.lam) := by ring
+    rw [← hend]
+    simpa only using hsum
   have hmargin4Tendsto : Tendsto
       (fun T => scale * wideRepairRewardFour + 2 * Real.sqrt 3 *
           localCorrelationError T (P.atD T) (ThmD.cDT P.ϱ P.lam)
             (12 * P.w / P.L T + 3 * (1 - P.lam))) atTop
       (nhds (scale * wideRepairRewardFour +
         6 * Real.sqrt 3 * (1 - P.lam))) := by
-    have h := tendsto_const_nhds.add (herr.const_mul (2 * Real.sqrt 3))
-    convert h using 1 <;> ring
+    have hconst : Tendsto
+        (fun _ : ℝ => scale * wideRepairRewardFour) atTop
+        (nhds (scale * wideRepairRewardFour)) := tendsto_const_nhds
+    have hsum := hconst.add (herr.const_mul (2 * Real.sqrt 3))
+    have hend : scale * wideRepairRewardFour +
+        (2 * Real.sqrt 3) * (3 * (1 - P.lam)) =
+          scale * wideRepairRewardFour +
+            6 * Real.sqrt 3 * (1 - P.lam) := by ring
+    rw [← hend]
+    simpa only using hsum
   have hmargin5Tendsto : Tendsto
       (fun T => scale * wideRepairRewardFive +
         (5 * Real.sqrt 5 / 2) *
@@ -73,9 +88,16 @@ theorem eventually_seamA_mult2_atD_with_wide_repair_gain
             (12 * P.w / P.L T + 3 * (1 - P.lam))) atTop
       (nhds (scale * wideRepairRewardFive +
         (15 * Real.sqrt 5 / 2) * (1 - P.lam))) := by
-    have h := tendsto_const_nhds.add
-      (herr.const_mul (5 * Real.sqrt 5 / 2))
-    convert h using 1 <;> ring
+    have hconst : Tendsto
+        (fun _ : ℝ => scale * wideRepairRewardFive) atTop
+        (nhds (scale * wideRepairRewardFive)) := tendsto_const_nhds
+    have hsum := hconst.add (herr.const_mul (5 * Real.sqrt 5 / 2))
+    have hend : scale * wideRepairRewardFive +
+        (5 * Real.sqrt 5 / 2) * (3 * (1 - P.lam)) =
+          scale * wideRepairRewardFive +
+            (15 * Real.sqrt 5 / 2) * (1 - P.lam) := by ring
+    rw [← hend]
+    simpa only using hsum
   have hmargin3Ev := hmargin3Tendsto.eventually (Iio_mem_nhds hmargin3)
   have hmargin4Ev := hmargin4Tendsto.eventually (Iio_mem_nhds hmargin4)
   have hmargin5Ev := hmargin5Tendsto.eventually (Iio_mem_nhds hmargin5)
