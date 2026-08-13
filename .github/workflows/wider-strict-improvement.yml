@@ -372,6 +372,14 @@ jobs:
             quadratic-gain-build.log
             wider-quadratic-gain-build.log
             direct-four-point-interface-build.log
+            direct-core-four-energy-build.log
+            direct-zeta-wider-at-d-build.log
+            direct-zeta-wider-core-gain-build.log
+            direct-zeta-wider-seam-defect-build.log
+            direct-zeta-wider-strict-seam-eventually-build.log
+            direct-zeta-wider-strict-fixed-lambda-build.log
+            direct-zeta-wider-strict-concrete-build.log
+            direct-zeta-wider-endpoint-passage-build.log
             kernel-roots-build.log
             window-fourier-limit-build.log
             gram-defect-lower-build.log
