@@ -1,0 +1,42 @@
+{
+  "verdict": "PASS",
+  "repository": "aster2024/zeta-23-lean",
+  "branch": "codex/wider-strict-improvement-79828975",
+  "commit": "d368cc49d689576c81d7e4df0c135057d2462a27",
+  "tree": "7358bf04c0c86325c359505882bbdf8056ab523b",
+  "run_id": 31637227865,
+  "job_id": 94250501287,
+  "run_url": "https://github.com/aster2024/zeta-23-lean/actions/runs/31637227865",
+  "job_url": "https://github.com/aster2024/zeta-23-lean/actions/runs/31637227865/job/94250501287",
+  "started_at": "2026-08-12T20:21:37Z",
+  "completed_at": "2026-08-12T20:25:57Z",
+  "lean_toolchain": "leanprover/lean4:v4.33.0-rc2",
+  "mathlib_commit": "51e6992efd06126df61a496bebf8f49482a4e129",
+  "checks": {
+    "pinned_checkout": "PASS",
+    "pinned_toolchain_setup": "PASS",
+    "wider_serial_preflights": "PASS",
+    "wider_target_build": "PASS",
+    "default_root_build": "PASS",
+    "baseline_axiom_comparator": "PASS",
+    "wider_axiom_comparator": "PASS",
+    "forbidden_sorry_or_unsafe_axiom": "ABSENT",
+    "baseline_and_wider_axiom_unions_equal": true,
+    "receipt_upload": "PASS"
+  },
+  "artifact": {
+    "id": 9157559209,
+    "name": "wider-strict-improvement-receipts",
+    "size_in_bytes": 62199,
+    "digest": "sha256:999652ad62ce465898872e9f7ccf6c2981268f12a88bc6fefb0f3bf342e8b3d6",
+    "created_at": "2026-08-12T20:25:49Z",
+    "expires_at": "2026-11-10T20:21:28Z",
+    "public_metadata_verified": true,
+    "archive_downloaded_locally": false,
+    "download_boundary": "GitHub artifact archive download requires authenticated API access; no credential was read or requested."
+  },
+  "workflow_sha256": "8700c4c57153bbcb0169f1b98e69e7d6ab4ed7899513c960a2c422cb1f9e7eae",
+  "axiom_parser_sha256": "8ed1ae2b54b8615410095b83241a1882c55fcac3822e82003c20ab600d8533b4",
+  "fable_or_maas": "not_used",
+  "evidence_boundary": "This local receipt is a transcription of public GitHub API metadata plus the locked local commit. The authoritative build result is the linked public run."
+}

@@ -1,0 +1,1084 @@
+\documentclass[11pt,reqno]{amsart}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage[colorlinks=true,linkcolor=blue!55!black,citecolor=blue!55!black,urlcolor=blue!65!black]{hyperref}
+\hypersetup{
+  pdftitle={An Explicit Four-Point Improvement to the Unconditional Montgomery--Taylor Bound for Simple Zeta Zeros},
+  pdfauthor={Jizhou Guo},
+  pdfsubject={Analytic number theory and formal verification},
+  pdfkeywords={Riemann zeta function, simple zeros, pair correlation, Lean}
+}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\one}{\mathbf{1}}
+\newcommand{\pos}[1]{(#1)_{+}}
+\newcommand{\Ntot}{N}
+\newcommand{\Nsimple}{N_{0}^{\mathrm{s}}}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\rank}{rank}
+
+\title[An explicit four-point improvement]{An Explicit Four-Point Improvement to the Unconditional Montgomery--Taylor Bound for Simple Zeta Zeros}
+
+\author{Jizhou Guo}
+\address{Dots Studio, RedNote}
+\email{mitsuha2021b@gmail.com}
+
+\subjclass[2020]{11M06, 11M26, 15A42, 68V20}
+\keywords{Riemann zeta function, simple zeros, critical line, pair correlation, Montgomery--Taylor kernel, formal verification}
+
+\begin{document}
+
+\begin{abstract}
+Let $N(T,2T)$ count nontrivial zeros of the Riemann zeta function with
+$T<\operatorname{Im}\rho\le 2T$, with multiplicity, and let
+$N_0^{\mathrm{s}}(T,2T)$ count those zeros that are simple and lie on the
+critical line.  Building on the unconditional trace-and-pair-correlation
+framework of Claude, whose optimized endpoint constant is
+$H_*=0.672500703679\ldots$, we prove the explicit strict improvement
+\[
+ \liminf_{T\to\infty}
+ \frac{N_0^{\mathrm{s}}(T,2T)}{N(T,2T)}
+ \ge H_*+\frac{1}{79\,828\,975}.
+\]
+The new ingredient is a width-six, four-point packing argument.  We localize
+small values of the normalized Montgomery--Taylor kernel near its first six
+positive zeros, prove an exact three-coordinate energy lower bound
+\[
+ \delta_{1,6}\ge
+ \frac{2810232522752}{834437357315980975},
+\]
+and combine the double counting of six Gram edges with a sharp trace-zero
+four-block inequality.  Every terminal comparison is rational.  The full
+extension, including the fixed-window transfer and endpoint passage, is
+checked in Lean at a pinned public commit; executable ledgers independently
+enumerate all $6^3=216$ root-index budgets.  We also determine the ceiling of
+this frozen finite interface: the next unit fraction $1/79\,828\,974$ cannot
+be obtained without strengthening at least one of its inputs.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+
+Let $\rho=\beta+i\gamma$ run over the nontrivial zeros of the Riemann zeta
+function.  We write
+\[
+ N(T,2T)=\#\{\rho:T<\gamma\le 2T\},
+\]
+counting multiplicity, and let $N_0^{\mathrm{s}}(T,2T)$ count the simple
+zeros in the same range with $\beta=1/2$.
+
+Montgomery's pair-correlation argument gives, under the Riemann hypothesis,
+the celebrated lower proportion $2/3$ of simple zeros
+\cite{Montgomery1973}.  Optimizing the test function yields the
+Montgomery--Taylor constant $0.6725\ldots$ \cite{Montgomery1975,CheerGoldston1993}.
+Subsequent conditional improvements use additional information or wider
+positivity, including the semidefinite-programming bound of Chirre,
+Gon\c{c}alves and de Laat \cite{ChirreGoncalvesDeLaat2020}.  Separately,
+an unconditional Montgomery form-factor theorem summing over all complex
+zeros was proved by Baluyot, Goldston, Suriajaya and Turnage-Butterbaugh
+\cite{BaluyotEtAl2024}, and recent work has clarified what
+would follow from removing the hypothesis from the zero-side argument
+\cite{BaluyotEtAl2025,GoldstonSuriajaya2025,GoldstonSuriajaya2026}.
+
+The parent manuscript \cite{Claude2026} replaces the missing zero-side
+positivity by finite-dimensional Hermitian linear algebra.  It proves
+unconditionally that the Montgomery--Taylor endpoint is attained for zeros
+that are simultaneously simple and on the critical line.  The present paper
+is a companion improvement to that theorem.  We do not alter its prime-side
+or explicit-formula analysis.  Instead, we strengthen the local spectral
+defect that is inserted into the same analytic transfer.
+
+Define
+\begin{equation}\label{eq:cstar}
+ c_*=
+ \frac{\sqrt2\tan(1/\sqrt2)}{1+\tan(1/\sqrt2)/\sqrt2},
+ \qquad H_*=2-\frac1{c_*}.
+\end{equation}
+Thus $H_*=0.672500703679411\ldots$.
+
+\begin{theorem}[Main theorem]\label{thm:main}
+For every $\eta>0$ there is $T_0$ such that, for all $T\ge T_0$,
+\begin{equation}\label{eq:main-epsilon}
+ \left(H_*+\frac1{79\,828\,975}-\eta\right)N(T,2T)
+ \le N_0^{\mathrm{s}}(T,2T).
+\end{equation}
+Consequently,
+\begin{equation}\label{eq:main-liminf}
+ \liminf_{T\to\infty}
+ \frac{N_0^{\mathrm{s}}(T,2T)}{N(T,2T)}
+ \ge H_*+\frac1{79\,828\,975}.
+\end{equation}
+\end{theorem}
+
+Numerically, the certified increment is
+$1.2526779906669\cdot10^{-8}$.  Its small size should not obscure the
+structural point: the two-trace endpoint is not rigid.  A local energy defect
+survives all off-line Hermitian cancellations and gives a strictly positive
+unconditional gain.
+
+The proof has three new components.
+\begin{enumerate}[label=(\roman*)]
+\item We localize every sufficiently small value of the endpoint kernel on
+      $[0,12\pi]$ inside radius $1/8$ of one of its first six positive zeros.
+\item For three coordinates $a,b,a+b$, exact separation of the localized
+      roots gives a uniform rational energy lower bound.
+\item We pack four simple-zero labels at a time.  The four constituent
+      triples count the six Gram edges twice, while a trace-zero Hermitian
+      four-block converts Frobenius energy to trace-norm mass with factor two.
+\end{enumerate}
+
+All transcendental estimates used to reach the finite interface are written
+as directed rational inequalities.  Two short Python ledgers check the 216
+terminal cases and the final cross products using \texttt{fractions.Fraction}.
+The complete route is also formalized in Lean 4
+\cite{deMouraEtAl2021,Mathlib2020}.  The human proof, executable arithmetic,
+and formal proof are deliberately separate evidence layers.
+
+\section{The analytic-to-matrix transfer}
+
+Because the new argument modifies the rank--trace step of
+\cite[Sections~2--7]{Claude2026}, we spell out the complete interface used
+here.  In particular, the labels, matrices, normalization, boundary loss and
+fixed-window comparison are not left implicit.
+
+For $0<\lambda\le1$ put
+\begin{equation}\label{eq:fixed-lambda-constant}
+ \vartheta_\lambda=\frac{\lambda}{\sqrt2},\qquad
+ c_\lambda^*=\frac{\sqrt2\sin\vartheta_\lambda}
+ {\cos\vartheta_\lambda+\vartheta_\lambda\sin\vartheta_\lambda},
+ \qquad H_\lambda=2-(c_\lambda^*)^{-1}.
+\end{equation}
+Thus $H_1=H_*$.  Fix $\lambda<1$ while $T\to\infty$, and write
+\begin{align*}
+ \ell&=\log(T/2\pi), & L&=\lambda\ell, & h&=2\pi/L,\\
+ d&=\lfloor LT/(2\pi)\rfloor,
+ & \tau_k&=T+kh &&(0\le k<d).
+\end{align*}
+Let $w=1$ and let $\chi$ be a fixed nondecreasing $C^3$ ramp which is zero to
+the left of $0$ and one to the right of $1$; in particular,
+$0\le\chi\le1$.  We use the Montgomery--Taylor window
+\begin{equation}\label{eq:finite-window}
+ \phi_T(u)=
+ \sqrt{\cos(\sqrt2\lambda u/L)}\,
+ \chi\left(\frac{L/2-|u|}{w}\right),
+ \qquad
+ a_T=\frac1L\int_{\mathbb R}\phi_T(u)^2\,du,
+\end{equation}
+and the Fourier convention
+$\widehat\phi_T(r)=\int\phi_T(u)e^{iru}\,du$.  On the support of the
+window the cosine in \eqref{eq:finite-window} is at least $3/4$, and hence
+$1/2\le a_T\le1$ for all sufficiently large $T$.
+
+For a zero $\rho$, set $\gamma_\rho=-i(\rho-1/2)$; it is real precisely on
+the critical line, and the functional equation sends $\gamma_\rho$ to
+$\overline{\gamma_\rho}$.  The finite Weil matrix is the Hermitian matrix of
+the zero-side form on the modulated windows
+$\phi_T(u)e^{-i\tau_ku}$.  Summing over the distinct nontrivial zeros once
+and writing their multiplicities explicitly, this says
+\begin{equation}\label{eq:weil-entry}
+ (\mathcal G_T)_{kl}=\sum_\rho m_\rho\,
+ \widehat\phi_T(\gamma_\rho-\tau_k)
+ \overline{\widehat\phi_T(\overline{\gamma_\rho}-\tau_l)}.
+\end{equation}
+Pairing $\rho$ with $1-\overline\rho$ makes
+\eqref{eq:weil-entry} Hermitian.  We normalize it by
+\begin{equation}\label{eq:weil-normalization}
+ \widehat{\mathcal G}_T=\frac{\mathcal G_T}{a_TL^2}.
+\end{equation}
+For a simple critical-line zero $\rho=1/2+i\gamma$, its contribution to
+$\widehat{\mathcal G}_T$ is the rank-one matrix $v_\gamma v_\gamma^*$, where
+\begin{equation}\label{eq:finite-vector}
+ v_\gamma(k)=\frac{\widehat\phi_T(\gamma-\tau_k)}{L\sqrt{a_T}},\qquad
+ w_\gamma=\|v_\gamma\|_2^2,\qquad
+ x_\gamma=\frac{v_\gamma}{\sqrt{w_\gamma}}.
+\end{equation}
+The last expression is used only after $w_\gamma>0$ has been established.
+
+Define the interior simple core
+\begin{align}\label{eq:simple-core}
+ \mathcal S_T&=\left\{\frac12+i\gamma:
+   \zeta\left(\frac12+i\gamma\right)=0,\ m_\rho=1,\right.\notag\\[-2mm]
+ &\hspace{39mm}\left.T+3\le\gamma\le2T-3\right\},
+ & s=s_T=|\mathcal S_T|.
+\end{align}
+Put $I'=(T-\sqrt T,2T+\sqrt T]$, let $s_1$ count the simple critical-line
+zeros in $I'$, and set $E_{\partial}=s_1-s$.  Thus $E_{\partial}$ counts the
+simple labels removed from $I'$ when the core is selected.  Also put
+\begin{equation}\label{eq:dimension-D}
+ D=D_T=\frac{LT}{2\pi}.
+\end{equation}
+The matrix $G_T=(\langle x_\gamma,x_{\gamma'}\rangle)_
+{\gamma,\gamma'\in\mathcal S_T}$ is the simple-core Gram matrix; it has unit
+diagonal.  The simple zeros in $I'$ but omitted from the core lie in two
+outer strips of total length $2\sqrt T$ and two interior strips of length
+three.  The local zero-count
+bound $N(t,t+1)=O(\log(|t|+3))$ therefore gives
+\begin{equation}\label{eq:boundary-loss}
+ E_{\partial}(T)=O(\sqrt T\log T)=o(N(T,2T)).
+\end{equation}
+
+We next record the analytic matrix estimates in the exact normalization just
+defined.
+
+\begin{lemma}[Fixed-window matrix package]\label{lem:matrix-package}
+For every fixed $0<\lambda<1$, as $T\to\infty$,
+\begin{align}
+ \tr\widehat{\mathcal G}_T&=N(T,2T)+o(N(T,2T)),\label{eq:trace-one}\\
+ \|\widehat{\mathcal G}_T\|_F^2
+   &=(c_\lambda^*)^{-1}N(T,2T)+o(N(T,2T)),\label{eq:trace-two}\\
+ \frac{s}{N(T,2T)}&\ge H_\lambda-o(1),\qquad
+ \frac{D}{N(T,2T)}=\lambda+o(1),\qquad
+ \frac{s}{N(T,2T)}\le1.\label{eq:parent-density}
+\end{align}
+The normalized tail outside $I'$ has trace norm $o(1)$.
+No assertion here assumes RH or a zero-density estimate.
+\end{lemma}
+
+\begin{proof}
+Poisson summation at spacing $h=2\pi/L$ gives, without aliasing,
+\[
+ \sum_{k\in\mathbb Z}
+ \widehat\phi_T(\gamma-\tau_k)
+ \overline{\widehat\phi_T(\gamma'-\tau_k)}
+ =L\,\widehat{\phi_T^2}(\gamma-\gamma').
+\]
+The diagonal case is $a_TL^2$.  Applying Weil's explicit formula to the
+finite family and using the Montgomery--Vaughan inequality for the prime
+powers $n\le e^L=(T/2\pi)^\lambda$ gives
+\eqref{eq:trace-one}.  The same calculation for the squared matrix gives
+\[
+ \|\widehat{\mathcal G}_T\|_F^2
+ =\frac{b_T+\lambda^2J_T}{\lambda a_T^2}\,N(T,2T)+o(N(T,2T)),
+\]
+where $b_T=L^{-1}\int\phi_T^4$ and
+$J_T=2L^{-3}\int_0^L(\phi_T^2\star\phi_T^2)(y)y\,dy$.
+The fixed-width ramps have total mass $O(1/L)$, so
+$(a_T,b_T,J_T)$ converge to the scale-free moments of
+$v_\lambda(s)=\cos(\sqrt2\lambda s)$.  The elementary Euler--Lagrange
+calculation for this profile gives
+$\lambda a_T^2/(b_T+\lambda^2J_T)\to c_\lambda^*$, proving
+\eqref{eq:trace-two}.  These are the trace calculations in
+\cite[Sections~2, 5 and 7.1]{Claude2026}; the preceding display states all
+normalizations needed here.
+
+On the zero side, write
+$\widehat{\mathcal G}_T=\widehat{\mathcal A}_T+\widehat{\mathcal E}_T$,
+where $\widehat{\mathcal A}_T$ is the contribution of the zeros with real
+ordinate in $I'$ and $\widehat{\mathcal E}_T$ is the tail.  Each
+critical-line point contributes a positive rank-one
+form.  Each off-line functional-equation pair contributes the pullback of a
+$2\times2$ form of signature $(1,1)$, so its positive index is at most one.
+For Hermitian $P\succeq0$ and Hermitian $Q$, with
+$\rank P\le r$ and $n_+(Q)\le b$, von Neumann's trace inequality yields
+\begin{equation}\label{eq:rank-trace-basic}
+ r\ge2\tr P+4\tr Q-4b-\|P+Q\|_F^2.
+\end{equation}
+Indeed, writing $Q=Q_+-Q_-$ and arranging the eigenvalues of $P,Q_+,Q_-$
+in decreasing order, von Neumann bounds the only unfavorable cross term by
+$\sum_i p_i n_i$; the scalar inequalities
+$(p_i-n_i)^2\ge2(p_i-n_i)-1$ and $q_j^2\ge4q_j-4$ then sum to
+\eqref{eq:rank-trace-basic}.  Repeated eigenvalues follow by continuity.
+Applying \eqref{eq:rank-trace-basic} to $\widehat{\mathcal A}_T$, with the
+simple critical-line points on the rank side and the multiple on-line points
+and off-line pairs on the index side, gives
+\[
+ s_1
+ \ge4\tr\widehat{\mathcal A}_T-
+ \|\widehat{\mathcal A}_T\|_F^2-2N(I').
+\]
+Proposition~4.2 of \cite{Claude2026} gives
+$\|\widehat{\mathcal E}_T\|_1=O_\lambda(T^{\lambda/2-1})$.
+Consequently $|\tr\widehat{\mathcal E}_T|=o(N)$ and
+\[
+ \left|\|\widehat{\mathcal A}_T\|_F^2-
+ \|\widehat{\mathcal G}_T\|_F^2\right|
+ \le \|\widehat{\mathcal E}_T\|_1
+ \left(2\|\widehat{\mathcal G}_T\|_F+
+ \|\widehat{\mathcal E}_T\|_1\right)=o(N).
+\]
+Also $N(I')=N(T,2T)+O(\sqrt T\log T)$.  Equations
+\eqref{eq:trace-one}--\eqref{eq:trace-two}, followed by
+$s=s_1-E_{\partial}$ and \eqref{eq:boundary-loss}, therefore give the first
+inequality in \eqref{eq:parent-density}.  Whenever $H_\lambda>0$, this first,
+defect-free pass also proves that the core is nonempty for all large $T$.
+The second relation in \eqref{eq:parent-density} follows from
+$D=LT/(2\pi)$ and the Riemann--von Mangoldt formula; the last is exact because
+$\mathcal S_T\subset(T,2T]$.  The displayed tail estimate is exactly the
+term-by-term consequence of two integrations by parts in $\widehat\phi_T$
+and the unit-window zero count; see \cite[Proposition~4.2]{Claude2026}.
+\end{proof}
+
+The four-point improvement enters through the following finite-height
+version of the same zero-side calculation.  Here $\delta_\lambda$ is a
+certified \emph{lower bound} for the finite/full four-point energy, not the
+energy itself.
+
+\begin{lemma}[Refined unit-core rank--trace inequality]
+\label{lem:refined-rank-trace}
+Let $A=P+Q$ be Hermitian, where
+$P=\sum_{j=1}^s x_jx_j^*$, where $s\ge1$ and $\|x_j\|=1$, and suppose
+$n_+(Q)\le b$.  If $G=(\langle x_i,x_j\rangle)_{i,j\le s}$ and
+$V=\|G-I_s\|_1/2$, then
+\begin{equation}\label{eq:refined-unit-rank-trace}
+ \|A\|_F^2\ge
+ 2\tr P-s+4\tr Q-4b+\frac{V^2}{s}.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Let $d$ be the ambient dimension and, for a positive semidefinite matrix
+$R$ on $\mathbb C^m$, put
+\[
+ \mathcal D_m(R)=\sum_{i=1}^m(1-\lambda_i(R))_+^2.
+\]
+Splitting $Q=Q_+-Q_-$, von Neumann's trace inequality and
+\[
+ (p-n)^2\ge2p-1-4n+(1-p)_+^2,
+ \qquad q^2\ge4q-4
+\]
+give, after summing the ambient $d$ eigenvalue contributions,
+\[
+ \|P+Q\|_F^2\ge
+ 2\tr P-d+4\tr Q-4b+\mathcal D_d(P).
+\]
+This is where the change from the ambient spectrum to the Gram spectrum must
+be recorded.  If $W$ has columns $x_1,\ldots,x_s$, then
+$P=WW^*$ and $G=W^*W$.  If their common nonzero eigenvalues are
+$\mu_1,\ldots,\mu_r$, their zero multiplicities are $d-r$ and $s-r$,
+respectively.  Since $(1-0)_+^2=1$, it follows exactly that
+\[
+ \mathcal D_d(P)-d
+ =\sum_{i=1}^r(1-\mu_i)_+^2-r
+ =\mathcal D_s(G)-s.
+\]
+Substitution therefore changes the preceding ambient bound into
+\[
+ \|P+Q\|_F^2\ge
+ 2\tr P-s+4\tr Q-4b+\mathcal D_s(G).
+\]
+Let $p_1,\ldots,p_s\ge0$ be the eigenvalues of $G$, including its zero
+eigenvalues.  Then $\mathcal D_s(G)=\sum_j(1-p_j)_+^2$.
+The unit diagonal gives $\sum_jp_j=s$, hence the total mass below one is
+\[
+ \sum_j(1-p_j)_+=\frac12\sum_j|p_j-1|
+ =\frac12\|G-I_s\|_1=V.
+\]
+Cauchy--Schwarz now gives
+$\sum_j(1-p_j)_+^2\ge V^2/s$, proving
+\eqref{eq:refined-unit-rank-trace}.  This derivation does not require $P$
+and $Q$ to commute.
+\end{proof}
+
+\begin{proposition}[Four-point transfer]\label{prop:transfer}
+Fix $\lambda$ with $H_\lambda>0$ and a constant $\delta_\lambda\ge0$.
+For each sufficiently large $T$ with $s>0$, suppose that every packed
+width-six four-tuple of the core at that height has six-edge energy at least
+$2\delta_\lambda$.  Then, at each height for which this local hypothesis
+holds,
+\begin{equation}\label{eq:four-defect}
+ N_0^{\mathrm s}(T,2T)\ge
+ 4\tr\widehat{\mathcal G}_T-
+ \|\widehat{\mathcal G}_T\|_F^2-2N(T,2T)
+ +\frac{\delta_\lambda}{8s}
+   \pos{s-\frac D2-3}^{2}-o(N(T,2T)).
+\end{equation}
+If the same $\delta_\lambda$ satisfies the local hypothesis for every
+$T\ge T_1(\lambda,\delta_\lambda)$, then
+\begin{equation}\label{eq:fixed-lambda-form}
+ \liminf_{T\to\infty}\frac{N_0^{\mathrm{s}}(T,2T)}{N(T,2T)}
+ \ge H_\lambda+
+ \frac{\delta_\lambda}{8}
+ \pos{H_\lambda-\frac\lambda2}^{2}.
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+Partition the scaled ordinates $L\gamma$ into the half-open intervals
+$I_j=[L(T+3)+12\pi j,L(T+3)+12\pi(j+1))$, $j\ge0$.  For every core
+ordinate, $0\le L\gamma-L(T+3)\le LT$; hence the occupied indices satisfy
+$0\le j\le\lfloor D/6\rfloor$.  There are therefore at most $D/6+1$ bins.
+Taking consecutive groups of four in each bin loses at most three
+labels per occupied bin and gives
+\[
+ t\ge\frac14\pos{s-D/2-3}.
+\]
+For the unit core vectors, let $P_0=\sum_{\gamma\in\mathcal S_T}
+x_\gamma x_\gamma^*$.  The actual simple-core part is
+$P_w=\sum w_\gamma x_\gamma x_\gamma^*$ with $0<w_\gamma\le1$.
+Let $s_2$ be the number of distinct multiple critical-line zeros in $I'$ and
+let $p$ count the off-line functional-equation pairs there.  Before
+unitization, the complement
+$Q_w=\widehat{\mathcal A}_T-P_w$ has positive index at most
+\[
+ b=E_{\partial}+s_2+p.
+\]
+This is the direct sum/pullback count: the excluded simple labels and
+multiple on-line labels give positive one-dimensional forms, and each
+off-line pair gives one positive direction.  Since
+$P_0-P_w\succeq0$, the unitized complement
+\[
+ Q_0=\widehat{\mathcal A}_T-P_0=Q_w-(P_0-P_w)
+\]
+satisfies $n_+(Q_0)\le n_+(Q_w)\le b$ by the min--max principle.
+Lemma~\ref{lem:refined-rank-trace} therefore applies.  Its spectral term is
+$V^2/s$, where
+$V=\|G_T-I_s\|_1/2$.  The four-block calculation in
+Section~\ref{sec:four-point} gives
+$V\ge t\sqrt{2\delta_\lambda}$ and hence
+\[
+ \frac{V^2}{s}\ge\frac{2t^2\delta_\lambda}{s}
+ \ge\frac{\delta_\lambda}{8s}\pos{s-D/2-3}^2.
+\]
+Because $\tr P_0=s$ and $\tr Q_0=\tr\widehat{\mathcal A}_T-s$,
+Lemma~\ref{lem:refined-rank-trace} gives
+\[
+ \|\widehat{\mathcal A}_T\|_F^2
+ \ge4\tr\widehat{\mathcal A}_T-3s-4b+\frac{V^2}{s}.
+\]
+The multiplicity count
+$N(I')\ge s+E_{\partial}+2s_2+2p$ implies
+$4b\le2N(I')-2s+2E_{\partial}$.  Rearranging, and using
+$N_0^{\mathrm s}(T,2T)\ge s$, yields
+\[
+ N_0^{\mathrm s}(T,2T)\ge
+ 4\tr\widehat{\mathcal A}_T-
+ \|\widehat{\mathcal A}_T\|_F^2-2N(I')-2E_{\partial}
+ +\frac{V^2}{s}.
+\]
+The tail and boundary estimates in Lemma~\ref{lem:matrix-package} replace
+$\widehat{\mathcal A}_T$ by $\widehat{\mathcal G}_T$ and $N(I')$ by
+$N(T,2T)$; they absorb $E_{\partial}$ at total cost $o(N)$.
+Together with the displayed lower bound for $V^2/s$, this proves
+\eqref{eq:four-defect}.  Divide it by $N=N(T,2T)$, use
+Lemma~\ref{lem:matrix-package}, and note that $s/N\le1$ makes the reciprocal
+factor at least one.  Under the eventual hypothesis in the statement, the
+positive-part argument tends from below to
+$\pos{H_\lambda-\lambda/2}$ along every sufficiently large height, proving
+\eqref{eq:fixed-lambda-form}.
+\end{proof}
+
+We finally make explicit how an endpoint energy bound becomes a legitimate
+fixed-window input.  Define
+\begin{equation}\label{eq:fixed-kernel}
+ K_\lambda(x)=\int_{-1/2}^{1/2}
+   \cos(\sqrt2\lambda s)\cos(xs)\,ds,\qquad
+ R_\lambda(x)=\frac{K_\lambda(x)}{K_\lambda(0)}.
+\end{equation}
+For the vectors \eqref{eq:finite-vector}, Poisson summation identifies the
+full-grid correlation with the Fourier transform of $\phi_T^2$.  The omitted
+grid tail has normalized size
+\begin{equation}\label{eq:grid-tail}
+ 0\le q_T\le
+ \frac{4c_\chi^2}{81L}+\frac{113c_\chi^2}{648L^2}=o(1),
+\end{equation}
+where $c_\chi$ depends only on the fixed ramp.  Finite Cauchy--Schwarz gives
+$w_\gamma\in[1-q_T,1]$, and scalar normalization gives a uniform correlation
+error at most $2q_T$.
+
+The $L^1$ distance between $\phi_T^2$ and the sharp profile
+$\cos(\sqrt2\lambda u/L)1_{[-L/2,L/2]}$ is at most $2w$.  The numerator error
+is therefore at most $2w/L$, the zero-frequency mass error at most $4w/L$,
+and the actual mass is at least $1/2$ when $16w\le L$.  Hence the normalized
+full-grid kernel differs from $R_\lambda$ by at most $12w/L$.  Moreover
+\[
+ |\cos(\sqrt2\lambda s)-\cos(\sqrt2s)|\le1-\lambda
+ \quad(|s|\le1/2),
+\]
+while $K_\lambda(0)\ge3/4$.  Comparing numerator and denominator in
+\eqref{eq:fixed-kernel} gives, uniformly in $x$,
+\begin{equation}\label{eq:kernel-comparison}
+ |R_\lambda(x)-R_1(x)|\le3(1-\lambda).
+\end{equation}
+Combining the three comparisons, every finite normalized Gram correlation is
+within
+\begin{equation}\label{eq:correlation-error}
+ \epsilon_T=\frac{12w}{L}+3(1-\lambda)+2q_T
+ \longrightarrow3(1-\lambda)
+\end{equation}
+of the endpoint correlation.  Since $|u|,|v|\le1$ and $|u-v|\le\epsilon_T$
+imply $v^2\ge u^2-2\epsilon_T$, a three-edge energy loses at most
+$6\epsilon_T$.  Therefore the actual finite-height four-point defect
+parameter tends to
+\begin{equation}\label{eq:eighteen-loss}
+ \delta_*-6\cdot3(1-\lambda)=\delta_*-18(1-\lambda).
+\end{equation}
+This proves, rather than assumes, the fixed-window comparison used in
+Section~\ref{sec:endpoint}.
+
+\section{The endpoint kernel}
+
+The endpoint profile is
+\[
+ v(s)=\cos(\sqrt2s),\qquad -\frac12\le s\le\frac12.
+\]
+Define the real Fourier kernel and its normalization by
+\begin{equation}\label{eq:kernel-def}
+ K(x)=\int_{-1/2}^{1/2}\cos(\sqrt2s)e^{ixs}\,ds,
+ \qquad R(x)=\frac{K(x)}{K(0)}.
+\end{equation}
+The imaginary part vanishes by parity.  Put
+\begin{equation}\label{eq:kappa}
+ \kappa=\sqrt2\tan(1/\sqrt2).
+\end{equation}
+Away from the removable points $x^2=2$, product-to-sum gives
+\begin{equation}\label{eq:kernel-closed}
+ K(x)=\frac{2\cos(1/\sqrt2)}{x^2-2}
+ \left(x\sin\frac x2-\kappa\cos\frac x2\right).
+\end{equation}
+Moreover $0<K(0)\le1$, and hence $|R(x)|\ge|K(x)|$.
+
+For $n\ge1$, let
+\begin{equation}\label{eq:roots}
+ z_n=2\pi n+\eps_n
+\end{equation}
+be the positive root in the $n$th positive half-period.  Equivalently,
+\begin{equation}\label{eq:root-equation}
+ (2\pi n+\eps_n)\tan(\eps_n/2)=\kappa.
+\end{equation}
+The inherited root package gives
+\begin{equation}\label{eq:offset-basic}
+ 0<\eps_{n+1}<\eps_n<\frac25,
+ \qquad \eps_3>\frac18.
+\end{equation}
+
+\section{Exact root neighborhoods}
+
+Set
+\begin{equation}\label{eq:rho-tau}
+ \rho=\frac18,
+ \qquad \tau=\frac{1815107}{989072150}.
+\end{equation}
+For $1\le n\le6$ define
+\[
+ g_n(e)=(2\pi n+e)\sin(e/2)-\kappa\cos(e/2).
+\]
+Its derivative is
+\begin{equation}\label{eq:gn-derivative}
+ g_n'(e)=\left(1+\frac\kappa2\right)\sin\frac e2
+       +\frac{2\pi n+e}{2}\cos\frac e2.
+\end{equation}
+
+We use the rational bounds
+\begin{equation}\label{eq:elementary-bounds}
+ \frac65<\kappa\le\frac{49}{40},\qquad
+ 3<\pi<\frac{22}{7},\qquad
+ 2\cos(1/\sqrt2)\ge\frac32.
+\end{equation}
+On $-1/8\le e\le21/40$, one has
+\[
+ \cos(e/2)\ge C:=\frac{12359}{12800}
+\]
+and therefore
+\begin{equation}\label{eq:Ln}
+ g_n'(e)\ge L_n:=
+ \left(3n-\frac1{16}\right)\frac{12359}{12800}
+ -\frac{129}{1280}>0.
+\end{equation}
+Integration from the root, followed by \eqref{eq:kernel-closed}, gives the
+following exact local slopes.
+
+\begin{lemma}[Linear root neighborhoods]\label{lem:slopes}
+If $1\le n\le6$ and $|x-z_n|\le1/8$, then
+\begin{equation}\label{eq:local-slope}
+ |R(x)|\ge \frac{|x-z_n|}{d_n},
+\end{equation}
+where
+\begin{equation}\label{eq:dn-table}
+\begin{aligned}
+d_1&=\frac{930982144}{82354251},&
+d_2&=\frac{3442403584}{169559355},&
+d_3&=\frac{2513265408}{85588153},\\
+d_4&=\frac{13223160064}{343969563},&
+d_5&=\frac{20492495104}{431174667},&
+d_6&=\frac{9782600448}{172793257}.
+\end{aligned}
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+If $x=2\pi n+e$, the segment joining $e$ to $\eps_n$ stays in the strip on
+which \eqref{eq:Ln} holds.  Thus
+$|g_n(e)|\ge L_n|e-\eps_n|$.  On the same strip,
+$x<44n/7+21/40$.  Equations \eqref{eq:kernel-closed} and
+\eqref{eq:elementary-bounds} imply
+\[
+ |R(x)|\ge|K(x)|\ge
+ \frac{3L_n}{2(44n/7+21/40)^2}|e-\eps_n|.
+\]
+Exact reduction of the six rational reciprocals gives
+\eqref{eq:dn-table}.
+\end{proof}
+
+Two offset refinements will be needed.  The elementary tangent bound
+$\tan u\le u/(1-u^2/2)$ gives
+\[
+ \left(4\pi+\frac{11}{60}\right)\tan\frac{11}{120}
+ <\frac{235708}{200753}<\frac65<\kappa,
+\]
+so monotonicity of \eqref{eq:root-equation} yields
+\begin{equation}\label{eq:eps2}
+ \eps_2>\frac{11}{60}.
+\end{equation}
+Conversely,
+\[
+ \left(12\pi+\frac1{15}\right)\tan\frac1{30}
+ >\frac{2831}{2250}>\frac{49}{40}\ge\kappa,
+\]
+and hence
+\begin{equation}\label{eq:eps6}
+ \eps_6<\frac1{15}.
+\end{equation}
+
+\section{Six-root localization}
+
+\begin{proposition}[Localization]\label{prop:localization}
+For $0\le x\le12\pi$,
+\begin{equation}\label{eq:localization}
+ |R(x)|<\tau
+ \quad\Longrightarrow\quad
+ \min_{1\le n\le6}|x-z_n|<\frac18.
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+It is enough to prove the contrapositive with $K$, because
+$|K(x)|\le|R(x)|$.  The interval is split at multiples of $\pi$.
+
+On $[0,\pi]$, the inherited initial estimate gives
+$K(x)\ge165/512>\tau$.  On each positive half-period
+$[2\pi n,(2n+1)\pi]$, $1\le n\le5$, if the point is outside the radius
+$1/8$ neighborhood then monotonicity and Lemma~\ref{lem:slopes} give
+\begin{equation}\label{eq:positive-half}
+ |K(x)|\ge
+ \frac32\frac{L_n/8}{(22(2n+1)/7)^2}>\tau.
+\end{equation}
+The weakest comparison is $n=5$, for which the positive slack is
+\[
+ \frac{3563427}{1585971200}-\tau
+ =\frac{106740326833}{259279329689600}>0.
+\]
+
+On the five zero-free half-periods $[(2m-1)\pi,2m\pi]$, $1\le m\le5$,
+the two numerator terms in \eqref{eq:kernel-closed} have the same sign.  The
+refined bound $\kappa\ge592688/490449$ gives
+\begin{equation}\label{eq:zero-free}
+ |K(x)|\ge
+ \frac32\frac{592688/490449}{(44m/7)^2}\ge\tau.
+\end{equation}
+At $m=5$ equality holds.  This is sufficient because the premise in
+\eqref{eq:localization} is strict.
+
+It remains to treat $[11\pi,12\pi]$.  Write $x=12\pi+e$ with
+$-\pi\le e\le0$.  If $e\le-1/8$, then
+$\sin(-e/2)\ge\sin(1/16)>1/17$, and
+\[
+ |K(x)|\ge\frac32\frac{33/17}{(264/7)^2}
+ =\frac{49}{23936}>\tau.
+\]
+If $-1/8<e\le\eps_6-1/8$, integrate \eqref{eq:Ln} over the final length
+$1/8$ to obtain
+\[
+ |K(x)|\ge\frac32\frac{L_6/8}{(264/7)^2}
+ =\frac{172793257}{76126617600}>\tau.
+\]
+Together with the already localized neighborhood $|x-z_6|<1/8$, these
+estimates exhaust the points of $[0,12\pi]$ that must be considered.
+\end{proof}
+
+\section{The wider three-coordinate energy}
+
+Define
+\begin{equation}\label{eq:delta16-def}
+ \delta_{1,6}:=
+ \min_{\substack{a,b\ge0\\a+b\le12\pi}}
+ \bigl(R(a)^2+R(b)^2+R(a+b)^2\bigr).
+\end{equation}
+
+\begin{theorem}[Exact local energy]\label{thm:local-energy}
+One has
+\begin{equation}\label{eq:delta-star}
+ \delta_{1,6}\ge\delta_*:=
+ \frac{2810232522752}{834437357315980975}.
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+Suppose the energy in \eqref{eq:delta16-def} were smaller than $\delta_*$.
+Exact subtraction shows $\delta_*<\tau^2$, so each of
+$|R(a)|,|R(b)|,|R(a+b)|$ is smaller than $\tau$.  By
+Proposition~\ref{prop:localization}, there are $i,j,k\in\{1,\ldots,6\}$
+such that
+\[
+ |a-z_i|<\frac18,\quad |b-z_j|<\frac18,
+ \quad |a+b-z_k|<\frac18.
+\]
+Consequently $|z_i+z_j-z_k|<3/8$.  If $i+j\ne k$, the nonzero integral
+multiple of $2\pi$ dominates the three offsets and gives
+$|z_i+z_j-z_k|>2\pi-4/5>3/8$, a contradiction.  Hence $i+j=k$.
+
+Up to swapping $i$ and $j$, there are eight additive triples other than
+$(3,3,6)$.  For them, monotonicity of the offsets and \eqref{eq:eps2} give
+\[
+ \eps_i+\eps_j-\eps_k>\frac{11}{60}.
+\]
+For $(3,3,6)$, equations \eqref{eq:offset-basic} and \eqref{eq:eps6} give
+the same floor:
+$2\eps_3-\eps_6>1/4-1/15=11/60$.
+
+Put $u=a-z_i$, $v=b-z_j$ and $w=a+b-z_k$.  Lemma~\ref{lem:slopes} and
+weighted Cauchy--Schwarz yield
+\begin{align}\label{eq:weighted-cauchy}
+ R(a)^2+R(b)^2+R(a+b)^2
+ &\ge \frac{u^2}{d_i^2}+\frac{v^2}{d_j^2}+\frac{w^2}{d_k^2},\\
+ (z_i+z_j-z_k)^2
+ &\le(d_i^2+d_j^2+d_k^2)
+ \left(\frac{u^2}{d_i^2}+\frac{v^2}{d_j^2}
+ +\frac{w^2}{d_k^2}\right).\notag
+\end{align}
+For completeness, set $\sigma_{ijk}=11/60$ when $i+j=k$ and
+$\sigma_{ijk}=1$ otherwise.  The 216 exact budgets are
+\[
+ B_{ijk}=\frac{\sigma_{ijk}^2}{d_i^2+d_j^2+d_k^2}.
+\]
+Their minimum is attained at $(1,5,6)$ and $(5,1,6)$ and equals
+\begin{equation}\label{eq:budget-min}
+ B_*=
+ \frac{9755468468368320337833317374859207102505001}
+ {1623000197669009639771565694101668583197612441600}.
+\end{equation}
+The exact ledger verifies $\delta_*<\tau^2<B_*$.  In particular,
+\[
+ \tau^2-\delta_*
+ =\frac{35399897577222712511}
+ {32651991661090957509227042221277500}>0.
+\]
+Thus \eqref{eq:weighted-cauchy} contradicts the assumed energy, proving the
+theorem.
+\end{proof}
+
+\section{Four-point packing and spectral defect}\label{sec:four-point}
+
+The reason for working on the wider interval $[0,12\pi]$ is that it supports
+four-point rather than three-point packing.  The following elementary
+identity is the source of the improvement.
+
+\begin{lemma}[Four points count six edges twice]\label{lem:four-energy}
+Let $x_1,x_2,x_3,x_4$ lie in a normalized interval of width $12\pi$.
+If each three-coordinate energy is at least $\delta$, then
+\begin{equation}\label{eq:four-energy}
+ 2\delta\le
+ \sum_{1\le i<j\le4}|R(x_i-x_j)|^2.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Apply the three-coordinate inequality to each of the four triples obtained by
+deleting one point.  Every one of the six unordered pairs belongs to exactly
+two of these triples.  Summing the four inequalities and dividing by two
+gives \eqref{eq:four-energy}.
+\end{proof}
+
+The spectral conversion is also sharp for this block size.
+
+\begin{lemma}[Trace-zero four-block]\label{lem:trace-zero}
+If $B$ is Hermitian and $\tr B=0$, then
+\begin{equation}\label{eq:trace-zero}
+ \|B\|_1^2\ge2\|B\|_F^2.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Let $p$ be the sum of the positive eigenvalues.  Trace zero implies that the
+absolute sum of the negative eigenvalues is also $p$, so $\|B\|_1=2p$.
+The sum of squares on either sign is at most the square of the corresponding
+sum.  Hence $\|B\|_F^2\le2p^2=\|B\|_1^2/2$.
+\end{proof}
+
+We spell out the packing count.  If $s$ simple core labels are distributed
+among width-six bins and the parent dimensional budget is $D$, the number of
+occupied bins is at most $D/6+1$.  Partition each bin into disjoint
+four-tuples, leaving at most three labels in that bin.  If $t$ four-tuples are
+obtained, then
+\[
+ 4t\ge s-3\left(\frac D6+1\right)
+ =s-\frac D2-3.
+\]
+Thus
+\begin{equation}\label{eq:t-count}
+ t\ge\frac14\pos{s-\frac D2-3}.
+\end{equation}
+
+Let $G$ be the simple-core Gram matrix and $H=G-I_s$.  Thus $H$ is Hermitian
+and trace zero.  On each selected four-tuple, Lemma~\ref{lem:four-energy}
+and the zero diagonal of $H$ give
+\[
+ \|H_{\mathrm{block}}\|_F^2
+ =2\sum_{i<j}|G_{ij}|^2\ge4\delta_\lambda.
+\]
+Lemma~\ref{lem:trace-zero} therefore gives
+$\|H_{\mathrm{block}}\|_1\ge2\sqrt{2\delta_\lambda}$.
+Pinching onto disjoint blocks is an average of unitary conjugations, so it is
+contractive for the trace norm.  If
+$V=\frac12\|H\|_1$ is the negative spectral mass, then
+\[
+ V\ge t\sqrt{2\delta_\lambda}.
+\]
+The refined rank--trace lemma of the parent framework contributes at least
+$V^2/s$ to its defect.  Using \eqref{eq:t-count},
+\[
+ \frac{V^2}{s}\ge\frac{2t^2\delta_\lambda}{s}
+ \ge\frac{\delta_\lambda}{8s}
+ \pos{s-\frac D2-3}^{2},
+\]
+which is \eqref{eq:four-defect}.  This is exactly the improvement over the
+earlier triple coefficient.  The full matrix statement, including degenerate
+blocks and the positive-index comparison, is formalized in
+\texttt{FourBlockDefect.lean}.
+
+\section{Endpoint passage}\label{sec:endpoint}
+
+At a fixed $\lambda<1$, the normalized finite-window kernel converges to its
+scale-free kernel, while the scale-free kernel converges uniformly to the
+endpoint kernel as $\lambda\to1^-$.  The six correlations in a four-tuple
+produce a total comparison loss at most $18(1-\lambda)$.  Consequently, for
+every fixed $\lambda$ sufficiently close to one and every constant satisfying
+\begin{equation}\label{eq:fixed-delta-choice}
+ 0\le\delta_\lambda<\delta_*-18(1-\lambda),
+\end{equation}
+$\delta_\lambda$ is a valid lower-bound input to
+Proposition~\ref{prop:transfer}.  The strict inequality leaves room for the
+finite-window approximation.
+
+The order of limits is important.  Put
+\[
+ h_n=\frac1{n+1},\qquad \lambda_n=1-h_n,qquad
+ \delta_n=\delta_*-19h_n.
+\]
+For all sufficiently large $n$, $\delta_n\ge0$ and
+$\delta_n<\delta_*-18(1-\lambda_n)$, so
+\eqref{eq:fixed-delta-choice} holds.  Moreover,
+$H_{\lambda_n}-\lambda_n/2\to H_*-1/2>0$, so the positive part in
+\eqref{eq:fixed-lambda-form} is eventually inactive.  Given the outer error $\eta>0$ in
+Theorem~\ref{thm:main}, convergence of the resulting coefficients lets us
+choose one sufficiently large index $n=n(\eta)$ whose coefficient is within
+$\eta/2$ of the endpoint value.  We then fix this $n$ and invoke the
+fixed-$\lambda_n$ theorem with its remaining error budget $\eta/2$, obtaining
+$T_0=T_0(n,\eta)$.  The asserted inequality holds for every $T\ge T_0$.
+Thus the quantifier order is ``choose $n$ from $\eta$, then choose $T_0$'';
+there is no diagonal choice $\lambda=\lambda(T)$ and no exchange of limits.
+
+Since $H_{\lambda_n}\to H_*$ and $\delta_n\to\delta_*$, the endpoint gain is
+\begin{equation}\label{eq:endpoint-gain}
+ \frac{\delta_*}{8}\left(H_*-\frac12\right)^2.
+\end{equation}
+The exact endpoint estimate
+\begin{equation}\label{eq:endpoint-gap}
+ H_*-\frac12\ge\frac{102239}{592688}
+\end{equation}
+and rational reduction give
+\begin{equation}\label{eq:eta-exact}
+ \frac{\delta_*}{8}
+ \left(\frac{102239}{592688}\right)^2
+ =\frac1{79\,828\,975}.
+\end{equation}
+Equations \eqref{eq:endpoint-gain}--\eqref{eq:eta-exact}, together with the
+quantified fixed-$\lambda$ transfer, prove Theorem~\ref{thm:main}.
+
+\section{The ceiling of the frozen finite interface}
+
+The preceding proof deliberately uses a finite rational interface.  Its
+limiting obstruction can therefore be identified exactly.  Let
+\begin{equation}\label{eq:activation}
+ A_*=\tau^2=\frac{3294613421449}{978263717905622500}.
+\end{equation}
+Equation \eqref{eq:budget-min} satisfies $A_*<B_*$.  Hence the weighted
+Cauchy budgets are not active: the strict localization implication
+$|R|<\tau$ forces the admissible local constant to satisfy $\delta<A_*$.
+The supremal endpoint gain within this interface is therefore
+\begin{equation}\label{eq:Jstar}
+ J_*:=\frac{A_*}{8}
+ \left(\frac{102239}{592688}\right)^2
+ =\frac{25097204303521}{2003484094270714880000}.
+\end{equation}
+Exact comparison yields
+\begin{equation}\label{eq:unit-ceiling}
+ \frac1{79\,828\,975}<J_*\le\frac1{79\,828\,974}.
+\end{equation}
+
+\begin{proposition}[Fixed-interface ceiling]\label{prop:ceiling}
+The unit fraction in Theorem~\ref{thm:main} is the largest reciprocal integer
+strictly below the endpoint supremum of the frozen radius-$1/8$, six-root,
+weighted-Cauchy, four-point interface.  In particular, the same interface
+cannot certify the increment $1/79\,828\,974$.
+\end{proposition}
+
+This is not an upper bound for the true simple-zero proportion, for all
+four-point arguments, or even for the same kernel with sharper localization.
+An improvement can come from a stronger zero-free estimate, a different
+radius or block structure, a better endpoint-gap input, or a method that does
+not localize each correlation separately.
+
+\section{Formal verification and reproducibility}
+
+The Lean development is hosted at
+\url{https://github.com/aster2024/zeta-23-lean}.  The publication branch is
+\begin{center}
+\small\path{codex/wider-strict-improvement-79828975}.
+\end{center}
+The pinned source commit is
+\begin{center}
+\small\path{d368cc49d689576c81d7e4df0c135057d2462a27}
+\end{center}
+It was compiled with Lean $4.33.0$-rc2.  The pinned Mathlib commit is
+\begin{center}
+\small\path{51e6992efd06126df61a496bebf8f49482a4e129}
+\end{center}
+Public GitHub Actions run
+\href{https://github.com/aster2024/zeta-23-lean/actions/runs/31637227865}{31637227865}
+compiled the wider targets and the repository root.  The axiom comparator
+found the same axiom union as the baseline and no occurrence of
+\texttt{sorryAx} or \texttt{unsafeAx}.
+
+The public theorem is:
+\begin{verbatim}
+theorem zeta_wider_strict_simple_endpoint_rational :
+    forall outer > 0, exists T0 : R, forall T >= T0,
+      (ThmD.HD 1 + (1 : R) / 79828975 - outer) *
+        (Ncount T (2 * T) : R) <= N0simple T (2 * T)
+\end{verbatim}
+The actual source uses Lean's Unicode notation; the ASCII display above is
+only typographical.  The theorem has no caller-supplied hypotheses.  The
+repository keeps its analytic interface visible through a structure named
+\texttt{PaperInputs}, then instantiates and discharges those fields before the
+public theorem.  This organization is useful for auditing, but kernel
+checking is not a substitute for independent expert review of the
+mathematical modeling choices.
+
+Table~\ref{tab:lean-map} maps the principal human claims to formal files.
+\begin{table}[ht]
+\centering
+\caption{Main proof-to-Lean map.}\label{tab:lean-map}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Claim & Lean source \\
+\midrule
+Kernel and closed form & \texttt{EndpointKernel.lean} \\
+Six-root localization & \texttt{WiderRootLocalization.lean} \\
+216 energy budgets & \texttt{WiderFourPointEnergy.lean} \\
+Four-block trace defect & \texttt{FourBlockDefect.lean} \\
+Fixed-$\lambda$ theorem & \texttt{ZetaWiderStrictFixedLambda.lean} \\
+Endpoint theorem & \texttt{ZetaWiderEndpointPassage.lean} \\
+Interface ceiling & \texttt{WiderFixedInterfaceCeiling.lean} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The accompanying archive contains two exact rational scripts, their frozen
+outputs, and the five Lean source snapshots parsed by the first script.  They
+can be replayed with a standard Python~3 interpreter:
+\begin{center}\small
+\texttt{python3 wider\_four\_point\_rational\_ledger.py}\\
+\texttt{\hspace*{12mm}--verify-frozen-output}\\
+\texttt{python3 wider\_fixed\_interface\_ceiling\_ledger.py}\\
+\texttt{\hspace*{12mm}--verify-frozen-output}
+\end{center}
+Each script exits nonzero if a certified comparison fails.  The first reports
+\texttt{root\_triples\_checked=216}; the second records the two minimizers
+$(1,5,6)$ and $(5,1,6)$ and both unit-fraction cross slacks.
+
+\section{Scope, limitations, and provenance}
+
+The theorem is unconditional in the same mathematical sense as the parent
+trace-and-pair-correlation theorem \cite{Claude2026}: it assumes neither the
+Riemann hypothesis nor a zero-density hypothesis.  It is a strict improvement
+of that unconditional $H_*$ bound, not of the best conditional bounds that
+use more pair-correlation information.  The improvement is also not claimed
+as externally established until the parent theorem and this companion
+argument receive independent human expert review.
+
+Automated systems assisted with exploration, exact-arithmetic scripting,
+formalization, drafting, and adversarial proof checking.  The named human
+author selected the claims, preserved the evidence and certification
+boundaries, and takes responsibility for the submitted manuscript.  No AI
+system is listed as an author.  The parent theorem is cited under the
+authorship shown on its public manuscript.
+
+\section*{Data and code availability}
+
+The Lean source and workflow are available in the public repository cited
+above.  The exact ledgers, their source snapshots, frozen outputs, and build
+receipt are included in the companion evidence archive.  The release package
+records SHA-256 hashes for its three distributed artifacts.  No proprietary
+data, company MaaS key, or nonpublic model output is required to replay the
+certificates.
+
+\section*{Acknowledgments}
+
+This work depends on the analytic framework and formal source of
+\cite{Claude2026}, and on the number-theoretic literature cited there.  The
+author thanks the maintainers of Lean and Mathlib for the proof environment.
+
+\bibliographystyle{amsplain}
+\bibliography{references}
+
+\appendix
+
+\section{Exact constants}
+
+For convenient comparison, Table~\ref{tab:constants} lists the constants
+that enter the finite interface.  Every row is present verbatim in one of the
+two executable ledgers.
+
+\begin{table}[ht]
+\centering
+\caption{Frozen exact constants.}\label{tab:constants}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Quantity & Exact value \\
+\midrule
+Localization radius $\rho$ & $1/8$ \\
+Threshold $\tau$ & $1815107/989072150$ \\
+Offset floor & $11/60$ \\
+Local energy $\delta_*$ & $2810232522752/834437357315980975$ \\
+Endpoint gap lower bound & $102239/592688$ \\
+Public increment & $1/79828975$ \\
+Next excluded unit & $1/79828974$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Verification identities}
+\enlargethispage{5\baselineskip}
+
+The two terminal identities used in the theorem and the method ceiling are
+\[
+ \frac{2810232522752}{834437357315980975}\cdot\frac18
+ \left(\frac{102239}{592688}\right)^2
+ =\frac1{79828975}
+\]
+and
+\[
+ \frac1{79828975}<
+ \frac{25097204303521}{2003484094270714880000}
+ \le\frac1{79828974}.
+\]
+They are checked by integer cross multiplication in both Lean and Python.
+
+\end{document}

@@ -5,6 +5,30 @@
 
 Repository: <https://github.com/anthropics/zeta-23-lean>.
 
+## Width-six four-point strict improvement (this branch)
+
+Branch `codex/wider-strict-improvement-79828975` adds a formally checked
+companion improvement to the unconditional Montgomery--Taylor simple-zero
+bound.  Its public endpoint theorem is
+
+```text
+forall outer > 0, exists T0, forall T >= T0,
+  (H_* + 1/79,828,975 - outer) * N(T,2T) <= N_0^s(T,2T).
+```
+
+The extension uses six-root localization, width-six four-point packing, and a
+trace-zero Hermitian four-block inequality.  The terminal arithmetic is exact:
+all 216 root-index budgets and the frozen-interface ceiling are checked by
+rational ledgers.  The publication source and reproducibility material are in
+[`publication/`](publication/).
+
+Pinned extension commit:
+`d368cc49d689576c81d7e4df0c135057d2462a27`.  Public CI run
+[31637227865](https://github.com/aster2024/zeta-23-lean/actions/runs/31637227865)
+compiled the wider targets and default root and passed the baseline-equal
+axiom audit.  This build evidence is distinct from external mathematical
+peer review.
+
 This repository accompanies the paper "More than two thirds of the zeros of the Riemann zeta function lie on the critical line" (Claude; Anthropic, San Francisco, 2026).
 It contains a complete, `sorry`-free Lean 4 / Mathlib formalization of Theorems A–E of that paper, including proofs
 of every analytic input the argument uses (Weil's explicit formula for ζ and for primitive Dirichlet L-functions,

@@ -3,6 +3,10 @@ Copyright 2026 Anthropic, PBC
 
 This product is licensed under the Apache License, Version 2.0 (see LICENSE).
 
+The width-six four-point extension, companion-paper source, and exact rational
+ledgers under publication/ include contributions Copyright 2026 Jizhou Guo,
+also licensed under the Apache License, Version 2.0.
+
 This product includes software derived from PrimeNumberTheoremAnd
 (https://github.com/AlexKontorovich/PrimeNumberTheoremAnd),
 Copyright the PrimeNumberTheoremAnd contributors, licensed under the Apache License, Version 2.0.

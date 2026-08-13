@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "Please cite the companion manuscript when using the width-six four-point extension."
+title: "An Explicit Four-Point Improvement to the Unconditional Montgomery--Taylor Bound for Simple Zeta Zeros"
+type: article
+authors:
+  - family-names: Guo
+    given-names: Jizhou
+    email: mitsuha2021b@gmail.com
+    affiliation: "Dots Studio, RedNote"
+date-released: 2026-08-13
+version: 0.1.0
+repository-code: "https://github.com/aster2024/zeta-23-lean"
+license: Apache-2.0
+keywords:
+  - Riemann zeta function
+  - simple zeros
+  - pair correlation
+  - Lean

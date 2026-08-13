@@ -1,0 +1,22 @@
+WIDER_FOUR_POINT_RATIONAL_LEDGER PASS
+radius=1/8
+localization_threshold=1815107/989072150
+weakest_local_slope=172793257/9782600448
+weakest_positive_outside=3563427/1585971200
+weakest_zero_free_m1_m5=1815107/989072150
+last_zero_free_far=49/23936
+last_zero_free_short=172793257/76126617600
+epsilon_two_test_upper=235708/200753
+epsilon_two_lower=11/60
+epsilon_six_test_lower=2831/2250
+epsilon_six_upper=1/15
+root_triples_checked=216
+weakest_budget_energy=9755468468368320337833317374859207102505001/1623000197669009639771565694101668583197612441600
+delta_1_6_candidate=2810232522752/834437357315980975
+activation_slack=35399897577222712511/32651991661090957509227042221277500
+endpoint_gap=102239/592688
+public_eta=1/79828975
+endpoint_activation_supremum=25097204303521/2003484094270714880000
+best_strict_unit_eta=1/79828975
+next_unit_eta_excluded=1/79828974
+lean_source_bindings=threshold,denominators,budget_ceiling,delta,eta,endpoint,ceiling,root

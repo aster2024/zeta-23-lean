@@ -1,0 +1,62 @@
+\providecommand{\bysame}{\leavevmode\hbox to3em{\hrulefill}\thinspace}
+\providecommand{\MR}{\relax\ifhmode\unskip\space\fi MR }
+% \MRhref is called by the amsart/book/proc definition of \MR.
+\providecommand{\MRhref}[2]{%
+  \href{http://www.ams.org/mathscinet-getitem?mr=#1}{#2}
+}
+\providecommand{\href}[2]{#2}
+\begin{thebibliography}{10}
+
+\bibitem{BaluyotEtAl2024}
+Siegfred Alan~C. Baluyot, Daniel~A. Goldston, Ade~Irma Suriajaya, and
+  Caroline~L. Turnage-Butterbaugh, \emph{An unconditional {M}ontgomery theorem
+  for pair correlation of zeros of the {R}iemann zeta-function}, Acta
+  Arithmetica \textbf{214} (2024), 357--376.
+
+\bibitem{BaluyotEtAl2025}
+\bysame, \emph{Pair correlation of zeros of the {R}iemann zeta function {I}:
+  Proportions of simple zeros and critical zeros}, 2025.
+
+\bibitem{CheerGoldston1993}
+Angela~Y. Cheer and Daniel~A. Goldston, \emph{Simple zeros of the {R}iemann
+  zeta-function}, Proceedings of the American Mathematical Society \textbf{118}
+  (1993), no.~2, 365--372.
+
+\bibitem{ChirreGoncalvesDeLaat2020}
+Andr{\'e}s Chirre, Felipe Gon{\c c}alves, and David de~Laat, \emph{Pair
+  correlation estimates for the zeros of the zeta function via semidefinite
+  programming}, Advances in Mathematics \textbf{361} (2020), 106926.
+
+\bibitem{Claude2026}
+{Claude}, \emph{More than two thirds of the zeros of the {R}iemann zeta
+  function lie on the critical line}, August 2026, Research manuscript dated 10
+  August 2026.
+
+\bibitem{deMouraEtAl2021}
+Leonardo de~Moura and Sebastian Ullrich, \emph{The {Lean 4} theorem prover and
+  programming language}, Automated Deduction---CADE 28, Lecture Notes in
+  Computer Science, vol. 12699, Springer, 2021, pp.~625--635.
+
+\bibitem{GoldstonSuriajaya2025}
+Daniel~A. Goldston and Ade~Irma Suriajaya, \emph{Zeta zeros on the critical
+  line}, 2025.
+
+\bibitem{GoldstonSuriajaya2026}
+\bysame, \emph{Zeta zeros in a narrow vertical box}, 2026.
+
+\bibitem{Mathlib2020}
+The mathlib Community, \emph{The {Lean} mathematical library}, Proceedings of
+  the 9th ACM SIGPLAN International Conference on Certified Programs and
+  Proofs, Association for Computing Machinery, 2020, pp.~367--381.
+
+\bibitem{Montgomery1973}
+Hugh~L. Montgomery, \emph{The pair correlation of zeros of the zeta function},
+  Analytic Number Theory, Proceedings of Symposia in Pure Mathematics, vol.~24,
+  American Mathematical Society, 1973, pp.~181--193.
+
+\bibitem{Montgomery1975}
+\bysame, \emph{Distribution of zeros of the {R}iemann zeta function},
+  Proceedings of the International Congress of Mathematicians, Vancouver 1974,
+  vol.~1, Canadian Mathematical Congress, 1975, pp.~379--381.
+
+\end{thebibliography}
