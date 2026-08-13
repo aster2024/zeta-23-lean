@@ -283,6 +283,7 @@ theorem sum_wideRepairBlockReward_eq
     WideRepairFourResidue, wideRepairBlockReward]
   rw [Finset.sum_mul, ← Finset.sum_filter, ← Finset.sum_filter]
   simp [Finset.sum_const, nsmul_eq_mul]
+  ring
 
 theorem sum_wideRepairBlockReward_lower
     {S B : Type*} [Fintype B] [DecidableEq B]
@@ -298,7 +299,7 @@ theorem sum_wideRepairBlockReward_lower
       push_cast
       simp [Finset.sum_sub_distrib, Finset.sum_const, Finset.card_univ,
         nsmul_eq_mul]
-      rw [Finset.sum_mul]
+      rw [Finset.sum_div]
       ring
     _ ≤ ∑ b, wideRepairBinReward (E.occupancy b) :=
       Finset.sum_le_sum fun b _ => wideRepairBinReward_lower (E.occupancy b)
