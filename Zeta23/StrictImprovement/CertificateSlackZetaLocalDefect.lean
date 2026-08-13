@@ -63,7 +63,7 @@ theorem hatAz_mult2_with_certificate_slack_spectral_gain
       Fintype.card (CoreSimpleLabel Z T 3) := by
     dsimp [E]
     exact coreCertificateSlackEnumeration_cover Z T 3 P hL (by norm_num)
-  have hbins0 := coreCertificateSlackBin_card_le Z T P hL hT
+  have hbins0 := coreCertificateSlackBin_card_le T P hL hT
   have hbins :
       (Fintype.card
         (Fin (certificateSlackBinCount (coreBinD T P))) : ℝ) ≤
