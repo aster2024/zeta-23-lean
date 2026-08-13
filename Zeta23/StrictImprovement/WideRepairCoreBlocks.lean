@@ -65,6 +65,7 @@ theorem packedCoreWideRepairBlock_traceNorm_lower
           (normalizedCoreVec Z T 3 P hconj)).submatrix
             (wideRepairBlockIndex
               (coreWideRepairEnumeration Z T 3 P hL (by norm_num)) q)) := by
+  classical
   let E := coreWideRepairEnumeration Z T 3 P hL (by norm_num)
   let idx := wideRepairBlockIndex E q
   let x := normalizedCoreVec Z T 3 P hconj
