@@ -166,6 +166,9 @@ jobs:
 
           # Compile the new endpoint chain first so a local integration error
           # is reported before replaying the full historical preflight list.
+          run_preflight Zeta23.StrictImprovement.WideRepairZetaEndpointPassage \
+            wide-repair-zeta-endpoint-passage-build.log \
+            "Mixed repaired endpoint passage preflight failure"
           run_preflight Zeta23.StrictImprovement.CertificateSlackZetaEndpointPassage \
             certificate-slack-endpoint-aggregate-build.log \
             "Certificate-slack endpoint aggregate preflight failure"
@@ -361,6 +364,7 @@ jobs:
           lake build \
             Zeta23.StrictImprovement.ZetaWiderEndpointPassage \
             Zeta23.StrictImprovement.WiderFixedInterfaceCeiling \
+            Zeta23.StrictImprovement.WideRepairZetaEndpointPassage \
             2>&1 | tee wider-target-build.log
           target_status=${PIPESTATUS[0]}
           if [[ "${target_status}" -ne 0 ]]; then
@@ -525,6 +529,7 @@ jobs:
             certificate-slack-zeta-strict-fixed-lambda-build.log
             certificate-slack-zeta-strict-concrete-build.log
             certificate-slack-zeta-endpoint-passage-build.log
+            wide-repair-zeta-endpoint-passage-build.log
             certificate-slack-endpoint-aggregate-build.log
             build-commit.txt
             lean-version.txt

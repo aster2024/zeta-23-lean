@@ -26,6 +26,7 @@ import Zeta23.StrictImprovement.DirectZetaWiderStrictConcrete
 import Zeta23.StrictImprovement.DirectZetaWiderEndpointPassage
 import Zeta23.StrictImprovement.SpectralZetaWiderEndpointPassage
 import Zeta23.StrictImprovement.CertificateSlackZetaEndpointPassage
+import Zeta23.StrictImprovement.WideRepairZetaEndpointPassage
 
 #print axioms Zeta23.StrictImprovement.zeta_wider_strict_simple_endpoint_rational
 #print axioms Zeta23.StrictImprovement.common_budget_iff_le_widerFixedDeltaCeiling
@@ -40,3 +41,6 @@ import Zeta23.StrictImprovement.CertificateSlackZetaEndpointPassage
 #print axioms Zeta23.StrictImprovement.zeta_direct_strict_simple_endpoint_rational
 #print axioms Zeta23.StrictImprovement.zeta_spectral_strict_simple_endpoint_rational
 #print axioms Zeta23.StrictImprovement.zeta_certificate_slack_spectral_endpoint_rational
+#print axioms Zeta23.StrictImprovement.sum_traceNorm_dependent_principal_le
+#print axioms Zeta23.StrictImprovement.wideRepairBinReward_lower
+#print axioms Zeta23.StrictImprovement.zeta_wide_repair_strict_simple_endpoint_rational
