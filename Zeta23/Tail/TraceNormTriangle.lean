@@ -71,7 +71,8 @@ theorem sum_abs_re_diag_unitary_conj_le_traceNorm
           (hA.eigenvalues j : ℂ) *
             (W i j * starRingEnd ℂ (W i j)) by ring,
         RCLike.mul_conj]
-      push_cast]
+      push_cast
+      rfl]
     simp only [Complex.ofReal_re, normSqMatrix, Matrix.of_apply]
     ring
   have hdiag : ∀ i,
@@ -109,13 +110,41 @@ theorem traceNorm_eq_sum_abs_re_diag_eigenbasis
       ∑ i, |Complex.re
         ((star (hA.eigenvectorUnitary : Matrix n n ℂ) * A *
           (hA.eigenvectorUnitary : Matrix n n ℂ)) i i)| := by
-  conv_rhs => rw [hA.spectral_theorem, Unitary.conjStarAlgAut_apply]
-  simp only [Matrix.mul_assoc]
-  rw [Unitary.star_mul_self_of_mem hA.eigenvectorUnitary.2]
-  simp only [mul_one]
-  rw [← Matrix.mul_assoc,
-    Unitary.star_mul_self_of_mem hA.eigenvectorUnitary.2, one_mul]
+  let U : Matrix.unitaryGroup n ℂ := hA.eigenvectorUnitary
+  let D : Matrix n n ℂ :=
+    diagonal (RCLike.ofReal ∘ hA.eigenvalues)
+  have hspectral : A =
+      (U : Matrix n n ℂ) * D * star (U : Matrix n n ℂ) := by
+    simpa [U, D, Unitary.conjStarAlgAut_apply] using hA.spectral_theorem
+  have hdiag :
+      star (U : Matrix n n ℂ) * A * (U : Matrix n n ℂ) = D := by
+    calc
+      star (U : Matrix n n ℂ) * A * (U : Matrix n n ℂ) =
+          star (U : Matrix n n ℂ) *
+            ((U : Matrix n n ℂ) * D * star (U : Matrix n n ℂ)) *
+            (U : Matrix n n ℂ) :=
+        congrArg (fun M : Matrix n n ℂ =>
+          star (U : Matrix n n ℂ) * M * (U : Matrix n n ℂ)) hspectral
+      _ = (star (U : Matrix n n ℂ) * (U : Matrix n n ℂ)) * D *
+          (star (U : Matrix n n ℂ) * (U : Matrix n n ℂ)) := by
+        noncomm_ring
+      _ = D := by
+        rw [Unitary.star_mul_self_of_mem U.2]
+        simp
+  change traceNorm hA =
+    ∑ i, |Complex.re
+      ((star (U : Matrix n n ℂ) * A * (U : Matrix n n ℂ)) i i)|
+  rw [hdiag]
+  dsimp [D]
   simp [traceNorm]
+
+/-- The custom trace norm depends on the matrix, not on the particular proof
+of Hermitianity. -/
+theorem traceNorm_congr
+    {A B : Matrix n n ℂ} (hA : A.IsHermitian) (hB : B.IsHermitian)
+    (hAB : A = B) : traceNorm hA = traceNorm hB := by
+  subst B
+  rfl
 
 /-- Triangle inequality for the custom Hermitian trace norm. -/
 theorem traceNorm_add_le
@@ -159,18 +188,26 @@ theorem traceNorm_neg
       star (U : Matrix n n ℂ) * (-A) * (U : Matrix n n ℂ) =
         -(star (U : Matrix n n ℂ) * A * (U : Matrix n n ℂ)) := by
     noncomm_ring
+  have hsum_neg (U : Matrix.unitaryGroup n ℂ) :
+      (∑ i, |Complex.re
+        ((star (U : Matrix n n ℂ) * (-A) * (U : Matrix n n ℂ)) i i)|) =
+      ∑ i, |Complex.re
+        ((star (U : Matrix n n ℂ) * A * (U : Matrix n n ℂ)) i i)| := by
+    refine sum_congr rfl fun i _ => ?_
+    have hentry := congrArg (fun M : Matrix n n ℂ => M i i) (hconj_neg U)
+    rw [hentry]
+    simp
   have hle : traceNorm hA.neg ≤ traceNorm hA := by
     rw [traceNorm_eq_sum_abs_re_diag_eigenbasis hA.neg]
-    rw [hconj_neg]
-    simpa only [Pi.neg_apply, map_neg, abs_neg] using
-      (sum_abs_re_diag_unitary_conj_le_traceNorm hA
-        hA.neg.eigenvectorUnitary)
+    rw [hsum_neg]
+    exact sum_abs_re_diag_unitary_conj_le_traceNorm hA
+      hA.neg.eigenvectorUnitary
   have hle' : traceNorm hA ≤ traceNorm hA.neg := by
     have h := sum_abs_re_diag_unitary_conj_le_traceNorm hA.neg
       hA.eigenvectorUnitary
-    rw [hconj_neg] at h
+    rw [hsum_neg] at h
     rw [traceNorm_eq_sum_abs_re_diag_eigenbasis hA]
-    simpa only [Pi.neg_apply, map_neg, abs_neg] using h
+    exact h
   exact le_antisymm hle hle'
 
 /-- Reverse triangle inequality, stated in the exact form used by the
@@ -180,12 +217,14 @@ theorem abs_traceNorm_sub_traceNorm_le
     |traceNorm hA - traceNorm hB| ≤ traceNorm (hA.sub hB) := by
   have hAB : traceNorm hA ≤ traceNorm hB + traceNorm (hA.sub hB) := by
     have h := traceNorm_add_le hB (hA.sub hB)
-    simpa only [add_sub_cancel_left] using h
+    rw [traceNorm_congr (hB.add (hA.sub hB)) hA (by abel)] at h
+    exact h
   have hBA : traceNorm hB ≤ traceNorm hA + traceNorm (hA.sub hB) := by
     have h := traceNorm_add_le hA (hA.sub hB).neg
     have hneg := traceNorm_neg (hA.sub hB)
     rw [hneg] at h
-    simpa only [neg_sub, add_sub_cancel_left] using h
+    rw [traceNorm_congr (hA.add (hA.sub hB).neg) hB (by abel)] at h
+    exact h
   rw [abs_le]
   constructor <;> linarith
 
