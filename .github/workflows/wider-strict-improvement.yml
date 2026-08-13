@@ -9,6 +9,7 @@ on:
       - "lake-manifest.json"
       - "Zeta23.lean"
       - "Zeta23/StrictImprovement/**"
+      - "Zeta23/Tail/TraceNormTriangle.lean"
       - "comparator/PrintAxioms/StrictImprovement.lean"
       - "comparator/PrintAxioms/WiderStrictImprovement.lean"
       - ".github/workflows/wider-strict-improvement.yml"
@@ -19,6 +20,7 @@ on:
       - "lake-manifest.json"
       - "Zeta23.lean"
       - "Zeta23/StrictImprovement/**"
+      - "Zeta23/Tail/TraceNormTriangle.lean"
       - "comparator/PrintAxioms/StrictImprovement.lean"
       - "comparator/PrintAxioms/WiderStrictImprovement.lean"
       - ".github/workflows/wider-strict-improvement.yml"
@@ -91,6 +93,7 @@ jobs:
             lakefile.toml \
             lake-manifest.json \
             Zeta23.lean \
+            Zeta23/Tail/TraceNormTriangle.lean \
             .github/workflows/wider-strict-improvement.yml \
             .github/scripts/extract_axiom_union.py \
             comparator/PrintAxioms/StrictImprovement.lean \
@@ -265,6 +268,33 @@ jobs:
             zeta-core-binning-build.log "Zeta core binning preflight failure"
           run_preflight Zeta23.StrictImprovement.FourBlockDefect \
             four-block-defect-build.log "Four-block defect preflight failure"
+          run_preflight Zeta23.StrictImprovement.SpectralFourDefect \
+            spectral-four-defect-build.log \
+            "Spectral four-block defect preflight failure"
+          run_preflight Zeta23.Tail.TraceNormTriangle \
+            trace-norm-triangle-build.log \
+            "Trace-norm triangle preflight failure"
+          run_preflight Zeta23.StrictImprovement.SpectralFourStability \
+            spectral-four-stability-build.log \
+            "Spectral four-point stability preflight failure"
+          run_preflight Zeta23.StrictImprovement.SpectralFourPointInterface \
+            spectral-four-point-interface-build.log \
+            "Spectral four-point interface preflight failure"
+          run_preflight Zeta23.StrictImprovement.SpectralCoreFour \
+            spectral-core-four-build.log \
+            "Spectral core four-point preflight failure"
+          run_preflight Zeta23.StrictImprovement.SpectralZetaWiderLocalDefect \
+            spectral-zeta-wider-local-defect-build.log \
+            "Spectral zeta wider local defect preflight failure"
+          run_preflight Zeta23.StrictImprovement.SpectralZetaWiderSeamDefect \
+            spectral-zeta-wider-seam-defect-build.log \
+            "Spectral zeta wider seam defect preflight failure"
+          run_preflight Zeta23.StrictImprovement.SpectralZetaWiderAtD \
+            spectral-zeta-wider-at-d-build.log \
+            "Spectral zeta wider at-D preflight failure"
+          run_preflight Zeta23.StrictImprovement.SpectralZetaWiderSeamAtD \
+            spectral-zeta-wider-seam-at-d-build.log \
+            "Spectral zeta wider at-D seam preflight failure"
           run_preflight Zeta23.StrictImprovement.WidthSixBinning \
             width-six-binning-build.log "Width-six binning preflight failure"
 
@@ -407,6 +437,15 @@ jobs:
             interval-binning-build.log
             zeta-core-binning-build.log
             four-block-defect-build.log
+            spectral-four-defect-build.log
+            trace-norm-triangle-build.log
+            spectral-four-stability-build.log
+            spectral-four-point-interface-build.log
+            spectral-core-four-build.log
+            spectral-zeta-wider-local-defect-build.log
+            spectral-zeta-wider-seam-defect-build.log
+            spectral-zeta-wider-at-d-build.log
+            spectral-zeta-wider-seam-at-d-build.log
             width-six-binning-build.log
             build-commit.txt
             lean-version.txt
