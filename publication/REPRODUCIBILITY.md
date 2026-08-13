@@ -46,8 +46,9 @@ successful run is <https://github.com/aster2024/zeta-23-lean/actions/runs/316372
 
 ## Manuscript check
 
+From `publication/` run:
+
 ```bash
-cd paper
 tectonic --keep-logs --keep-intermediates main.tex
 rg -n 'undefined|Citation|Reference|Overfull|Underfull' main.log
 ```
