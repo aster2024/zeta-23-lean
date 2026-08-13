@@ -122,7 +122,8 @@ theorem packedCoreFour_spectral_traceNorm_lower
       endpointFourDeviation_offdiag coord hrt,
       gramMatrix_normalizedCoreVec_eq_finiteCorrelation
         Z T P hconj hreal hc hpos (idx r) (idx t)]
-    simpa only [Complex.norm_real, Real.norm_eq_abs] using hclose r t
+    rw [← Complex.ofReal_sub, Complex.norm_real, Real.norm_eq_abs]
+    exact hclose r t
   apply spectral_endpoint_to_nearby_traceNorm_lower
     hcertificate coord hdist hB hdiagB heps hm
   · simpa [eps, epsFin, localCorrelationError] using hmargin
