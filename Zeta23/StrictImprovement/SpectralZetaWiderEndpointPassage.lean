@@ -47,7 +47,9 @@ lemma spectralFourMassLower_pos : 0 < spectralFourMassLower := by
 theorem tendsto_spectralEndpointRoot :
     Tendsto spectralEndpointRoot atTop
       (nhds (Real.sqrt spectralFourMassLower)) := by
-  have h := tendsto_const_nhds.sub
+  have hconst : Tendsto (fun _ : ℕ => Real.sqrt spectralFourMassLower)
+      atTop (nhds (Real.sqrt spectralFourMassLower)) := tendsto_const_nhds
+  have h := hconst.sub
     (tendsto_endpointStep_zero.const_mul (6 * Real.sqrt 3 + 1))
   simpa [spectralEndpointRoot] using h
 
@@ -63,7 +65,9 @@ theorem tendsto_spectralEndpointMass :
       spectralFourMassLower :=
     Real.sq_sqrt spectralFourMassLower_nonneg
   rw [hsqrt] at h
-  simpa [spectralEndpointMass] using h
+  change Tendsto (fun n : ℕ => spectralEndpointRoot n ^ 2) atTop
+    (nhds spectralFourMassLower)
+  exact h
 
 theorem tendsto_spectralEndpointRate :
     Tendsto spectralEndpointRate atTop
