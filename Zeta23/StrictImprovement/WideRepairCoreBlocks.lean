@@ -187,21 +187,27 @@ theorem packedCoreWideRepairBlock_traceNorm_lower
                 wideEndpointDeviation coord r t‖ ≤ eps := by
             intro r t hrt
             exact hedge hrt
+          have h01 : (0 : Fin 4) ≠ 1 := by decide
+          have h02 : (0 : Fin 4) ≠ 2 := by decide
+          have h03 : (0 : Fin 4) ≠ 3 := by decide
+          have h12 : (1 : Fin 4) ≠ 2 := by decide
+          have h13 : (1 : Fin 4) ≠ 3 := by decide
+          have h23 : (2 : Fin 4) ≠ 3 := by decide
           apply wideRepairFour_nearby_traceNorm_lower hcertificates.four
             coord hdiamRat hB hdiagB heps
           · simpa [eps, epsFin, localCorrelationError] using hmargin4
-          · simpa [wideEndpointDeviation, endpointFourDeviation] using
-              hedge4 (by decide)
-          · simpa [wideEndpointDeviation, endpointFourDeviation] using
-              hedge4 (by decide)
-          · simpa [wideEndpointDeviation, endpointFourDeviation] using
-              hedge4 (by decide)
-          · simpa [wideEndpointDeviation, endpointFourDeviation] using
-              hedge4 (by decide)
-          · simpa [wideEndpointDeviation, endpointFourDeviation] using
-              hedge4 (by decide)
-          · simpa [wideEndpointDeviation, endpointFourDeviation] using
-              hedge4 (by decide)
+          · simpa [wideEndpointDeviation, endpointFourDeviation, h01] using
+              hedge4 h01
+          · simpa [wideEndpointDeviation, endpointFourDeviation, h02] using
+              hedge4 h02
+          · simpa [wideEndpointDeviation, endpointFourDeviation, h03] using
+              hedge4 h03
+          · simpa [wideEndpointDeviation, endpointFourDeviation, h12] using
+              hedge4 h12
+          · simpa [wideEndpointDeviation, endpointFourDeviation, h13] using
+              hedge4 h13
+          · simpa [wideEndpointDeviation, endpointFourDeviation, h23] using
+              hedge4 h23
 
 end StrictImprovement
 end Zeta23
