@@ -5,6 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 -/
 import Zeta23.StrictImprovement.WideRepairMixedPacking
 import Zeta23.StrictImprovement.ZetaFiniteCorrelation
+import Zeta23.StrictImprovement.CoreTripleEnergy
 
 /-!
 # Finite/full transfer for every selected mixed block
@@ -90,7 +91,17 @@ theorem packedCoreWideRepairBlock_traceNorm_lower
         fullCoreCorrelation Z T P z z'| ≤ epsFin at hfin
     have hlim := hfull z z'
     dsimp [eps, epsFin]
-    exact (abs_sub_le _ _ _).trans (add_le_add hfin hlim)
+    calc
+      |finiteNormalizedCoreCorrelation Z T P hconj z z' -
+          endpointR (coreScaledOrdinate Z T 3 P z -
+            coreScaledOrdinate Z T 3 P z')| ≤
+          |finiteNormalizedCoreCorrelation Z T P hconj z z' -
+            fullCoreCorrelation Z T P z z'| +
+          |fullCoreCorrelation Z T P z z' -
+            endpointR (coreScaledOrdinate Z T 3 P z -
+              coreScaledOrdinate Z T 3 P z')| := abs_sub_le _ _ _
+      _ ≤ epsFin + epsFull := add_le_add hfin hlim
+      _ = epsFull + epsFin := add_comm _ _
   have hunit : ∀ z, ∑ k, ‖x z k‖ ^ 2 = 1 := by
     intro z
     dsimp [x]
@@ -100,7 +111,10 @@ theorem packedCoreWideRepairBlock_traceNorm_lower
     intro r t hrt heq
     have hp : (⟨q, r⟩ : Σ q, Fin (wideRepairBlockSize q)) = ⟨q, t⟩ :=
       (wideRepairBlockIndex_injective E) heq
-    exact hrt (by simpa using congrArg Sigma.snd hp)
+    have hrt' : r = t := by
+      cases hp
+      rfl
+    exact hrt hrt'
   let hB := (gramDeviation_isHermitian x).submatrix idx
   have hdiagB : ∀ r, (gramDeviation x).submatrix idx idx r r = 0 := by
     intro r
@@ -121,7 +135,8 @@ theorem packedCoreWideRepairBlock_traceNorm_lower
     intro r t
     by_cases hrt : r = t
     · subst t
-      simp [hdiagB, wideEndpointDeviation_diag, heps]
+      rw [hdiagB r, wideEndpointDeviation_diag coord r]
+      simp [heps]
     · exact hedge hrt
   have hdiam : ∀ r t : Fin (wideRepairBlockSize q),
       |coord r - coord t| < 16 * Real.pi := by
