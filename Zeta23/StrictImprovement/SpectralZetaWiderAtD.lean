@@ -66,7 +66,7 @@ theorem packedCoreFour_atD_spectral_local_traceNorm
     have hfinite0 : 0 ≤ 12 * P.w / P.L T :=
       div_nonneg (mul_nonneg (by norm_num) hw0) hL'.le
     nlinarith
-  apply packedCoreFour_spectral_local_traceNorm
+  apply packedCoreFour_spectral_traceNorm_lower
     hcertificate Z T (P.atD T) hconj (ThmD.cDT P.ϱ P.lam)
     hreal hF hT hc hbudget hL hpos heps hm
   · intro z z'
