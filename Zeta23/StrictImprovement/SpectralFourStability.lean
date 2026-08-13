@@ -35,7 +35,9 @@ theorem traceNorm_le_two_sqrt_frobSq_fin4
     have h := sq_sum_le_card_mul_sum_sq
       (s := Finset.univ) (f := fun i => |hA.eigenvalues i|)
     simpa [sq_abs] using h
-  have hfrob : 0 ≤ frobSq A := Assembly.frobSq_nonneg A
+  have hfrob : 0 ≤ frobSq A := by
+    rw [frobSq_hermitian_eq_sum_sq_eigenvalues hA]
+    positivity
   have hsqrt : 0 ≤ Real.sqrt (frobSq A) := Real.sqrt_nonneg _
   have hsqrtSq : (Real.sqrt (frobSq A)) ^ 2 = frobSq A :=
     Real.sq_sqrt hfrob
