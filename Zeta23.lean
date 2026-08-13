@@ -28,3 +28,4 @@ import Zeta23.StrictImprovement.DirectZetaWiderStrictSeamEventually
 import Zeta23.StrictImprovement.DirectZetaWiderStrictFixedLambda
 import Zeta23.StrictImprovement.DirectZetaWiderStrictConcrete
 import Zeta23.StrictImprovement.DirectZetaWiderEndpointPassage
+import Zeta23.StrictImprovement.SpectralFourDefect
