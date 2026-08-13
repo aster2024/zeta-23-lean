@@ -191,6 +191,12 @@ jobs:
           run_preflight Zeta23.StrictImprovement.DirectZetaWiderStrictSeamEventually \
             direct-zeta-wider-strict-seam-eventually-build.log \
             "Direct zeta wider strict seam eventually preflight failure"
+          run_preflight Zeta23.StrictImprovement.DirectZetaWiderStrictFixedLambda \
+            direct-zeta-wider-strict-fixed-lambda-build.log \
+            "Direct zeta wider strict fixed-lambda preflight failure"
+          run_preflight Zeta23.StrictImprovement.DirectZetaWiderStrictConcrete \
+            direct-zeta-wider-strict-concrete-build.log \
+            "Direct zeta wider strict concrete preflight failure"
           run_preflight Zeta23.StrictImprovement.KernelRoots \
             kernel-roots-build.log "Kernel roots preflight failure"
           run_preflight Zeta23.StrictImprovement.WindowFourierLimit \

@@ -21,6 +21,8 @@ import Zeta23.StrictImprovement.DirectZetaWiderAtD
 import Zeta23.StrictImprovement.DirectZetaWiderCoreGain
 import Zeta23.StrictImprovement.DirectZetaWiderSeamDefect
 import Zeta23.StrictImprovement.DirectZetaWiderStrictSeamEventually
+import Zeta23.StrictImprovement.DirectZetaWiderStrictFixedLambda
+import Zeta23.StrictImprovement.DirectZetaWiderStrictConcrete
 
 #print axioms Zeta23.StrictImprovement.zeta_wider_strict_simple_endpoint_rational
 #print axioms Zeta23.StrictImprovement.common_budget_iff_le_widerFixedDeltaCeiling
@@ -31,3 +33,4 @@ import Zeta23.StrictImprovement.DirectZetaWiderStrictSeamEventually
 #print axioms Zeta23.StrictImprovement.eventually_directAtDCoreGain_ge_fixed_eps
 #print axioms Zeta23.StrictImprovement.seamA_mult2_atD_with_direct_explicit_gain
 #print axioms Zeta23.StrictImprovement.eventually_seamA_mult2_atD_with_direct_explicit_gain
+#print axioms Zeta23.StrictImprovement.zeta_direct_strict_simple_fixed_lam

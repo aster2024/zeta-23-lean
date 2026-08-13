@@ -25,3 +25,5 @@ import Zeta23.StrictImprovement.DirectZetaWiderAtD
 import Zeta23.StrictImprovement.DirectZetaWiderCoreGain
 import Zeta23.StrictImprovement.DirectZetaWiderSeamDefect
 import Zeta23.StrictImprovement.DirectZetaWiderStrictSeamEventually
+import Zeta23.StrictImprovement.DirectZetaWiderStrictFixedLambda
+import Zeta23.StrictImprovement.DirectZetaWiderStrictConcrete
