@@ -185,17 +185,17 @@ theorem packedCoreWideRepairBlock_traceNorm_lower
             coord hdiamRat hB hdiagB heps
           · simpa [eps, epsFin, localCorrelationError] using hmargin4
           · simpa [wideEndpointDeviation, endpointFourDeviation] using
-              hedge (by decide : (0 : Fin 4) ≠ 1)
+              hedge (by omega : (0 : Fin 4) ≠ 1)
           · simpa [wideEndpointDeviation, endpointFourDeviation] using
-              hedge (by decide : (0 : Fin 4) ≠ 2)
+              hedge (by omega : (0 : Fin 4) ≠ 2)
           · simpa [wideEndpointDeviation, endpointFourDeviation] using
-              hedge (by decide : (0 : Fin 4) ≠ 3)
+              hedge (by omega : (0 : Fin 4) ≠ 3)
           · simpa [wideEndpointDeviation, endpointFourDeviation] using
-              hedge (by decide : (1 : Fin 4) ≠ 2)
+              hedge (by omega : (1 : Fin 4) ≠ 2)
           · simpa [wideEndpointDeviation, endpointFourDeviation] using
-              hedge (by decide : (1 : Fin 4) ≠ 3)
+              hedge (by omega : (1 : Fin 4) ≠ 3)
           · simpa [wideEndpointDeviation, endpointFourDeviation] using
-              hedge (by decide : (2 : Fin 4) ≠ 3)
+              hedge (by omega : (2 : Fin 4) ≠ 3)
 
 end StrictImprovement
 end Zeta23
