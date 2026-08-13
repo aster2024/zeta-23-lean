@@ -295,6 +295,21 @@ jobs:
           run_preflight Zeta23.StrictImprovement.SpectralZetaWiderSeamAtD \
             spectral-zeta-wider-seam-at-d-build.log \
             "Spectral zeta wider at-D seam preflight failure"
+          run_preflight Zeta23.StrictImprovement.SpectralZetaWiderCoreGain \
+            spectral-zeta-wider-core-gain-build.log \
+            "Spectral zeta wider core gain preflight failure"
+          run_preflight Zeta23.StrictImprovement.SpectralZetaWiderStrictSeamEventually \
+            spectral-zeta-wider-strict-seam-eventually-build.log \
+            "Spectral zeta wider strict seam eventually preflight failure"
+          run_preflight Zeta23.StrictImprovement.SpectralZetaWiderStrictFixedLambda \
+            spectral-zeta-wider-strict-fixed-lambda-build.log \
+            "Spectral zeta wider strict fixed-lambda preflight failure"
+          run_preflight Zeta23.StrictImprovement.SpectralZetaWiderStrictConcrete \
+            spectral-zeta-wider-strict-concrete-build.log \
+            "Spectral zeta wider strict concrete preflight failure"
+          run_preflight Zeta23.StrictImprovement.SpectralZetaWiderEndpointPassage \
+            spectral-zeta-wider-endpoint-passage-build.log \
+            "Spectral zeta wider endpoint passage preflight failure"
           run_preflight Zeta23.StrictImprovement.WidthSixBinning \
             width-six-binning-build.log "Width-six binning preflight failure"
 
@@ -446,6 +461,11 @@ jobs:
             spectral-zeta-wider-seam-defect-build.log
             spectral-zeta-wider-at-d-build.log
             spectral-zeta-wider-seam-at-d-build.log
+            spectral-zeta-wider-core-gain-build.log
+            spectral-zeta-wider-strict-seam-eventually-build.log
+            spectral-zeta-wider-strict-fixed-lambda-build.log
+            spectral-zeta-wider-strict-concrete-build.log
+            spectral-zeta-wider-endpoint-passage-build.log
             width-six-binning-build.log
             build-commit.txt
             lean-version.txt
