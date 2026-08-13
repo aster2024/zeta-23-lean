@@ -61,9 +61,9 @@ theorem sum_abs_re_diag_unitary_conj_le_traceNorm
     intro i
     rw [hconj, Matrix.mul_apply]
     dsimp [D]
-    simp only [mul_diagonal, Matrix.star_apply, RCLike.star_def,
-      Function.comp_apply, map_sum]
-    refine sum_congr rfl fun j _ => ?_
+    simp only [mul_diagonal, Function.comp_apply]
+    apply Finset.sum_congr rfl
+    intro j _hj
     rw [show W i j * (hA.eigenvalues j : ℂ) * starRingEnd ℂ (W i j) =
         ((hA.eigenvalues j * ‖W i j‖ ^ 2 : ℝ) : ℂ) by
       rw [show W i j * (hA.eigenvalues j : ℂ) * starRingEnd ℂ (W i j) =
@@ -112,13 +112,20 @@ theorem traceNorm_eq_sum_abs_re_diag_eigenbasis
       star (hA.eigenvectorUnitary : Matrix n n ℂ) * A *
           (hA.eigenvectorUnitary : Matrix n n ℂ) =
         diagonal (Complex.ofReal ∘ hA.eigenvalues) := by
-    rw [hA.spectral_theorem, Unitary.conjStarAlgAut_apply]
+    have hspectral : A =
+        (hA.eigenvectorUnitary : Matrix n n ℂ) *
+          diagonal (Complex.ofReal ∘ hA.eigenvalues) *
+          star (hA.eigenvectorUnitary : Matrix n n ℂ) := by
+      simpa only [Unitary.conjStarAlgAut_apply] using hA.spectral_theorem
     calc
-      star (hA.eigenvectorUnitary : Matrix n n ℂ) *
+      star (hA.eigenvectorUnitary : Matrix n n ℂ) * A *
+            (hA.eigenvectorUnitary : Matrix n n ℂ) =
+          star (hA.eigenvectorUnitary : Matrix n n ℂ) *
             ((hA.eigenvectorUnitary : Matrix n n ℂ) *
               diagonal (Complex.ofReal ∘ hA.eigenvalues) *
               star (hA.eigenvectorUnitary : Matrix n n ℂ)) *
-            (hA.eigenvectorUnitary : Matrix n n ℂ) =
+            (hA.eigenvectorUnitary : Matrix n n ℂ) := by rw [hspectral]
+      _ =
           (star (hA.eigenvectorUnitary : Matrix n n ℂ) *
               (hA.eigenvectorUnitary : Matrix n n ℂ)) *
             diagonal (Complex.ofReal ∘ hA.eigenvalues) *
@@ -151,7 +158,11 @@ theorem traceNorm_add_le
            |Complex.re ((star (U : Matrix n n ℂ) * B *
               (U : Matrix n n ℂ)) i i)|) := by
           refine sum_le_sum fun i _ => ?_
-          rw [hsplit, Matrix.add_apply, map_add]
+          rw [hsplit, Matrix.add_apply]
+          change |Complex.re ((star (U : Matrix n n ℂ) * A *
+              (U : Matrix n n ℂ)) i i) +
+                Complex.re ((star (U : Matrix n n ℂ) * B *
+                  (U : Matrix n n ℂ)) i i)| ≤ _
           exact abs_add _ _
     _ = (∑ i, |Complex.re ((star (U : Matrix n n ℂ) * A *
           (U : Matrix n n ℂ)) i i)|) +
