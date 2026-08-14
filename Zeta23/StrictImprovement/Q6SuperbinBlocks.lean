@@ -325,6 +325,7 @@ def wideRepairToQ6SuperbinCoordinate
           by_cases hhalf : half.val = 0
           · have : half = 0 := Fin.ext hhalf
             subst half
+            change Fin 3 at k
             by_cases hp : q6SuperbinRightOccupancy E b % 5 = 3
             · exact ⟨⟨⟨b, .six⟩,
                 ⟨0, by simp [q6SuperbinBlockCount,
@@ -335,6 +336,7 @@ def wideRepairToQ6SuperbinCoordinate
                   q6SuperbinLeftOccupancy, hmod, hp]⟩⟩, k⟩
           · have : half = 1 := Fin.ext (by omega)
             subst half
+            change Fin 3 at k
             by_cases hp : q6SuperbinLeftOccupancy E b % 5 = 3
             · exact ⟨⟨⟨b, .six⟩,
                 ⟨0, by simp [q6SuperbinBlockCount,
@@ -428,6 +430,7 @@ theorem wideRepairToQ6_leftInverse
         simp [q6SuperbinBlockCount, hcond.1, hcond.2] at hlt
         omega
       subst u
+      change Fin 6 at k
       by_cases hk : k.val < 3
       · simp [q6SuperbinToWideRepairCoordinate,
           wideRepairToQ6SuperbinCoordinate, hcond.1, hcond.2, hk]
