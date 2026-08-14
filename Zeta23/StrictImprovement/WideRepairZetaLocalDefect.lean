@@ -24,10 +24,11 @@ open ZeroSide ZeroSide.RankTraceMult
 
 def wideRepairAtDCoreGain
     (Z : ZeroConfig) (T : ℝ) (P : Params) (scale : ℝ) : ℝ :=
-  scale ^ 2 / (25600 *
-      (Fintype.card (CoreSimpleLabel Z T 3) : ℝ)) *
+  scale ^ 2 * wideRepairAlpha ^ 2 /
+      (Fintype.card (CoreSimpleLabel Z T 3) : ℝ) *
     max 0 ((Fintype.card (CoreSimpleLabel Z T 3) : ℝ) -
-      (13 : ℝ) / 40 * coreBinD T (P.atD T) - 13 / 5) ^ 2
+      wideRepairPackingLoss * coreBinD T (P.atD T) -
+      wideRepairPackingIntercept) ^ 2
 
 /-- Fixed-height `c=2` zero-side inequality with the mixed repaired gain. -/
 theorem hatAz_mult2_with_wide_repair_gain
@@ -47,10 +48,11 @@ theorem hatAz_mult2_with_wide_repair_gain
               (coreWideRepairEnumeration Z T 3 P hL (by norm_num)) q))) :
     4 * rtrace (P.hat T (Z.Az P T)) -
         frobSq (P.hat T (Z.Az P T)) - 2 * (Z.NIprime T : ℝ) +
-        scale ^ 2 / (25600 *
-          (Fintype.card (CoreSimpleLabel Z T 3) : ℝ)) *
+        scale ^ 2 * wideRepairAlpha ^ 2 /
+          (Fintype.card (CoreSimpleLabel Z T 3) : ℝ) *
           max 0 ((Fintype.card (CoreSimpleLabel Z T 3) : ℝ) -
-            (13 : ℝ) / 40 * coreBinD T P - 13 / 5) ^ 2
+            wideRepairPackingLoss * coreBinD T P -
+            wideRepairPackingIntercept) ^ 2
       ≤ (Z.s1 T : ℝ) + excludedSimpleCount Z T 3 := by
   let D := blockData Z T P hconj
   let E := coreWideRepairEnumeration Z T 3 P hL (by norm_num)

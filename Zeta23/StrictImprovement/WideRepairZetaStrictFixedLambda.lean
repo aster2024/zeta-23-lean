@@ -42,7 +42,7 @@ theorem zeta_wide_repair_strict_package_fixed_lam
     (hmargin5 : scale * wideRepairRewardFive +
         (15 * Real.sqrt 5 / 2) * (1 - lam) < wideRepairRewardFive)
     (hq0 : 0 ≤ ThmD.HD lam - eps -
-      (13 : ℝ) / 40 * (lam + eps) - eps) :
+      wideRepairPackingLoss * (lam + eps) - eps) :
     let P := paramsOf stdProfile lam
     ∃ theta0 : ℝ → ℝ,
       (∀ᶠ T in atTop,
@@ -52,10 +52,10 @@ theorem zeta_wide_repair_strict_package_fixed_lam
       (∀ᶠ T in atTop,
         WideRepairStrictSeamAt zetaZeroConfig P theta0 scale T) ∧
       (∀ᶠ T in atTop,
-        (scale ^ 2 *
+        (scale ^ 2 * wideRepairAlpha ^ 2 *
             (ThmD.HD lam - eps -
-              (13 : ℝ) / 40 * (lam + eps) - eps) ^ 2 /
-            (25600 * (1 + eps))) * (Ncount T (2 * T) : ℝ) ≤
+              wideRepairPackingLoss * (lam + eps) - eps) ^ 2 /
+            (1 + eps)) * (Ncount T (2 * T) : ℝ) ≤
           wideRepairAtDCoreGain zetaZeroConfig T P scale) := by
   dsimp
   let P : Params := paramsOf stdProfile lam

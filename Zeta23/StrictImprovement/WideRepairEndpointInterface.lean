@@ -83,7 +83,20 @@ structure WideRepairEndpointCertificates : Prop where
 
 def wideRepairRewardThree : ℝ := 1 / 400
 def wideRepairRewardFour : ℝ := 1 / 85
-def wideRepairRewardFive : ℝ := 1 / 32
+def wideRepairRewardFive : ℝ := 316227 / 10000000
+
+/-- Reward per atom of the dominant five-point block. -/
+def wideRepairAlpha : ℝ := wideRepairRewardFive / 5
+
+/-- Worst one-bin residue deficit; residue three is proved maximal in
+`WideRepairMixedPacking`. -/
+def wideRepairDeficit : ℝ := 3 * wideRepairAlpha - wideRepairRewardThree
+
+/-- Coefficient of the diameter term after `card(B) <= D/8+1`. -/
+def wideRepairPackingLoss : ℝ := wideRepairDeficit / (8 * wideRepairAlpha)
+
+/-- Constant boundary loss after summing over bins. -/
+def wideRepairPackingIntercept : ℝ := wideRepairDeficit / wideRepairAlpha
 
 lemma wideRepairRewardThree_nonneg : 0 ≤ wideRepairRewardThree := by
   norm_num [wideRepairRewardThree]
@@ -93,6 +106,20 @@ lemma wideRepairRewardFour_nonneg : 0 ≤ wideRepairRewardFour := by
 
 lemma wideRepairRewardFive_nonneg : 0 ≤ wideRepairRewardFive := by
   norm_num [wideRepairRewardFive]
+
+lemma wideRepairAlpha_pos : 0 < wideRepairAlpha := by
+  norm_num [wideRepairAlpha, wideRepairRewardFive]
+
+lemma wideRepairDeficit_nonneg : 0 ≤ wideRepairDeficit := by
+  norm_num [wideRepairDeficit, wideRepairAlpha, wideRepairRewardFive,
+    wideRepairRewardThree]
+
+lemma wideRepairPackingLoss_nonneg : 0 ≤ wideRepairPackingLoss := by
+  exact div_nonneg wideRepairDeficit_nonneg (mul_nonneg (by norm_num)
+    wideRepairAlpha_pos.le)
+
+lemma wideRepairPackingIntercept_nonneg : 0 ≤ wideRepairPackingIntercept := by
+  exact div_nonneg wideRepairDeficit_nonneg wideRepairAlpha_pos.le
 
 private lemma frobSq_eq_sum_norm_sq_wide
     {n : Type*} [Fintype n] [DecidableEq n] (A : Matrix n n ℂ) :

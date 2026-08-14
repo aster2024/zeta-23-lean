@@ -40,10 +40,11 @@ theorem seamA_mult2_with_wide_repair_gain
         theta0 / (P.a T * P.L T) *
           (4 + 2 * Real.sqrt (frobSq (P.hat T (Z.Gz P T))) +
             theta0 / (P.a T * P.L T)) +
-        scale ^ 2 / (25600 *
-          (Fintype.card (CoreSimpleLabel Z T 3) : ℝ)) *
+        scale ^ 2 * wideRepairAlpha ^ 2 /
+          (Fintype.card (CoreSimpleLabel Z T 3) : ℝ) *
           max 0 ((Fintype.card (CoreSimpleLabel Z T 3) : ℝ) -
-            (13 : ℝ) / 40 * coreBinD T P - 13 / 5) ^ 2
+            wideRepairPackingLoss * coreBinD T P -
+            wideRepairPackingIntercept) ^ 2
       ≤ Z.N0s T (2 * T) + excludedSimpleCount Z T 3 := by
   obtain ⟨B, hB0, htrE, hfrE, hBle⟩ := hTl.hat
   have hGAE : P.hat T (Z.Gz P T) =

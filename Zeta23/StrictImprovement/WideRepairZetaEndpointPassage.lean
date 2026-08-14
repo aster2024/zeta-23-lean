@@ -33,17 +33,18 @@ def wideRepairEndpointScale (n : ℕ) : ℝ :=
 /-- The mixed packing's positive part before truncation. -/
 def wideRepairEndpointQ (n : ℕ) : ℝ :=
   ThmD.HD (endpointLam n) - endpointEps n -
-    (13 : ℝ) / 40 * (endpointLam n + endpointEps n) - endpointEps n
+    wideRepairPackingLoss * (endpointLam n + endpointEps n) - endpointEps n
 
 /-- Fixed-window coefficient delivered at the `n`-th taper. -/
 def wideRepairEndpointRate (n : ℕ) : ℝ :=
   ThmD.HD (endpointLam n) +
-    wideRepairEndpointScale n ^ 2 * wideRepairEndpointQ n ^ 2 /
-      (25600 * (1 + endpointEps n))
+    wideRepairEndpointScale n ^ 2 * wideRepairAlpha ^ 2 *
+      wideRepairEndpointQ n ^ 2 / (1 + endpointEps n)
 
 /-- Endpoint coefficient before its public unit-fraction weakening. -/
 def wideRepairEndpointRateLimit : ℝ :=
-  ThmD.HD 1 + (ThmD.HD 1 - (13 : ℝ) / 40) ^ 2 / 25600
+  ThmD.HD 1 + wideRepairAlpha ^ 2 *
+    (ThmD.HD 1 - wideRepairPackingLoss) ^ 2
 
 theorem tendsto_wideRepairEndpointScale :
     Tendsto wideRepairEndpointScale atTop (nhds 1) := by
@@ -58,40 +59,42 @@ theorem tendsto_wideRepairEndpointScale :
 
 theorem tendsto_wideRepairEndpointQ :
     Tendsto wideRepairEndpointQ atTop
-      (nhds (ThmD.HD 1 - (13 : ℝ) / 40)) := by
+      (nhds (ThmD.HD 1 - wideRepairPackingLoss)) := by
   have hsum := tendsto_endpointLam_one.add tendsto_endpointStep_zero
-  have hscaled := hsum.const_mul ((13 : ℝ) / 40)
+  have hscaled := hsum.const_mul wideRepairPackingLoss
   have h := ((tendsto_endpointHD.sub tendsto_endpointStep_zero).sub
     hscaled).sub tendsto_endpointStep_zero
   change Tendsto
     (fun n : ℕ => ThmD.HD (endpointLam n) - endpointEps n -
-      (13 : ℝ) / 40 * (endpointLam n + endpointEps n) -
+      wideRepairPackingLoss * (endpointLam n + endpointEps n) -
       endpointEps n) atTop _
   simpa only [endpointEps, add_zero, mul_one, sub_zero] using h
 
 theorem tendsto_wideRepairEndpointRate :
     Tendsto wideRepairEndpointRate atTop
       (nhds wideRepairEndpointRateLimit) := by
-  have hnum := (tendsto_wideRepairEndpointScale.pow 2).mul
+  have hnum := ((tendsto_wideRepairEndpointScale.pow 2).mul
+    (tendsto_const_nhds : Tendsto (fun _ : ℕ => wideRepairAlpha ^ 2)
+      atTop (nhds (wideRepairAlpha ^ 2)))).mul
     (tendsto_wideRepairEndpointQ.pow 2)
   have hden : Tendsto
-      (fun n : ℕ => (25600 : ℝ) * (1 + endpointStep n)) atTop
-      (nhds ((25600 : ℝ) * (1 + 0))) :=
-    tendsto_const_nhds.mul
-      (tendsto_const_nhds.add tendsto_endpointStep_zero)
+      (fun n : ℕ => (1 : ℝ) + endpointStep n) atTop
+      (nhds ((1 : ℝ) + 0)) :=
+    tendsto_const_nhds.add tendsto_endpointStep_zero
   have hgain := hnum.div hden
-    (by norm_num : (25600 : ℝ) * (1 + 0) ≠ 0)
+    (by norm_num : (1 : ℝ) + 0 ≠ 0)
   have h := tendsto_endpointHD.add hgain
   have hend :
-      ThmD.HD 1 + 1 ^ 2 * (ThmD.HD 1 - (13 : ℝ) / 40) ^ 2 /
-          (25600 * (1 + 0)) = wideRepairEndpointRateLimit := by
+      ThmD.HD 1 + 1 ^ 2 * wideRepairAlpha ^ 2 *
+          (ThmD.HD 1 - wideRepairPackingLoss) ^ 2 / (1 + 0) =
+        wideRepairEndpointRateLimit := by
     unfold wideRepairEndpointRateLimit
     ring
   rw [← hend]
   change Tendsto
     (fun n : ℕ => ThmD.HD (endpointLam n) +
-      wideRepairEndpointScale n ^ 2 * wideRepairEndpointQ n ^ 2 /
-        (25600 * (1 + endpointStep n))) atTop _
+      wideRepairEndpointScale n ^ 2 * wideRepairAlpha ^ 2 *
+        wideRepairEndpointQ n ^ 2 / (1 + endpointStep n)) atTop _
   exact h
 
 /-- All fixed-window hypotheses needed by the mixed endpoint passage. -/
@@ -127,7 +130,10 @@ theorem eventually_wideRepairEndpointFeasible :
   have hHpos :
       ∀ᶠ n in atTop, 0 < ThmD.HD (endpointLam n) - endpointEps n :=
     hHlim.eventually (Ioi_mem_nhds hHone)
-  have hqLimit : 0 < ThmD.HD 1 - (13 : ℝ) / 40 := by
+  have hqLimit : 0 < ThmD.HD 1 - wideRepairPackingLoss := by
+    have hloss : wideRepairPackingLoss < (1 : ℝ) / 2 := by
+      norm_num [wideRepairPackingLoss, wideRepairDeficit, wideRepairAlpha,
+        wideRepairRewardFive, wideRepairRewardThree]
     linarith [refined_endpoint_gap]
   have hqPos : ∀ᶠ n in atTop, 0 < wideRepairEndpointQ n :=
     tendsto_wideRepairEndpointQ.eventually (Ioi_mem_nhds hqLimit)
@@ -178,7 +184,8 @@ quadratic gain. -/
 theorem zeta_wide_repair_strict_simple_endpoint_of_le_gain
     (hcertificates : WideRepairEndpointCertificates)
     {eta : ℝ}
-    (heta : eta ≤ (ThmD.HD 1 - (13 : ℝ) / 40) ^ 2 / 25600) :
+    (heta : eta ≤ wideRepairAlpha ^ 2 *
+      (ThmD.HD 1 - wideRepairPackingLoss) ^ 2) :
     ∀ outer > 0, ∃ T₀ : ℝ, ∀ T ≥ T₀,
       (ThmD.HD 1 + eta - outer) *
         (Ncount T (2 * T) : ℝ) ≤ N0simple T (2 * T) := by
@@ -210,30 +217,54 @@ theorem zeta_wide_repair_strict_simple_endpoint_of_le_gain
   exact le_trans
     (mul_le_mul_of_nonneg_right hcoef (Nat.cast_nonneg _)) hfixed
 
-theorem wideRepair_endpoint_gap_lower :
-    (1029797 : ℝ) / 2963440 ≤ ThmD.HD 1 - (13 : ℝ) / 40 := by
-  linarith [refined_endpoint_gap]
+theorem wideRepair_saturated_amplitude_lower :
+    (2600779031 : ℝ) / 1185376000000 ≤
+      wideRepairAlpha * (ThmD.HD 1 - wideRepairPackingLoss) := by
+  norm_num [wideRepairAlpha, wideRepairRewardFive, wideRepairPackingLoss,
+    wideRepairDeficit, wideRepairRewardThree]
+  nlinarith [refined_endpoint_gap]
 
 theorem wideRepair_public_le_endpoint_gain :
-    (1 : ℝ) / 211997 ≤
-      (ThmD.HD 1 - (13 : ℝ) / 40) ^ 2 / 25600 := by
-  have hgap0 : 0 ≤ (1029797 : ℝ) / 2963440 := by norm_num
-  have hsq := pow_le_pow_left₀ hgap0 wideRepair_endpoint_gap_lower 2
+    (1 : ℝ) / 207733 ≤ wideRepairAlpha ^ 2 *
+      (ThmD.HD 1 - wideRepairPackingLoss) ^ 2 := by
+  have hamp0 : 0 ≤ (2600779031 : ℝ) / 1185376000000 := by norm_num
+  have hsq := pow_le_pow_left₀ hamp0
+    wideRepair_saturated_amplitude_lower 2
   calc
-    (1 : ℝ) / 211997 ≤
-        ((1029797 : ℝ) / 2963440) ^ 2 / 25600 := by norm_num
-    _ ≤ (ThmD.HD 1 - (13 : ℝ) / 40) ^ 2 / 25600 := by
-      exact div_le_div_of_nonneg_right hsq (by norm_num)
+    (1 : ℝ) / 207733 ≤
+        ((2600779031 : ℝ) / 1185376000000) ^ 2 := by norm_num
+    _ ≤ (wideRepairAlpha *
+        (ThmD.HD 1 - wideRepairPackingLoss)) ^ 2 := hsq
+    _ = wideRepairAlpha ^ 2 *
+        (ThmD.HD 1 - wideRepairPackingLoss) ^ 2 := by ring
 
 /-- Public rational form, explicitly conditional on all three external
 endpoint interval certificates. -/
 theorem zeta_wide_repair_strict_simple_endpoint_rational
     (hcertificates : WideRepairEndpointCertificates) :
     ∀ outer > 0, ∃ T₀ : ℝ, ∀ T ≥ T₀,
-      (ThmD.HD 1 + (1 : ℝ) / 211997 - outer) *
+      (ThmD.HD 1 + (1 : ℝ) / 207733 - outer) *
         (Ncount T (2 * T) : ℝ) ≤ N0simple T (2 * T) :=
   zeta_wide_repair_strict_simple_endpoint_of_le_gain
     hcertificates wideRepair_public_le_endpoint_gain
+
+/-- Backward-compatible weakening matching the frozen v0.4 headline. -/
+theorem zeta_wide_repair_strict_simple_endpoint_rational_211997
+    (hcertificates : WideRepairEndpointCertificates) :
+    ∀ outer > 0, ∃ T₀ : ℝ, ∀ T ≥ T₀,
+      (ThmD.HD 1 + (1 : ℝ) / 211997 - outer) *
+        (Ncount T (2 * T) : ℝ) ≤ N0simple T (2 * T) := by
+  intro outer houter
+  obtain ⟨T₀, hT₀⟩ :=
+    zeta_wide_repair_strict_simple_endpoint_rational hcertificates
+      ((1 : ℝ) / 2 * outer) (by linarith)
+  refine ⟨T₀, fun T hT => ?_⟩
+  have hmain := hT₀ T hT
+  have hcoef : ThmD.HD 1 + (1 : ℝ) / 211997 - outer ≤
+      ThmD.HD 1 + (1 : ℝ) / 207733 - outer / 2 := by
+    norm_num
+    linarith
+  exact le_trans (mul_le_mul_of_nonneg_right hcoef (Nat.cast_nonneg _)) hmain
 
 end StrictImprovement
 end Zeta23

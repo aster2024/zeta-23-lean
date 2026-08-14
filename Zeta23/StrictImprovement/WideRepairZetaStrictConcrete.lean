@@ -29,12 +29,12 @@ theorem zeta_wide_repair_strict_simple_fixed_lam
     (hmargin5 : scale * wideRepairRewardFive +
         (15 * Real.sqrt 5 / 2) * (1 - lam) < wideRepairRewardFive)
     (hq0 : 0 ≤ ThmD.HD lam - eps -
-      (13 : ℝ) / 40 * (lam + eps) - eps) :
+      wideRepairPackingLoss * (lam + eps) - eps) :
     ∀ outer > 0, ∃ T0 : ℝ, ∀ T ≥ T0,
-      (ThmD.HD lam + scale ^ 2 *
+      (ThmD.HD lam + scale ^ 2 * wideRepairAlpha ^ 2 *
           (ThmD.HD lam - eps -
-            (13 : ℝ) / 40 * (lam + eps) - eps) ^ 2 /
-            (25600 * (1 + eps)) - outer) *
+            wideRepairPackingLoss * (lam + eps) - eps) ^ 2 /
+            (1 + eps) - outer) *
         (Ncount T (2 * T) : ℝ) ≤ N0simple T (2 * T) := by
   let P : Params := paramsOf stdProfile lam
   have hP : P.Valid := by

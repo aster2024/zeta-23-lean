@@ -260,7 +260,8 @@ def wideRepairBinReward (n : ℕ) : ℝ :=
     (if n % 5 = 4 then wideRepairRewardFour else 0)
 
 theorem wideRepairBinReward_lower (n : ℕ) :
-    (n : ℝ) / 160 - (13 : ℝ) / 800 ≤ wideRepairBinReward n := by
+    wideRepairAlpha * (n : ℝ) - wideRepairDeficit ≤
+      wideRepairBinReward n := by
   have hdecomp : n % 5 + 5 * (n / 5) = n := Nat.mod_add_div n 5
   have hdecomp' : (n : ℝ) = ((n % 5 : ℕ) : ℝ) +
       5 * ((n / 5 : ℕ) : ℝ) := by
@@ -269,7 +270,8 @@ theorem wideRepairBinReward_lower (n : ℕ) :
   interval_cases h : n % 5 <;>
     rw [hdecomp'] <;>
     simp [wideRepairBinReward, h, wideRepairRewardThree,
-      wideRepairRewardFour, wideRepairRewardFive] <;>
+      wideRepairRewardFour, wideRepairRewardFive, wideRepairAlpha,
+      wideRepairDeficit] <;>
     norm_num <;>
     linarith
 
@@ -288,18 +290,18 @@ theorem sum_wideRepairBlockReward_eq
 theorem sum_wideRepairBlockReward_lower
     {S B : Type*} [Fintype B] [DecidableEq B]
     (E : BinnedEnumeration S B) :
-    ((∑ b, E.occupancy b : ℕ) : ℝ) / 160 -
-        (13 : ℝ) / 800 * (Fintype.card B : ℝ) ≤
+    wideRepairAlpha * ((∑ b, E.occupancy b : ℕ) : ℝ) -
+        wideRepairDeficit * (Fintype.card B : ℝ) ≤
       ∑ q : WideRepairBlock E, wideRepairBlockReward q := by
   rw [sum_wideRepairBlockReward_eq E]
   calc
-    ((∑ b, E.occupancy b : ℕ) : ℝ) / 160 -
-          (13 : ℝ) / 800 * (Fintype.card B : ℝ) =
-        ∑ b : B, ((E.occupancy b : ℝ) / 160 - (13 : ℝ) / 800) := by
+    wideRepairAlpha * ((∑ b, E.occupancy b : ℕ) : ℝ) -
+          wideRepairDeficit * (Fintype.card B : ℝ) =
+        ∑ b : B, (wideRepairAlpha * (E.occupancy b : ℝ) -
+          wideRepairDeficit) := by
       push_cast
       simp [Finset.sum_sub_distrib, Finset.sum_const, Finset.card_univ,
-        nsmul_eq_mul]
-      rw [Finset.sum_div]
+        nsmul_eq_mul, Finset.mul_sum]
       ring
     _ ≤ ∑ b, wideRepairBinReward (E.occupancy b) :=
       Finset.sum_le_sum fun b _ => wideRepairBinReward_lower (E.occupancy b)
@@ -341,15 +343,20 @@ theorem mixed_blocks_traceNorm_target_lower
       2 * (scale * wideRepairBlockReward q) ≤
         Tail.traceNorm ((gramDeviation_isHermitian x).submatrix
           (wideRepairBlockIndex E q))) :
-    2 * (scale / 160 *
-        max 0 ((Fintype.card S : ℝ) - (13 : ℝ) / 40 * D - 13 / 5)) ≤
+    2 * (scale * wideRepairAlpha *
+        max 0 ((Fintype.card S : ℝ) - wideRepairPackingLoss * D -
+          wideRepairPackingIntercept)) ≤
       Tail.traceNorm (gramDeviation_isHermitian x) := by
   have hrewards := sum_wideRepairBlockReward_lower E
   rw [hcover] at hrewards
-  have hbase : (1 : ℝ) / 160 *
-      ((Fintype.card S : ℝ) - (13 : ℝ) / 40 * D - 13 / 5) ≤
+  have hbase : wideRepairAlpha *
+      ((Fintype.card S : ℝ) - wideRepairPackingLoss * D -
+        wideRepairPackingIntercept) ≤
       ∑ q : WideRepairBlock E, wideRepairBlockReward q := by
     have hcard := hbins
+    norm_num [wideRepairAlpha, wideRepairRewardFive, wideRepairDeficit,
+      wideRepairRewardThree, wideRepairPackingLoss,
+      wideRepairPackingIntercept] at hrewards ⊢
     nlinarith
   have hrewards0 : 0 ≤
       ∑ q : WideRepairBlock E, wideRepairBlockReward q := by
@@ -361,23 +368,27 @@ theorem mixed_blocks_traceNorm_target_lower
         cases q with
         | inl _ => exact wideRepairRewardThree_nonneg
         | inr _ => exact wideRepairRewardFour_nonneg
-  have hmax : (1 : ℝ) / 160 *
-      max 0 ((Fintype.card S : ℝ) - (13 : ℝ) / 40 * D - 13 / 5) ≤
+  have hmax : wideRepairAlpha *
+      max 0 ((Fintype.card S : ℝ) - wideRepairPackingLoss * D -
+        wideRepairPackingIntercept) ≤
       ∑ q : WideRepairBlock E, wideRepairBlockReward q := by
     by_cases harg : 0 ≤
-        (Fintype.card S : ℝ) - (13 : ℝ) / 40 * D - 13 / 5
+        (Fintype.card S : ℝ) - wideRepairPackingLoss * D -
+          wideRepairPackingIntercept
     · rw [max_eq_right harg]
       exact hbase
     · have harg' :
-          (Fintype.card S : ℝ) - (13 : ℝ) / 40 * D - 13 / 5 ≤ 0 :=
+          (Fintype.card S : ℝ) - wideRepairPackingLoss * D -
+            wideRepairPackingIntercept ≤ 0 :=
         le_of_not_ge harg
       rw [max_eq_left harg']
       simpa using hrewards0
   have hscaled := mul_le_mul_of_nonneg_left hmax hscale
   have htrace := mixed_blocks_traceNorm_lower E x hlocal
   calc
-    2 * (scale / 160 *
-        max 0 ((Fintype.card S : ℝ) - (13 : ℝ) / 40 * D - 13 / 5))
+    2 * (scale * wideRepairAlpha *
+        max 0 ((Fintype.card S : ℝ) - wideRepairPackingLoss * D -
+          wideRepairPackingIntercept))
         ≤ 2 * (scale * ∑ q : WideRepairBlock E,
           wideRepairBlockReward q) := by
       nlinarith
@@ -422,8 +433,8 @@ theorem reward_sq_le_card_mul_belowOneDefect_of_traceNorm
   have hsq : R ^ 2 ≤ V ^ 2 := by nlinarith
   exact hsq.trans hCS
 
-/-- Finite-dimensional rank--trace theorem carrying the exact repaired
-coefficient `scale^2/25600`. -/
+/-- Finite-dimensional rank--trace theorem carrying the saturated coefficient
+`scale^2 * wideRepairAlpha^2`. -/
 theorem rank_trace_two_with_mixed_blocks
     {S B d : Type*} [Fintype S] [DecidableEq S] [Nonempty S]
     [Fintype B] [DecidableEq B] [Fintype d] [DecidableEq d]
@@ -440,13 +451,13 @@ theorem rank_trace_two_with_mixed_blocks
     {b : ℕ} (hb : posIndex hQ ≤ b) :
     2 * rtrace (columnMatrix x * (columnMatrix x)ᴴ) -
         (Fintype.card S : ℝ) + 4 * rtrace Q - 4 * (b : ℝ) +
-        scale ^ 2 / (25600 * (Fintype.card S : ℝ)) *
+        scale ^ 2 * wideRepairAlpha ^ 2 / (Fintype.card S : ℝ) *
           max 0 ((Fintype.card S : ℝ) -
-            (13 : ℝ) / 40 * D - 13 / 5) ^ 2 ≤
+            wideRepairPackingLoss * D - wideRepairPackingIntercept) ^ 2 ≤
       frobSq (columnMatrix x * (columnMatrix x)ᴴ + Q) := by
   let target : ℝ := max 0 ((Fintype.card S : ℝ) -
-    (13 : ℝ) / 40 * D - 13 / 5)
-  let R : ℝ := scale / 160 * target
+    wideRepairPackingLoss * D - wideRepairPackingIntercept)
+  let R : ℝ := scale * wideRepairAlpha * target
   have hR0 : 0 ≤ R := by
     dsimp [R, target]
     positivity
@@ -465,7 +476,8 @@ theorem rank_trace_two_with_mixed_blocks
     simpa only [mul_comm, mul_left_comm, mul_assoc] using hlower
   have hrefined := rank_trace_ineq_two_refined_gram (columnMatrix x) hQ hb
   have hRform : R ^ 2 / (Fintype.card S : ℝ) =
-      scale ^ 2 / (25600 * (Fintype.card S : ℝ)) * target ^ 2 := by
+      scale ^ 2 * wideRepairAlpha ^ 2 / (Fintype.card S : ℝ) *
+        target ^ 2 := by
     dsimp [R]
     field_simp [ne_of_gt hspos]
     ring
@@ -493,9 +505,9 @@ theorem rank_trace_two_with_normalized_mixed_blocks
       (hA.sub (weightedProjectorSum_posSemidef x w hw0).isHermitian) ≤ b) :
     2 * rtrace (projectorSum x) - (Fintype.card S : ℝ) +
         4 * rtrace (A - projectorSum x) - 4 * (b : ℝ) +
-        scale ^ 2 / (25600 * (Fintype.card S : ℝ)) *
+        scale ^ 2 * wideRepairAlpha ^ 2 / (Fintype.card S : ℝ) *
           max 0 ((Fintype.card S : ℝ) -
-            (13 : ℝ) / 40 * D - 13 / 5) ^ 2 ≤
+            wideRepairPackingLoss * D - wideRepairPackingIntercept) ^ 2 ≤
       frobSq A := by
   have hb' : posIndex (hA.sub (projectorSum_posSemidef x).isHermitian) ≤ b :=
     (posIndex_unit_complement_le_weighted_complement x w hw0 hw1 hA).trans hb
