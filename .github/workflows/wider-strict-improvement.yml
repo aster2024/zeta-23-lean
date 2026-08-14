@@ -166,6 +166,15 @@ jobs:
 
           # Compile the new endpoint chain first so a local integration error
           # is reported before replaying the full historical preflight list.
+          run_preflight Zeta23.StrictImprovement.Q6SuperbinEndpointInterface \
+            q6-superbin-endpoint-interface-build.log \
+            "Q6 superbin endpoint interface preflight failure"
+          run_preflight Zeta23.StrictImprovement.Q6SuperbinResiduePacking \
+            q6-superbin-residue-packing-build.log \
+            "Q6 superbin residue packing preflight failure"
+          run_preflight Zeta23.StrictImprovement.Q6SuperbinBinning \
+            q6-superbin-binning-build.log \
+            "Q6 superbin binning preflight failure"
           run_preflight Zeta23.StrictImprovement.WideRepairZetaEndpointPassage \
             wide-repair-zeta-endpoint-passage-build.log \
             "Mixed repaired endpoint passage preflight failure"
@@ -365,6 +374,9 @@ jobs:
             Zeta23.StrictImprovement.ZetaWiderEndpointPassage \
             Zeta23.StrictImprovement.WiderFixedInterfaceCeiling \
             Zeta23.StrictImprovement.WideRepairZetaEndpointPassage \
+            Zeta23.StrictImprovement.Q6SuperbinEndpointInterface \
+            Zeta23.StrictImprovement.Q6SuperbinResiduePacking \
+            Zeta23.StrictImprovement.Q6SuperbinBinning \
             2>&1 | tee wider-target-build.log
           target_status=${PIPESTATUS[0]}
           if [[ "${target_status}" -ne 0 ]]; then
