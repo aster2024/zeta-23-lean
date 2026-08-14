@@ -58,3 +58,5 @@ import Zeta23.StrictImprovement.WideRepairZetaEndpointPassage
 import Zeta23.StrictImprovement.Q6SuperbinEndpointInterface
 import Zeta23.StrictImprovement.Q6SuperbinResiduePacking
 import Zeta23.StrictImprovement.Q6SuperbinBinning
+import Zeta23.StrictImprovement.Q6SuperbinMixedPacking
+import Zeta23.StrictImprovement.Q6SuperbinEndpointArithmetic

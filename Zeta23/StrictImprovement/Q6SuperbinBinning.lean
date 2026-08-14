@@ -127,7 +127,7 @@ theorem q6SuperbinHalf_one_bounds
   exact ⟨hge, hlocal.2.le⟩
 
 abbrev Q6HalfBinKey (D : ℝ) :=
-  Σ _ : Fin (q6SuperbinCount D), Fin 2
+  Fin (q6SuperbinCount D) × Fin 2
 
 noncomputable def q6HalfBinKey
     {S : Type*} (D base : ℝ) (coord : S → ℝ)
@@ -153,6 +153,21 @@ theorem q6HalfBinEnumeration_cover
       Fintype.card S := by
   exact fiberBinnedEnumeration_cover (q6HalfBinKey D base coord hrange)
 
+theorem q6HalfBinEnumeration_superbin_cover
+    {S : Type*} [Fintype S]
+    (D base : ℝ) (coord : S → ℝ)
+    (hrange : ∀ s, 0 ≤ coord s - base ∧
+      coord s - base ≤ 2 * Real.pi * D) :
+    ∑ b : Fin (q6SuperbinCount D),
+        ((q6HalfBinEnumeration D base coord hrange).occupancy (b, 0) +
+          (q6HalfBinEnumeration D base coord hrange).occupancy (b, 1)) =
+      Fintype.card S := by
+  rw [← q6HalfBinEnumeration_cover D base coord hrange]
+  rw [Fintype.sum_prod_type]
+  apply Finset.sum_congr rfl
+  intro b _
+  exact Fin.sum_univ_two
+
 @[simp] theorem q6HalfBinEnumeration_entry_key
     {S : Type*} [Fintype S]
     (D base : ℝ) (coord : S → ℝ)
@@ -164,6 +179,95 @@ theorem q6HalfBinEnumeration_cover
       ((q6HalfBinEnumeration D base coord hrange).entry q k) = q := by
   exact fiberBinnedEnumeration_at_bin
     (q6HalfBinKey D base coord hrange) q k
+
+variable (Z : ZeroConfig) (T C : ℝ) (P : Params)
+
+noncomputable def coreQ6HalfBinEnumeration
+    (hL : 0 < P.L T) (hC : 0 ≤ C) :
+    BinnedEnumeration (CoreSimpleLabel Z T C)
+      (Q6HalfBinKey (coreBinD T P)) :=
+  q6HalfBinEnumeration (coreBinD T P) (coreBinBase T C P)
+    (coreScaledOrdinate Z T C P)
+    (coreScaledOrdinate_range Z T C P hL hC)
+
+theorem coreQ6HalfBinEnumeration_superbin_cover
+    (hL : 0 < P.L T) (hC : 0 ≤ C) :
+    ∑ b : Fin (q6SuperbinCount (coreBinD T P)),
+        ((coreQ6HalfBinEnumeration Z T C P hL hC).occupancy (b, 0) +
+          (coreQ6HalfBinEnumeration Z T C P hL hC).occupancy (b, 1)) =
+      Fintype.card (CoreSimpleLabel Z T C) := by
+  exact q6HalfBinEnumeration_superbin_cover
+    (coreBinD T P) (coreBinBase T C P)
+    (coreScaledOrdinate Z T C P)
+    (coreScaledOrdinate_range Z T C P hL hC)
+
+theorem coreQ6Superbin_card_le
+    (hL : 0 < P.L T) (hT : 0 ≤ T) :
+    (Fintype.card (Fin (q6SuperbinCount (coreBinD T P))) : ℝ) ≤
+      coreBinD T P / 16 + 1 := by
+  apply q6Superbin_card_le
+  unfold coreBinD
+  positivity
+
+theorem coreQ6LeftEntry_bounds
+    (hL : 0 < P.L T) (hC : 0 ≤ C)
+    (b : Fin (q6SuperbinCount (coreBinD T P)))
+    (k : Fin ((coreQ6HalfBinEnumeration Z T C P hL hC).occupancy (b, 0))) :
+    let z := (coreQ6HalfBinEnumeration Z T C P hL hC).entry (b, 0) k
+    0 ≤ coreScaledOrdinate Z T C P z -
+        (coreBinBase T C P + (b.val : ℝ) * (32 * Real.pi)) ∧
+      coreScaledOrdinate Z T C P z -
+        (coreBinBase T C P + (b.val : ℝ) * (32 * Real.pi)) ≤
+          16 * Real.pi := by
+  let E := coreQ6HalfBinEnumeration Z T C P hL hC
+  let z := E.entry (b, 0) k
+  have hkey := q6HalfBinEnumeration_entry_key
+    (coreBinD T P) (coreBinBase T C P)
+    (coreScaledOrdinate Z T C P)
+    (coreScaledOrdinate_range Z T C P hL hC) (b, 0) k
+  have hsuper : q6Superbin (coreBinD T P) (coreBinBase T C P)
+      (coreScaledOrdinate Z T C P)
+      (coreScaledOrdinate_range Z T C P hL hC) z = b :=
+    congrArg Prod.fst hkey
+  have hhalf : q6SuperbinHalf (coreBinD T P) (coreBinBase T C P)
+      (coreScaledOrdinate Z T C P)
+      (coreScaledOrdinate_range Z T C P hL hC) z = 0 :=
+    congrArg Prod.snd hkey
+  have hbounds := q6SuperbinHalf_zero_bounds
+    (coreScaledOrdinate_range Z T C P hL hC) hhalf
+  dsimp only at hbounds ⊢
+  rw [hsuper] at hbounds
+  exact hbounds
+
+theorem coreQ6RightEntry_bounds
+    (hL : 0 < P.L T) (hC : 0 ≤ C)
+    (b : Fin (q6SuperbinCount (coreBinD T P)))
+    (k : Fin ((coreQ6HalfBinEnumeration Z T C P hL hC).occupancy (b, 1))) :
+    let z := (coreQ6HalfBinEnumeration Z T C P hL hC).entry (b, 1) k
+    16 * Real.pi ≤ coreScaledOrdinate Z T C P z -
+        (coreBinBase T C P + (b.val : ℝ) * (32 * Real.pi)) ∧
+      coreScaledOrdinate Z T C P z -
+        (coreBinBase T C P + (b.val : ℝ) * (32 * Real.pi)) ≤
+          32 * Real.pi := by
+  let E := coreQ6HalfBinEnumeration Z T C P hL hC
+  let z := E.entry (b, 1) k
+  have hkey := q6HalfBinEnumeration_entry_key
+    (coreBinD T P) (coreBinBase T C P)
+    (coreScaledOrdinate Z T C P)
+    (coreScaledOrdinate_range Z T C P hL hC) (b, 1) k
+  have hsuper : q6Superbin (coreBinD T P) (coreBinBase T C P)
+      (coreScaledOrdinate Z T C P)
+      (coreScaledOrdinate_range Z T C P hL hC) z = b :=
+    congrArg Prod.fst hkey
+  have hhalf : q6SuperbinHalf (coreBinD T P) (coreBinBase T C P)
+      (coreScaledOrdinate Z T C P)
+      (coreScaledOrdinate_range Z T C P hL hC) z = 1 :=
+    congrArg Prod.snd hkey
+  have hbounds := q6SuperbinHalf_one_bounds
+    (coreScaledOrdinate_range Z T C P hL hC) hhalf
+  dsimp only at hbounds ⊢
+  rw [hsuper] at hbounds
+  exact hbounds
 
 end StrictImprovement
 end Zeta23
