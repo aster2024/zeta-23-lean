@@ -127,18 +127,21 @@ theorem coreQ6SuperbinBlock_geometry
         constructor <;> nlinarith [hb.1, hb.2]
       · intro i hi
         have hnot : ¬ i.val < 3 := by omega
+        have hi6 : i.val < 6 := by
+          simpa [q6SuperbinBlockSize, q6SuperbinBlockKindSize] using i.isLt
+        have hiright : i.val - 3 < 3 := by omega
         have hidx :
             q6SuperbinBlockIndex E ⟨⟨b, .six⟩, u⟩ i =
               E.entry (b, 1)
                 (wideRepairResidualSlot (q6SuperbinRightOccupancy E b) 3
-                  hcond.2 ⟨i.val - 3, by omega⟩) := by
+                  hcond.2 ⟨i.val - 3, hiright⟩) := by
           dsimp only [q6SuperbinBlockIndex, q6SuperbinBlockCoordinate, id]
           rw [dif_neg hnot]
         dsimp only [coreQ6SuperbinBlockCoordinate]
         rw [hidx]
         have hb := coreQ6RightEntry_bounds Z T C P hL hC b
           (wideRepairResidualSlot (q6SuperbinRightOccupancy E b) 3
-            hcond.2 ⟨i.val - 3, by omega⟩)
+            hcond.2 ⟨i.val - 3, hiright⟩)
         constructor <;> nlinarith [hb.1, hb.2]
 
 private abbrev q6p (T : ℝ) (P : Params) : PrimeSide.Setting :=
