@@ -361,6 +361,36 @@ def wideRepairToQ6SuperbinCoordinate
               ⟨0, by simp [q6SuperbinBlockCount,
                 q6SuperbinRightOccupancy, hmod]⟩⟩, k⟩
 
+private theorem q6SuperbinToWideRepairCoordinate_six_left
+    {S B : Type*} [Fintype B]
+    (E : BinnedEnumeration S (B × Fin 2)) (b : B)
+    (u : Fin (q6SuperbinBlockCount E b .six))
+    (hcond : q6SuperbinLeftOccupancy E b % 5 = 3 ∧
+      q6SuperbinRightOccupancy E b % 5 = 3)
+    (k : Fin 6) (hk : k.val < 3) :
+    q6SuperbinToWideRepairCoordinate E
+        (⟨⟨⟨b, .six⟩, u⟩, k⟩ :
+          Σ q : Q6SuperbinBlock E, Fin (q6SuperbinBlockSize q)) =
+      ⟨Sum.inr (Sum.inl
+          ⟨(b, 0), q6WideThreeLeftWitness E b hcond.1⟩),
+        (⟨k.val, hk⟩ : Fin 3)⟩ := by
+  simp [q6SuperbinToWideRepairCoordinate, hk]
+
+private theorem q6SuperbinToWideRepairCoordinate_six_right
+    {S B : Type*} [Fintype B]
+    (E : BinnedEnumeration S (B × Fin 2)) (b : B)
+    (u : Fin (q6SuperbinBlockCount E b .six))
+    (hcond : q6SuperbinLeftOccupancy E b % 5 = 3 ∧
+      q6SuperbinRightOccupancy E b % 5 = 3)
+    (k : Fin 6) (hk : ¬ k.val < 3) :
+    q6SuperbinToWideRepairCoordinate E
+        (⟨⟨⟨b, .six⟩, u⟩, k⟩ :
+          Σ q : Q6SuperbinBlock E, Fin (q6SuperbinBlockSize q)) =
+      ⟨Sum.inr (Sum.inl
+          ⟨(b, 1), q6WideThreeRightWitness E b hcond.2⟩),
+        (⟨k.val - 3, by omega⟩ : Fin 3)⟩ := by
+  simp [q6SuperbinToWideRepairCoordinate, hk]
+
 theorem wideRepairToQ6_leftInverse
     {S B : Type*} [Fintype B]
     (E : BinnedEnumeration S (B × Fin 2)) :
@@ -433,10 +463,13 @@ theorem wideRepairToQ6_leftInverse
         omega
       subst u
       change Fin 6 at k
-      fin_cases k <;>
-        ext <;>
-        simp [q6SuperbinToWideRepairCoordinate,
-          wideRepairToQ6SuperbinCoordinate, hcond.1, hcond.2]
+      by_cases hk : k.val < 3
+      · rw [q6SuperbinToWideRepairCoordinate_six_left E b _ hcond k hk]
+        simp [wideRepairToQ6SuperbinCoordinate, hcond.1, hcond.2]
+      · have hk3 : 3 ≤ k.val := by omega
+        have hval : k.val - 3 + 3 = k.val := Nat.sub_add_cancel hk3
+        rw [q6SuperbinToWideRepairCoordinate_six_right E b _ hcond k hk]
+        simp [wideRepairToQ6SuperbinCoordinate, hcond.1, hcond.2, hval]
 
 theorem q6SuperbinToWideRepairCoordinate_injective
     {S B : Type*} [Fintype B]
@@ -473,10 +506,12 @@ theorem q6SuperbinBlockIndex_eq_wideRepair
       subst u
       change Fin 6 at k
       by_cases hk : k.val < 3
-      · simp [q6SuperbinBlockIndex, q6SuperbinBlockCoordinate,
-          q6SuperbinToWideRepairCoordinate, hcond.1, hcond.2, hk]
-      · simp [q6SuperbinBlockIndex, q6SuperbinBlockCoordinate,
-          q6SuperbinToWideRepairCoordinate, hcond.1, hcond.2, hk]
+      · rw [q6SuperbinToWideRepairCoordinate_six_left E b _ hcond k hk]
+        simp [q6SuperbinBlockIndex, q6SuperbinBlockCoordinate,
+          wideRepairBlockIndex, hcond.1, hk]
+      · rw [q6SuperbinToWideRepairCoordinate_six_right E b _ hcond k hk]
+        simp [q6SuperbinBlockIndex, q6SuperbinBlockCoordinate,
+          wideRepairBlockIndex, hcond.2, hk]
 
 /-- All points selected by the merged q6 inventory are globally distinct. -/
 theorem q6SuperbinBlockIndex_injective
