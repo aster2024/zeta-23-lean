@@ -175,6 +175,24 @@ jobs:
           run_preflight Zeta23.StrictImprovement.Q6SuperbinBinning \
             q6-superbin-binning-build.log \
             "Q6 superbin binning preflight failure"
+          run_preflight Zeta23.StrictImprovement.Q6SuperbinZetaSeamAtD \
+            q6-superbin-zeta-seam-at-d-build.log \
+            "Q6 superbin zeta seam preflight failure"
+          run_preflight Zeta23.StrictImprovement.Q6SuperbinZetaCoreGain \
+            q6-superbin-zeta-core-gain-build.log \
+            "Q6 superbin zeta core-gain preflight failure"
+          run_preflight Zeta23.StrictImprovement.Q6SuperbinZetaStrictSeamEventually \
+            q6-superbin-zeta-strict-seam-eventually-build.log \
+            "Q6 superbin strict seam eventually preflight failure"
+          run_preflight Zeta23.StrictImprovement.Q6SuperbinZetaStrictFixedLambda \
+            q6-superbin-zeta-strict-fixed-lambda-build.log \
+            "Q6 superbin strict fixed-lambda preflight failure"
+          run_preflight Zeta23.StrictImprovement.Q6SuperbinZetaStrictConcrete \
+            q6-superbin-zeta-strict-concrete-build.log \
+            "Q6 superbin strict concrete preflight failure"
+          run_preflight Zeta23.StrictImprovement.Q6SuperbinZetaEndpointPassage \
+            q6-superbin-zeta-endpoint-passage-build.log \
+            "Q6 superbin endpoint passage preflight failure"
           run_preflight Zeta23.StrictImprovement.WideRepairZetaEndpointPassage \
             wide-repair-zeta-endpoint-passage-build.log \
             "Mixed repaired endpoint passage preflight failure"
@@ -382,6 +400,16 @@ jobs:
             Zeta23.StrictImprovement.Q6SuperbinBlocks \
             Zeta23.StrictImprovement.Q6SuperbinLocal \
             Zeta23.StrictImprovement.Q6SuperbinPacking \
+            Zeta23.StrictImprovement.Q6SuperbinCoreBlocks \
+            Zeta23.StrictImprovement.Q6SuperbinZetaLocalDefect \
+            Zeta23.StrictImprovement.Q6SuperbinZetaAtD \
+            Zeta23.StrictImprovement.Q6SuperbinZetaSeamDefect \
+            Zeta23.StrictImprovement.Q6SuperbinZetaSeamAtD \
+            Zeta23.StrictImprovement.Q6SuperbinZetaCoreGain \
+            Zeta23.StrictImprovement.Q6SuperbinZetaStrictSeamEventually \
+            Zeta23.StrictImprovement.Q6SuperbinZetaStrictFixedLambda \
+            Zeta23.StrictImprovement.Q6SuperbinZetaStrictConcrete \
+            Zeta23.StrictImprovement.Q6SuperbinZetaEndpointPassage \
             2>&1 | tee wider-target-build.log
           target_status=${PIPESTATUS[0]}
           if [[ "${target_status}" -ne 0 ]]; then
