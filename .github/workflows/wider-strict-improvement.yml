@@ -379,6 +379,9 @@ jobs:
             Zeta23.StrictImprovement.Q6SuperbinBinning \
             Zeta23.StrictImprovement.Q6SuperbinMixedPacking \
             Zeta23.StrictImprovement.Q6SuperbinEndpointArithmetic \
+            Zeta23.StrictImprovement.Q6SuperbinBlocks \
+            Zeta23.StrictImprovement.Q6SuperbinLocal \
+            Zeta23.StrictImprovement.Q6SuperbinPacking \
             2>&1 | tee wider-target-build.log
           target_status=${PIPESTATUS[0]}
           if [[ "${target_status}" -ne 0 ]]; then

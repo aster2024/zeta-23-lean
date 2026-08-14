@@ -60,3 +60,6 @@ import Zeta23.StrictImprovement.Q6SuperbinResiduePacking
 import Zeta23.StrictImprovement.Q6SuperbinBinning
 import Zeta23.StrictImprovement.Q6SuperbinMixedPacking
 import Zeta23.StrictImprovement.Q6SuperbinEndpointArithmetic
+import Zeta23.StrictImprovement.Q6SuperbinBlocks
+import Zeta23.StrictImprovement.Q6SuperbinLocal
+import Zeta23.StrictImprovement.Q6SuperbinPacking
