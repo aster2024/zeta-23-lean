@@ -461,7 +461,8 @@ theorem rank_trace_two_with_mixed_blocks
   have hR0 : 0 ≤ R := by
     dsimp [R, target]
     exact mul_nonneg (mul_nonneg hscale wideRepairAlpha_pos.le)
-      (max_zero _)
+      (le_max_left 0 ((Fintype.card S : ℝ) -
+        wideRepairPackingLoss * D - wideRepairPackingIntercept))
   have htrace : 2 * R ≤ Tail.traceNorm (gramDeviation_isHermitian x) := by
     dsimp [R, target]
     exact mixed_blocks_traceNorm_target_lower E hcover D hbins x hscale hlocal
