@@ -91,3 +91,4 @@ import Zeta23.StrictImprovement.Q7SalvagedZetaStrictSeamEventually
 import Zeta23.StrictImprovement.Q7SalvagedZetaStrictFixedLambda
 import Zeta23.StrictImprovement.Q7SalvagedZetaStrictConcrete
 import Zeta23.StrictImprovement.Q7SalvagedZetaEndpointPassage
+import Zeta23.StrictImprovement.Q7FullSpectralZetaEndpointPassage

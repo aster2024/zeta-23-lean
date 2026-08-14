@@ -428,6 +428,7 @@ jobs:
             Zeta23.StrictImprovement.Q7SalvagedZetaStrictFixedLambda \
             Zeta23.StrictImprovement.Q7SalvagedZetaStrictConcrete \
             Zeta23.StrictImprovement.Q7SalvagedZetaEndpointPassage \
+            Zeta23.StrictImprovement.Q7FullSpectralZetaEndpointPassage \
             2>&1 | tee wider-target-build.log
           target_status=${PIPESTATUS[0]}
           if [[ "${target_status}" -ne 0 ]]; then
