@@ -293,9 +293,10 @@ def q6SuperbinToWideRepairCoordinate
       · exact ⟨Sum.inr (Sum.inl
           ⟨(b, 0), q6WideThreeLeftWitness E b hcond.1⟩),
             ⟨k.val, hk⟩⟩
-      · exact ⟨Sum.inr (Sum.inl
+      · have hk' : k.val - 3 < 3 := by omega
+        exact ⟨Sum.inr (Sum.inl
           ⟨(b, 1), q6WideThreeRightWitness E b hcond.2⟩),
-            ⟨k.val - 3, by omega⟩⟩
+            (show Fin 3 from ⟨k.val - 3, hk'⟩)⟩
 
 /-- Canonical inverse on the old selected inventory: a three-residue whose
 partner is also a three-residue is routed into the merged six-block. -/
@@ -328,7 +329,7 @@ def wideRepairToQ6SuperbinCoordinate
             · exact ⟨⟨⟨b, .six⟩,
                 ⟨0, by simp [q6SuperbinBlockCount,
                   q6SuperbinLeftOccupancy, hmod, hp]⟩⟩,
-                  ⟨k.val, by omega⟩⟩
+                  (show Fin 6 from ⟨k.val, by omega⟩)⟩
             · exact ⟨⟨⟨b, .threeLeft⟩,
                 ⟨0, by simp [q6SuperbinBlockCount,
                   q6SuperbinLeftOccupancy, hmod, hp]⟩⟩, k⟩
@@ -338,7 +339,7 @@ def wideRepairToQ6SuperbinCoordinate
             · exact ⟨⟨⟨b, .six⟩,
                 ⟨0, by simp [q6SuperbinBlockCount,
                   q6SuperbinRightOccupancy, hmod, hp]⟩⟩,
-                  ⟨k.val + 3, by omega⟩⟩
+                  (show Fin 6 from ⟨k.val + 3, by omega⟩)⟩
             · exact ⟨⟨⟨b, .threeRight⟩,
                 ⟨0, by simp [q6SuperbinBlockCount,
                   q6SuperbinRightOccupancy, hmod, hp]⟩⟩, k⟩
@@ -372,28 +373,61 @@ theorem wideRepairToQ6_leftInverse
       have hcond : q6SuperbinLeftOccupancy E b % 5 = 3 ∧
           q6SuperbinRightOccupancy E b % 5 ≠ 3 :=
         q6_condition_of_fin_ite u
+      have hu : u = ⟨0, by simp [q6SuperbinBlockCount,
+          hcond.1, hcond.2]⟩ := by
+        apply Fin.ext
+        have hlt := u.isLt
+        simp [q6SuperbinBlockCount, hcond.1, hcond.2] at hlt
+        omega
+      subst u
       simp [q6SuperbinToWideRepairCoordinate,
         wideRepairToQ6SuperbinCoordinate, hcond.1, hcond.2]
   | threeRight =>
       have hcond : q6SuperbinRightOccupancy E b % 5 = 3 ∧
           q6SuperbinLeftOccupancy E b % 5 ≠ 3 :=
         q6_condition_of_fin_ite u
+      have hu : u = ⟨0, by simp [q6SuperbinBlockCount,
+          hcond.1, hcond.2]⟩ := by
+        apply Fin.ext
+        have hlt := u.isLt
+        simp [q6SuperbinBlockCount, hcond.1, hcond.2] at hlt
+        omega
+      subst u
       simp [q6SuperbinToWideRepairCoordinate,
         wideRepairToQ6SuperbinCoordinate, hcond.1, hcond.2]
   | fourLeft =>
       have hcond : q6SuperbinLeftOccupancy E b % 5 = 4 :=
         q6_condition_of_fin_ite u
+      have hu : u = ⟨0, by simp [q6SuperbinBlockCount, hcond]⟩ := by
+        apply Fin.ext
+        have hlt := u.isLt
+        simp [q6SuperbinBlockCount, hcond] at hlt
+        omega
+      subst u
       simp [q6SuperbinToWideRepairCoordinate,
         wideRepairToQ6SuperbinCoordinate, hcond]
   | fourRight =>
       have hcond : q6SuperbinRightOccupancy E b % 5 = 4 :=
         q6_condition_of_fin_ite u
+      have hu : u = ⟨0, by simp [q6SuperbinBlockCount, hcond]⟩ := by
+        apply Fin.ext
+        have hlt := u.isLt
+        simp [q6SuperbinBlockCount, hcond] at hlt
+        omega
+      subst u
       simp [q6SuperbinToWideRepairCoordinate,
         wideRepairToQ6SuperbinCoordinate, hcond]
   | six =>
       have hcond : q6SuperbinLeftOccupancy E b % 5 = 3 ∧
           q6SuperbinRightOccupancy E b % 5 = 3 :=
         q6_condition_of_fin_ite u
+      have hu : u = ⟨0, by simp [q6SuperbinBlockCount,
+          hcond.1, hcond.2]⟩ := by
+        apply Fin.ext
+        have hlt := u.isLt
+        simp [q6SuperbinBlockCount, hcond.1, hcond.2] at hlt
+        omega
+      subst u
       by_cases hk : k.val < 3
       · simp [q6SuperbinToWideRepairCoordinate,
           wideRepairToQ6SuperbinCoordinate, hcond.1, hcond.2, hk]
