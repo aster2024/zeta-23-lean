@@ -517,9 +517,13 @@ theorem q6SuperbinBlockIndex_eq_wideRepair
           wideRepairBlockIndex, hcond.1, hk]
         dsimp only [id]
         rw [dif_pos hk]
+        simp only [q6SuperbinLeftOccupancy]
       · rw [q6SuperbinToWideRepairCoordinate_six_right E b _ hcond k hk]
         simp [q6SuperbinBlockIndex, q6SuperbinBlockCoordinate,
           wideRepairBlockIndex, hcond.2, hk]
+        dsimp only [id]
+        rw [dif_neg hk]
+        simp only [q6SuperbinRightOccupancy]
 
 /-- All points selected by the merged q6 inventory are globally distinct. -/
 theorem q6SuperbinBlockIndex_injective
