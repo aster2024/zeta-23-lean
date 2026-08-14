@@ -376,6 +376,7 @@ private theorem q6SuperbinToWideRepairCoordinate_six_left
         (⟨k.val, hk⟩ : Fin 3)⟩ := by
   dsimp only [q6SuperbinToWideRepairCoordinate, id]
   rw [dif_pos hk]
+  rfl
 
 private theorem q6SuperbinToWideRepairCoordinate_six_right
     {S B : Type*} [Fintype B]
@@ -392,6 +393,7 @@ private theorem q6SuperbinToWideRepairCoordinate_six_right
         (⟨k.val - 3, by omega⟩ : Fin 3)⟩ := by
   dsimp only [q6SuperbinToWideRepairCoordinate, id]
   rw [dif_neg hk]
+  rfl
 
 theorem wideRepairToQ6_leftInverse
     {S B : Type*} [Fintype B]
@@ -468,10 +470,14 @@ theorem wideRepairToQ6_leftInverse
       by_cases hk : k.val < 3
       · rw [q6SuperbinToWideRepairCoordinate_six_left E b _ hcond k hk]
         simp [wideRepairToQ6SuperbinCoordinate, hcond.1, hcond.2]
+        dsimp only [id]
+        congr
       · have hk3 : 3 ≤ k.val := by omega
         have hval : k.val - 3 + 3 = k.val := Nat.sub_add_cancel hk3
         rw [q6SuperbinToWideRepairCoordinate_six_right E b _ hcond k hk]
         simp [wideRepairToQ6SuperbinCoordinate, hcond.1, hcond.2, hval]
+        dsimp only [id]
+        congr <;> omega
 
 theorem q6SuperbinToWideRepairCoordinate_injective
     {S B : Type*} [Fintype B]
