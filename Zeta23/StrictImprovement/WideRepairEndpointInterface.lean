@@ -58,7 +58,8 @@ physical diameter-sixteen domain. -/
 def WideRepairThreeEndpointCertificate : Prop :=
   ∀ x : Fin 3 → ℝ,
     (∀ i j : Fin 3, |x i - x j| ≤ (352 : ℝ) / 7) →
-      (1 : ℝ) / 160000 < threeCoordinateEnergy endpointR (x 0) (x 1) (x 2)
+      (152881 : ℝ) / 24414062500 <
+        threeCoordinateEnergy endpointR (x 0) (x 1) (x 2)
 
 /-- External four-point spectral tree on the same rational simplex. -/
 def WideRepairFourEndpointCertificate : Prop :=
@@ -81,7 +82,7 @@ structure WideRepairEndpointCertificates : Prop where
   four : WideRepairFourEndpointCertificate
   five : WideRepairFiveEndpointCertificate
 
-def wideRepairRewardThree : ℝ := 1 / 400
+def wideRepairRewardThree : ℝ := 391 / 156250
 def wideRepairRewardFour : ℝ := 1 / 85
 def wideRepairRewardFive : ℝ := 316227 / 10000000
 
@@ -238,7 +239,7 @@ theorem wideRepairThree_endpoint_traceNorm_lower
       Tail.traceNorm (wideEndpointDeviation_isHermitian x) := by
   have hcert := (hcertificate x hdist).le
   have htrace := two_mul_sqrt_le_traceNorm_fin3
-    (show 0 ≤ (1 : ℝ) / 160000 by norm_num)
+    (show 0 ≤ (152881 : ℝ) / 24414062500 by norm_num)
     (wideEndpointDeviation_isHermitian x)
     (by
       unfold rtrace Matrix.trace
@@ -246,13 +247,16 @@ theorem wideRepairThree_endpoint_traceNorm_lower
     (by
       rw [frobSq_wideEndpointDeviation_fin3]
       nlinarith)
-  have hsqrt0 : 0 ≤ Real.sqrt ((1 : ℝ) / 160000) := Real.sqrt_nonneg _
-  have hsqrtSq : (Real.sqrt ((1 : ℝ) / 160000)) ^ 2 =
-      (1 : ℝ) / 160000 := Real.sq_sqrt (by norm_num)
+  have hsqrt0 : 0 ≤ Real.sqrt ((152881 : ℝ) / 24414062500) :=
+    Real.sqrt_nonneg _
+  have hsqrtSq : (Real.sqrt ((152881 : ℝ) / 24414062500)) ^ 2 =
+      (152881 : ℝ) / 24414062500 := Real.sq_sqrt (by norm_num)
   have hreward0 := wideRepairRewardThree_nonneg
-  have hrewardSq : wideRepairRewardThree ^ 2 = (1 : ℝ) / 160000 := by
+  have hrewardSq : wideRepairRewardThree ^ 2 =
+      (152881 : ℝ) / 24414062500 := by
     norm_num [wideRepairRewardThree]
-  have heq : Real.sqrt ((1 : ℝ) / 160000) = wideRepairRewardThree := by
+  have heq : Real.sqrt ((152881 : ℝ) / 24414062500) =
+      wideRepairRewardThree := by
     nlinarith
   rwa [heq] at htrace
 
