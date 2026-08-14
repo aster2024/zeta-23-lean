@@ -141,6 +141,7 @@ theorem sum_q6SuperbinBlockReward_eq
       q6SuperbinBlockKindReward, q6SuperbinPairReward,
       q6FineRemainderReward, hl, hr, Fintype.sum_sigma',
       hsum_fin, nsmul_eq_mul] <;>
+    simp only [Finset.card_univ, Fintype.card_fin] <;>
     ring
 
 lemma q6_condition_of_fin_ite
