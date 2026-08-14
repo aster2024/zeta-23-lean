@@ -89,7 +89,9 @@ theorem q6SuperbinBlock_nearby_traceNorm_lower
           ‖B i j - endpointFourDeviation coord i j‖ ≤ eps := by
         intro i j hij
         rw [endpointFourDeviation_offdiag coord hij]
-        exact hclose i j
+        have h := hclose i j
+        rw [wideEndpointDeviation_offdiag coord hij] at h
+        exact h
       exact wideRepairFour_nearby_traceNorm_lower
         hcertificates.base.four coord hdist hB hdiagB heps hmargin4
           (hedge (by decide)) (hedge (by decide)) (hedge (by decide))
@@ -104,7 +106,9 @@ theorem q6SuperbinBlock_nearby_traceNorm_lower
           ‖B i j - endpointFourDeviation coord i j‖ ≤ eps := by
         intro i j hij
         rw [endpointFourDeviation_offdiag coord hij]
-        exact hclose i j
+        have h := hclose i j
+        rw [wideEndpointDeviation_offdiag coord hij] at h
+        exact h
       exact wideRepairFour_nearby_traceNorm_lower
         hcertificates.base.four coord hdist hB hdiagB heps hmargin4
           (hedge (by decide)) (hedge (by decide)) (hedge (by decide))
