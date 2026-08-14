@@ -374,7 +374,8 @@ private theorem q6SuperbinToWideRepairCoordinate_six_left
       ⟨Sum.inr (Sum.inl
           ⟨(b, 0), q6WideThreeLeftWitness E b hcond.1⟩),
         (⟨k.val, hk⟩ : Fin 3)⟩ := by
-  simp [q6SuperbinToWideRepairCoordinate, hk]
+  dsimp only [q6SuperbinToWideRepairCoordinate, id]
+  rw [dif_pos hk]
 
 private theorem q6SuperbinToWideRepairCoordinate_six_right
     {S B : Type*} [Fintype B]
@@ -389,7 +390,8 @@ private theorem q6SuperbinToWideRepairCoordinate_six_right
       ⟨Sum.inr (Sum.inl
           ⟨(b, 1), q6WideThreeRightWitness E b hcond.2⟩),
         (⟨k.val - 3, by omega⟩ : Fin 3)⟩ := by
-  simp [q6SuperbinToWideRepairCoordinate, hk]
+  dsimp only [q6SuperbinToWideRepairCoordinate, id]
+  rw [dif_neg hk]
 
 theorem wideRepairToQ6_leftInverse
     {S B : Type*} [Fintype B]
