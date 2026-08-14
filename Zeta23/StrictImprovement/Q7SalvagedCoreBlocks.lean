@@ -46,6 +46,12 @@ private lemma abs_sub_le_sixteen_of_right_bounds
   rw [abs_le]
   constructor <;> nlinarith
 
+private lemma q7_condition_of_fin_ite
+    {p : Prop} [Decidable p] (u : Fin (if p then 1 else 0)) : p := by
+  by_contra hp
+  have hlt := u.isLt
+  simp [hp] at hlt
+
 theorem coreQ7SalvagedBlock_geometry
     (hL : 0 < P.L T) (hC : 0 ≤ C)
     (q : Q7SalvagedBlock (coreQ6HalfBinEnumeration Z T C P hL hC)) :
@@ -72,7 +78,7 @@ theorem coreQ7SalvagedBlock_geometry
       have hcond : q7SalvagedLeftOccupancy E b % 5 = 3 ∧
           q7SalvagedRightOccupancy E b % 5 ≠ 3 ∧
           q7SalvagedRightOccupancy E b % 5 ≠ 4 :=
-        q6_condition_of_fin_ite u
+        q7_condition_of_fin_ite u
       intro i j
       have hi := coreQ6LeftEntry_bounds Z T C P hL hC b
         (wideRepairResidualSlot (q7SalvagedLeftOccupancy E b) 3 hcond.1 i)
@@ -83,7 +89,7 @@ theorem coreQ7SalvagedBlock_geometry
       have hcond : q7SalvagedRightOccupancy E b % 5 = 3 ∧
           q7SalvagedLeftOccupancy E b % 5 ≠ 3 ∧
           q7SalvagedLeftOccupancy E b % 5 ≠ 4 :=
-        q6_condition_of_fin_ite u
+        q7_condition_of_fin_ite u
       intro i j
       have hi := coreQ6RightEntry_bounds Z T C P hL hC b
         (wideRepairResidualSlot (q7SalvagedRightOccupancy E b) 3 hcond.1 i)
@@ -93,7 +99,7 @@ theorem coreQ7SalvagedBlock_geometry
   | fourLeft =>
       have hcond : q7SalvagedLeftOccupancy E b % 5 = 4 ∧
           q7SalvagedRightOccupancy E b % 5 ≠ 3 :=
-        q6_condition_of_fin_ite u
+        q7_condition_of_fin_ite u
       intro i j
       have hi := coreQ6LeftEntry_bounds Z T C P hL hC b
         (wideRepairResidualSlot (q7SalvagedLeftOccupancy E b) 4 hcond.1 i)
@@ -103,7 +109,7 @@ theorem coreQ7SalvagedBlock_geometry
   | fourRight =>
       have hcond : q7SalvagedRightOccupancy E b % 5 = 4 ∧
           q7SalvagedLeftOccupancy E b % 5 ≠ 3 :=
-        q6_condition_of_fin_ite u
+        q7_condition_of_fin_ite u
       intro i j
       have hi := coreQ6RightEntry_bounds Z T C P hL hC b
         (wideRepairResidualSlot (q7SalvagedRightOccupancy E b) 4 hcond.1 i)
@@ -113,7 +119,7 @@ theorem coreQ7SalvagedBlock_geometry
   | six =>
       have hcond : q7SalvagedLeftOccupancy E b % 5 = 3 ∧
           q7SalvagedRightOccupancy E b % 5 = 3 :=
-        q6_condition_of_fin_ite u
+        q7_condition_of_fin_ite u
       constructor
       · intro i hi
         have hidx :
@@ -150,7 +156,7 @@ theorem coreQ7SalvagedBlock_geometry
   | sevenThreeFour =>
       have hcond : q7SalvagedLeftOccupancy E b % 5 = 3 ∧
           q7SalvagedRightOccupancy E b % 5 = 4 :=
-        q6_condition_of_fin_ite u
+        q7_condition_of_fin_ite u
       constructor
       · intro i hi
         have hidx :
@@ -187,7 +193,7 @@ theorem coreQ7SalvagedBlock_geometry
   | sevenFourThree =>
       have hcond : q7SalvagedLeftOccupancy E b % 5 = 4 ∧
           q7SalvagedRightOccupancy E b % 5 = 3 :=
-        q6_condition_of_fin_ite u
+        q7_condition_of_fin_ite u
       constructor
       · intro i hi
         have hidx :
