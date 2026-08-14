@@ -434,6 +434,7 @@ theorem wideRepairToQ6_leftInverse
       subst u
       change Fin 6 at k
       fin_cases k <;>
+        ext <;>
         simp [q6SuperbinToWideRepairCoordinate,
           wideRepairToQ6SuperbinCoordinate, hcond.1, hcond.2]
 
@@ -460,11 +461,22 @@ theorem q6SuperbinBlockIndex_eq_wideRepair
   | fourLeft => rfl
   | fourRight => rfl
   | six =>
+      have hcond : q6SuperbinLeftOccupancy E b % 5 = 3 ∧
+          q6SuperbinRightOccupancy E b % 5 = 3 :=
+        q6_condition_of_fin_ite u
+      have hu : u = ⟨0, by simp [q6SuperbinBlockCount,
+          hcond.1, hcond.2]⟩ := by
+        apply Fin.ext
+        have hlt := u.isLt
+        simp [q6SuperbinBlockCount, hcond.1, hcond.2] at hlt
+        omega
+      subst u
+      change Fin 6 at k
       by_cases hk : k.val < 3
       · simp [q6SuperbinBlockIndex, q6SuperbinBlockCoordinate,
-          q6SuperbinToWideRepairCoordinate, hk]
+          q6SuperbinToWideRepairCoordinate, hcond.1, hcond.2, hk]
       · simp [q6SuperbinBlockIndex, q6SuperbinBlockCoordinate,
-          q6SuperbinToWideRepairCoordinate, hk]
+          q6SuperbinToWideRepairCoordinate, hcond.1, hcond.2, hk]
 
 /-- All points selected by the merged q6 inventory are globally distinct. -/
 theorem q6SuperbinBlockIndex_injective
