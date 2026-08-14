@@ -410,6 +410,24 @@ jobs:
             Zeta23.StrictImprovement.Q6SuperbinZetaStrictFixedLambda \
             Zeta23.StrictImprovement.Q6SuperbinZetaStrictConcrete \
             Zeta23.StrictImprovement.Q6SuperbinZetaEndpointPassage \
+            Zeta23.StrictImprovement.Q7SalvagedEndpointInterface \
+            Zeta23.StrictImprovement.Q7SalvagedResiduePacking \
+            Zeta23.StrictImprovement.Q7SalvagedBinning \
+            Zeta23.StrictImprovement.Q7SalvagedMixedPacking \
+            Zeta23.StrictImprovement.Q7SalvagedEndpointArithmetic \
+            Zeta23.StrictImprovement.Q7SalvagedBlocks \
+            Zeta23.StrictImprovement.Q7SalvagedLocal \
+            Zeta23.StrictImprovement.Q7SalvagedPacking \
+            Zeta23.StrictImprovement.Q7SalvagedCoreBlocks \
+            Zeta23.StrictImprovement.Q7SalvagedZetaLocalDefect \
+            Zeta23.StrictImprovement.Q7SalvagedZetaAtD \
+            Zeta23.StrictImprovement.Q7SalvagedZetaSeamDefect \
+            Zeta23.StrictImprovement.Q7SalvagedZetaSeamAtD \
+            Zeta23.StrictImprovement.Q7SalvagedZetaCoreGain \
+            Zeta23.StrictImprovement.Q7SalvagedZetaStrictSeamEventually \
+            Zeta23.StrictImprovement.Q7SalvagedZetaStrictFixedLambda \
+            Zeta23.StrictImprovement.Q7SalvagedZetaStrictConcrete \
+            Zeta23.StrictImprovement.Q7SalvagedZetaEndpointPassage \
             2>&1 | tee wider-target-build.log
           target_status=${PIPESTATUS[0]}
           if [[ "${target_status}" -ne 0 ]]; then
