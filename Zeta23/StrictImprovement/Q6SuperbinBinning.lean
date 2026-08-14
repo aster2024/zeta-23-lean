@@ -166,7 +166,8 @@ theorem q6HalfBinEnumeration_superbin_cover
   rw [Fintype.sum_prod_type]
   apply Finset.sum_congr rfl
   intro b _
-  exact Fin.sum_univ_two
+  exact (Fin.sum_univ_two (fun h : Fin 2 =>
+    (q6HalfBinEnumeration D base coord hrange).occupancy (b, h))).symm
 
 @[simp] theorem q6HalfBinEnumeration_entry_key
     {S : Type*} [Fintype S]
