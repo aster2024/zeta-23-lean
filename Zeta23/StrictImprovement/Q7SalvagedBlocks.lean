@@ -606,6 +606,7 @@ theorem wideRepairToQ7Salvaged_leftInverse
       subst u
       simp [q7SalvagedToWideRepairCoordinate,
         wideRepairToQ7SalvagedCoordinate, hcond.1, hcond.2]
+      rfl
   | fourRight =>
       have hcond : q7SalvagedRightOccupancy E b % 5 = 4 ∧
           q7SalvagedLeftOccupancy E b % 5 ≠ 3 :=
@@ -618,6 +619,7 @@ theorem wideRepairToQ7Salvaged_leftInverse
       subst u
       simp [q7SalvagedToWideRepairCoordinate,
         wideRepairToQ7SalvagedCoordinate, hcond.1, hcond.2]
+      rfl
   | six =>
       have hcond : q7SalvagedLeftOccupancy E b % 5 = 3 ∧
           q7SalvagedRightOccupancy E b % 5 = 3 :=
