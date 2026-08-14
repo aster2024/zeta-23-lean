@@ -128,6 +128,9 @@ theorem sum_q6SuperbinBlockReward_eq
   apply Finset.sum_congr rfl
   intro b _
   rw [q6SuperbinBlockKind_univ]
+  have hsum_fin (n : ℕ) (r : ℝ) :
+      (∑ _ : Fin n, r) = (n : ℝ) * r := by
+    simp [Finset.sum_const, nsmul_eq_mul]
   have hleft : q6SuperbinLeftOccupancy E b % 5 < 5 :=
     Nat.mod_lt _ (by norm_num)
   have hright : q6SuperbinRightOccupancy E b % 5 < 5 :=
@@ -137,7 +140,7 @@ theorem sum_q6SuperbinBlockReward_eq
     simp [q6SuperbinBlockCount, q6SuperbinBlockReward,
       q6SuperbinBlockKindReward, q6SuperbinPairReward,
       q6FineRemainderReward, hl, hr, Fintype.sum_sigma',
-      Finset.card_univ, Fintype.card_fin, nsmul_eq_mul] <;>
+      hsum_fin, nsmul_eq_mul] <;>
     ring
 
 lemma q6_condition_of_fin_ite
