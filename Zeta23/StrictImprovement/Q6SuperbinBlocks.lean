@@ -37,7 +37,7 @@ inductive Q6SuperbinBlockKind
   | six
   deriving DecidableEq
 
-instance : Fintype Q6SuperbinBlockKind where
+instance q6SuperbinBlockKindFintype : Fintype Q6SuperbinBlockKind where
   elems := {.fiveLeft, .fiveRight, .threeLeft, .threeRight,
     .fourLeft, .fourRight, .six}
   complete x := by cases x <;> simp
@@ -129,7 +129,7 @@ theorem sum_q6SuperbinBlockReward_eq
     simp [q6SuperbinBlockCount, q6SuperbinBlockReward,
       q6SuperbinBlockKindReward, q6SuperbinPairReward,
       q6FineRemainderReward, hl, hr, Fintype.sum_sigma',
-      nsmul_eq_mul] <;>
+      q6SuperbinBlockKindFintype, nsmul_eq_mul] <;>
     ring
 
 lemma q6_condition_of_fin_ite
