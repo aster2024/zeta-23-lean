@@ -84,7 +84,7 @@ theorem hatAz_mult2_with_q7Salvaged_gain
     exact finiteCoreWeight_le_one Z T 3 P hconj hreal hPois hc z
   have hb := posIndex_scaledBlockA_sub_weightedCore_le
     Z T 3 P hconj hc hpos
-  have hmain := rank_trace_two_with_normalized_q6_selected_blocks
+  have hmain := rank_trace_two_with_normalized_q7Salvaged_selected_blocks
     (q7SalvagedLeftOccupancy E) (q7SalvagedRightOccupancy E)
     hcover (coreBinD T P) hbins q7SalvagedBlockSize
     (q7SalvagedBlockIndex E) (q7SalvagedBlockIndex_injective E)
