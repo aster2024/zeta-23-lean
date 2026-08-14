@@ -42,6 +42,13 @@ instance q6SuperbinBlockKindFintype : Fintype Q6SuperbinBlockKind where
     .fourLeft, .fourRight, .six}
   complete x := by cases x <;> simp
 
+lemma q6SuperbinBlockKind_univ :
+    (Finset.univ : Finset Q6SuperbinBlockKind) =
+      {.fiveLeft, .fiveRight, .threeLeft, .threeRight,
+        .fourLeft, .fourRight, .six} := by
+  ext x
+  cases x <;> simp
+
 def q6SuperbinLeftOccupancy
     {S B : Type*} [Fintype B]
     (E : BinnedEnumeration S (B × Fin 2)) (b : B) : ℕ :=
@@ -120,6 +127,7 @@ theorem sum_q6SuperbinBlockReward_eq
   rw [Fintype.sum_prod_type]
   apply Finset.sum_congr rfl
   intro b _
+  rw [q6SuperbinBlockKind_univ]
   have hleft : q6SuperbinLeftOccupancy E b % 5 < 5 :=
     Nat.mod_lt _ (by norm_num)
   have hright : q6SuperbinRightOccupancy E b % 5 < 5 :=
