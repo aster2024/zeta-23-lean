@@ -433,15 +433,9 @@ theorem wideRepairToQ6_leftInverse
         omega
       subst u
       change Fin 6 at k
-      by_cases hk : k.val < 3
-      · simp [q6SuperbinToWideRepairCoordinate,
-          wideRepairToQ6SuperbinCoordinate, hcond.1, hcond.2, hk]
-        rfl
-      · have hk3 : 3 ≤ k.val := by omega
+      fin_cases k <;>
         simp [q6SuperbinToWideRepairCoordinate,
-          wideRepairToQ6SuperbinCoordinate, hcond.1, hcond.2, hk]
-        apply Fin.ext
-        omega
+          wideRepairToQ6SuperbinCoordinate, hcond.1, hcond.2]
 
 theorem q6SuperbinToWideRepairCoordinate_injective
     {S B : Type*} [Fintype B]
