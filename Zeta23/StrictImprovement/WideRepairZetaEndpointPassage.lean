@@ -257,7 +257,7 @@ theorem zeta_wide_repair_strict_simple_endpoint_rational_211997
   intro outer houter
   obtain ⟨T₀, hT₀⟩ :=
     zeta_wide_repair_strict_simple_endpoint_rational hcertificates
-      ((1 : ℝ) / 2 * outer) (by linarith)
+      (outer / 2) (by linarith)
   refine ⟨T₀, fun T hT => ?_⟩
   have hmain := hT₀ T hT
   have hcoef : ThmD.HD 1 + (1 : ℝ) / 211997 - outer ≤
