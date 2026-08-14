@@ -137,7 +137,7 @@ theorem sum_q6SuperbinBlockReward_eq
     simp [q6SuperbinBlockCount, q6SuperbinBlockReward,
       q6SuperbinBlockKindReward, q6SuperbinPairReward,
       q6FineRemainderReward, hl, hr, Fintype.sum_sigma',
-      Fintype.card_fin, nsmul_eq_mul] <;>
+      Finset.card_univ, Fintype.card_fin, nsmul_eq_mul] <;>
     ring
 
 lemma q6_condition_of_fin_ite
