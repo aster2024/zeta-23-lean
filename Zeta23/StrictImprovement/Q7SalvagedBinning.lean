@@ -24,14 +24,17 @@ def q7SalvagedCount (D : ℝ) : ℕ := q6SuperbinCount D
 
 theorem q7Salvaged_card_le {D : ℝ} (hD : 0 ≤ D) :
     (Fintype.card (Fin (q7SalvagedCount D)) : ℝ) ≤ D / 16 + 1 := by
-  simpa [q7SalvagedCount] using q6Superbin_card_le hD
+  change (Fintype.card (Fin (q6SuperbinCount D)) : ℝ) ≤ D / 16 + 1
+  exact q6Superbin_card_le hD
 
 /-- The core q7 selector uses the same width-32 superbin count as q6. -/
 theorem coreQ7Salvaged_card_le
     (T : ℝ) (P : Params) (hL : 0 < P.L T) (hT : 0 ≤ T) :
     (Fintype.card (Fin (q7SalvagedCount (coreBinD T P))) : ℝ) ≤
       coreBinD T P / 16 + 1 := by
-  simpa [q7SalvagedCount] using coreQ6Superbin_card_le T P hL hT
+  change (Fintype.card (Fin (q6SuperbinCount (coreBinD T P))) : ℝ) ≤
+    coreBinD T P / 16 + 1
+  exact coreQ6Superbin_card_le T P hL hT
 
 end StrictImprovement
 end Zeta23

@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 SPDX-License-Identifier: Apache-2.0
 -/
 import Zeta23.StrictImprovement.Q7SalvagedResiduePacking
+import Zeta23.StrictImprovement.Q6SuperbinEndpointArithmetic
 import Zeta23.StrictImprovement.ZetaEndpointPassage
 
 /-!
@@ -112,22 +113,14 @@ def Q7SalvagedEndpointFeasible (n : ℕ) : Prop :=
     q7SalvagedSevenReward ∧
   0 ≤ q7SalvagedEndpointQ n
 
+private theorem scaled_reward_lt_reward
+    {reserve reward loss step : ℝ}
+    (hstep : 0 < step) (hmargin : 0 < reserve * reward - loss) :
+    (1 - reserve * step) * reward + loss * step < reward := by
+  nlinarith [mul_pos hstep hmargin]
+
 theorem eventually_q7SalvagedEndpointFeasible :
     ∀ᶠ n in atTop, Q7SalvagedEndpointFeasible n := by
-  have hlamPos : ∀ᶠ n in atTop, 0 < endpointLam n :=
-    tendsto_endpointLam_one.eventually (Ioi_mem_nhds one_pos)
-  have hscalePos : ∀ᶠ n in atTop, 0 < q7SalvagedEndpointScale n :=
-    tendsto_q7SalvagedEndpointScale.eventually (Ioi_mem_nhds one_pos)
-  have hHlim : Tendsto
-      (fun n => ThmD.HD (endpointLam n) - endpointEps n)
-        atTop (nhds (ThmD.HD 1)) := by
-    simpa [endpointEps] using
-      tendsto_endpointHD.sub tendsto_endpointStep_zero
-  have hHone : 0 < ThmD.HD 1 := by
-    linarith [one_sixth_lt_HD_one_sub_half]
-  have hHpos :
-      ∀ᶠ n in atTop, 0 < ThmD.HD (endpointLam n) - endpointEps n :=
-    hHlim.eventually (Ioi_mem_nhds hHone)
   have hqLimit : 0 < ThmD.HD 1 - q7SalvagedPackingLoss := by
     have hloss : q7SalvagedPackingLoss < (1 : ℝ) / 2 := by
       rw [q7SalvagedPackingLoss_value]
@@ -135,44 +128,22 @@ theorem eventually_q7SalvagedEndpointFeasible :
     linarith [refined_endpoint_gap]
   have hqPos : ∀ᶠ n in atTop, 0 < q7SalvagedEndpointQ n :=
     tendsto_q7SalvagedEndpointQ.eventually (Ioi_mem_nhds hqLimit)
-  filter_upwards [hlamPos, hscalePos, hHpos, hqPos]
-    with n hlam hscale hH hq
+  filter_upwards [eventually_q6SuperbinEndpointFeasible, hqPos]
+    with n hbase hq
+  rcases hbase with
+    ⟨hlam, hlamLt, heps, hH, hscale, hm3, hm4, hm5, _, _⟩
   have hstep := endpointStep_pos n
   have hlamStep : 1 - endpointLam n = endpointStep n := by
     unfold endpointLam
     ring
-  have hsqrt3 : 0 ≤ Real.sqrt 3 := Real.sqrt_nonneg _
-  have hsqrt5 : 0 ≤ Real.sqrt 5 := Real.sqrt_nonneg _
   have hsqrt6 : 0 ≤ Real.sqrt 6 := Real.sqrt_nonneg _
   have hsqrt7 : 0 ≤ Real.sqrt 7 := Real.sqrt_nonneg _
-  have hsqrt3sq : (Real.sqrt 3) ^ 2 = 3 :=
-    Real.sq_sqrt (by norm_num)
-  have hsqrt5sq : (Real.sqrt 5) ^ 2 = 5 :=
-    Real.sq_sqrt (by norm_num)
   have hsqrt6sq : (Real.sqrt 6) ^ 2 = 6 :=
     Real.sq_sqrt (by norm_num)
   have hsqrt7sq : (Real.sqrt 7) ^ 2 = 7 :=
     Real.sq_sqrt (by norm_num)
-  have hsqrt3lt : Real.sqrt 3 < 2 := by nlinarith
-  have hsqrt5lt : Real.sqrt 5 < 3 := by nlinarith
   have hsqrt6lt : Real.sqrt 6 < (5 : ℝ) / 2 := by nlinarith
   have hsqrt7lt : Real.sqrt 7 < 3 := by nlinarith
-  have hc3 : 0 < q7SalvagedEndpointReserve * wideRepairRewardThree -
-      9 * Real.sqrt 3 / 2 := by
-    have hrat : 9 < q7SalvagedEndpointReserve * wideRepairRewardThree := by
-      norm_num [q7SalvagedEndpointReserve, wideRepairRewardThree]
-    nlinarith
-  have hc4 : 0 < q7SalvagedEndpointReserve * wideRepairRewardFour -
-      6 * Real.sqrt 3 := by
-    have hrat : 12 < q7SalvagedEndpointReserve * wideRepairRewardFour := by
-      norm_num [q7SalvagedEndpointReserve, wideRepairRewardFour]
-    nlinarith
-  have hc5 : 0 < q7SalvagedEndpointReserve * wideRepairRewardFive -
-      15 * Real.sqrt 5 / 2 := by
-    have hrat : (45 : ℝ) / 2 <
-        q7SalvagedEndpointReserve * wideRepairRewardFive := by
-      norm_num [q7SalvagedEndpointReserve, wideRepairRewardFive]
-    nlinarith
   have hc6 : 0 < q7SalvagedEndpointReserve * q7SalvagedSixReward -
       9 * Real.sqrt 6 := by
     have hrat : (45 : ℝ) / 2 <
@@ -185,39 +156,38 @@ theorem eventually_q7SalvagedEndpointFeasible :
         q7SalvagedEndpointReserve * q7SalvagedSevenReward := by
       norm_num [q7SalvagedEndpointReserve, q7SalvagedSevenReward]
     nlinarith
-  have hm3 : q7SalvagedEndpointScale n * wideRepairRewardThree +
+  have hscale' : 0 ≤ q7SalvagedEndpointScale n := by
+    simpa [q7SalvagedEndpointScale, q7SalvagedEndpointReserve,
+      q6SuperbinEndpointScale, q6SuperbinEndpointReserve] using hscale
+  have hm3' : q7SalvagedEndpointScale n * wideRepairRewardThree +
       (9 * Real.sqrt 3 / 2) * (1 - endpointLam n) <
       wideRepairRewardThree := by
-    rw [hlamStep]
-    unfold q7SalvagedEndpointScale
-    nlinarith [mul_pos hstep hc3]
-  have hm4 : q7SalvagedEndpointScale n * wideRepairRewardFour +
+    simpa [q7SalvagedEndpointScale, q7SalvagedEndpointReserve,
+      q6SuperbinEndpointScale, q6SuperbinEndpointReserve] using hm3
+  have hm4' : q7SalvagedEndpointScale n * wideRepairRewardFour +
       6 * Real.sqrt 3 * (1 - endpointLam n) <
       wideRepairRewardFour := by
-    rw [hlamStep]
-    unfold q7SalvagedEndpointScale
-    nlinarith [mul_pos hstep hc4]
-  have hm5 : q7SalvagedEndpointScale n * wideRepairRewardFive +
+    simpa [q7SalvagedEndpointScale, q7SalvagedEndpointReserve,
+      q6SuperbinEndpointScale, q6SuperbinEndpointReserve] using hm4
+  have hm5' : q7SalvagedEndpointScale n * wideRepairRewardFive +
       (15 * Real.sqrt 5 / 2) * (1 - endpointLam n) <
       wideRepairRewardFive := by
-    rw [hlamStep]
-    unfold q7SalvagedEndpointScale
-    nlinarith [mul_pos hstep hc5]
+    simpa [q7SalvagedEndpointScale, q7SalvagedEndpointReserve,
+      q6SuperbinEndpointScale, q6SuperbinEndpointReserve] using hm5
   have hm6 : q7SalvagedEndpointScale n * q7SalvagedSixReward +
       9 * Real.sqrt 6 * (1 - endpointLam n) <
       q7SalvagedSixReward := by
     rw [hlamStep]
     unfold q7SalvagedEndpointScale
-    nlinarith [mul_pos hstep hc6]
+    exact scaled_reward_lt_reward hstep hc6
   have hm7 : q7SalvagedEndpointScale n * q7SalvagedSevenReward +
       (21 * Real.sqrt 7 / 2) * (1 - endpointLam n) <
       q7SalvagedSevenReward := by
     rw [hlamStep]
     unfold q7SalvagedEndpointScale
-    nlinarith [mul_pos hstep hc7]
-  refine ⟨hlam, endpointLam_lt_one n, ?_, hH, hscale.le,
-    hm3, hm4, hm5, hm6, hm7, hq.le⟩
-  simpa [endpointEps] using hstep
+    exact scaled_reward_lt_reward hstep hc7
+  exact ⟨hlam, hlamLt, heps, hH, hscale',
+    hm3', hm4', hm5', hm6, hm7, hq.le⟩
 
 theorem q7Salvaged_saturated_amplitude_lower :
     (551988813 : ℝ) / 231518750000 ≤
