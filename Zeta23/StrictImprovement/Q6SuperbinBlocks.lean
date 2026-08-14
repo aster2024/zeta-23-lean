@@ -122,15 +122,21 @@ theorem sum_q6SuperbinBlockReward_eq
     (∑ q : (Σ bk : B × Q6SuperbinBlockKind,
         Fin (q6SuperbinBlockCount E bk.1 bk.2)),
       q6SuperbinBlockReward q) = _
+  have hsum_kind (bk : B × Q6SuperbinBlockKind) :
+      (∑ u : Fin (q6SuperbinBlockCount E bk.1 bk.2),
+          q6SuperbinBlockReward
+            (⟨bk, u⟩ : Q6SuperbinBlock E)) =
+        (q6SuperbinBlockCount E bk.1 bk.2 : ℝ) *
+          q6SuperbinBlockKindReward bk.2 := by
+    simp [q6SuperbinBlockReward, Finset.sum_const, Finset.card_univ,
+      Fintype.card_fin, nsmul_eq_mul]
   rw [Fintype.sum_sigma'
     (fun bk u => q6SuperbinBlockReward (⟨bk, u⟩ : Q6SuperbinBlock E))]
+  simp_rw [hsum_kind]
   rw [Fintype.sum_prod_type]
   apply Finset.sum_congr rfl
   intro b _
   rw [q6SuperbinBlockKind_univ]
-  have hsum_fin (n : ℕ) (r : ℝ) :
-      (∑ _ : Fin n, r) = (n : ℝ) * r := by
-    simp [Finset.sum_const, nsmul_eq_mul]
   have hleft : q6SuperbinLeftOccupancy E b % 5 < 5 :=
     Nat.mod_lt _ (by norm_num)
   have hright : q6SuperbinRightOccupancy E b % 5 < 5 :=
@@ -140,8 +146,7 @@ theorem sum_q6SuperbinBlockReward_eq
     simp [q6SuperbinBlockCount, q6SuperbinBlockReward,
       q6SuperbinBlockKindReward, q6SuperbinPairReward,
       q6FineRemainderReward, hl, hr, Fintype.sum_sigma',
-      hsum_fin, nsmul_eq_mul] <;>
-    simp only [Finset.card_univ, Fintype.card_fin] <;>
+      nsmul_eq_mul] <;>
     ring
 
 lemma q6_condition_of_fin_ite
