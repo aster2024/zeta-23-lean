@@ -218,21 +218,21 @@ theorem zeta_wide_repair_strict_simple_endpoint_of_le_gain
     (mul_le_mul_of_nonneg_right hcoef (Nat.cast_nonneg _)) hfixed
 
 theorem wideRepair_saturated_amplitude_lower :
-    (13005673219 : ℝ) / 5926880000000 ≤
+    (2611891931 : ℝ) / 1185376000000 ≤
       wideRepairAlpha * (ThmD.HD 1 - wideRepairPackingLoss) := by
   norm_num [wideRepairAlpha, wideRepairRewardFive, wideRepairPackingLoss,
     wideRepairDeficit, wideRepairRewardThree]
   nlinarith [refined_endpoint_gap]
 
 theorem wideRepair_public_le_endpoint_gain :
-    (1 : ℝ) / 207677 ≤ wideRepairAlpha ^ 2 *
+    (1 : ℝ) / 205969 ≤ wideRepairAlpha ^ 2 *
       (ThmD.HD 1 - wideRepairPackingLoss) ^ 2 := by
-  have hamp0 : 0 ≤ (13005673219 : ℝ) / 5926880000000 := by norm_num
+  have hamp0 : 0 ≤ (2611891931 : ℝ) / 1185376000000 := by norm_num
   have hsq := pow_le_pow_left₀ hamp0
     wideRepair_saturated_amplitude_lower 2
   calc
-    (1 : ℝ) / 207677 ≤
-        ((13005673219 : ℝ) / 5926880000000) ^ 2 := by norm_num
+    (1 : ℝ) / 205969 ≤
+        ((2611891931 : ℝ) / 1185376000000) ^ 2 := by norm_num
     _ ≤ (wideRepairAlpha *
         (ThmD.HD 1 - wideRepairPackingLoss)) ^ 2 := hsq
     _ = wideRepairAlpha ^ 2 *
@@ -243,10 +243,28 @@ endpoint interval certificates. -/
 theorem zeta_wide_repair_strict_simple_endpoint_rational
     (hcertificates : WideRepairEndpointCertificates) :
     ∀ outer > 0, ∃ T₀ : ℝ, ∀ T ≥ T₀,
-      (ThmD.HD 1 + (1 : ℝ) / 207677 - outer) *
+      (ThmD.HD 1 + (1 : ℝ) / 205969 - outer) *
         (Ncount T (2 * T) : ℝ) ≤ N0simple T (2 * T) :=
   zeta_wide_repair_strict_simple_endpoint_of_le_gain
     hcertificates wideRepair_public_le_endpoint_gain
+
+/-- Backward-compatible weakening matching the latent-slack headline. -/
+theorem zeta_wide_repair_strict_simple_endpoint_rational_207677
+    (hcertificates : WideRepairEndpointCertificates) :
+    ∀ outer > 0, ∃ T₀ : ℝ, ∀ T ≥ T₀,
+      (ThmD.HD 1 + (1 : ℝ) / 207677 - outer) *
+        (Ncount T (2 * T) : ℝ) ≤ N0simple T (2 * T) := by
+  intro outer houter
+  obtain ⟨T₀, hT₀⟩ :=
+    zeta_wide_repair_strict_simple_endpoint_rational hcertificates
+      (outer / 2) (by linarith)
+  refine ⟨T₀, fun T hT => ?_⟩
+  have hmain := hT₀ T hT
+  have hcoef : ThmD.HD 1 + (1 : ℝ) / 207677 - outer ≤
+      ThmD.HD 1 + (1 : ℝ) / 205969 - outer / 2 := by
+    norm_num
+    linarith
+  exact le_trans (mul_le_mul_of_nonneg_right hcoef (Nat.cast_nonneg _)) hmain
 
 /-- Backward-compatible weakening matching the frozen v0.5 headline. -/
 theorem zeta_wide_repair_strict_simple_endpoint_rational_207733
@@ -256,7 +274,7 @@ theorem zeta_wide_repair_strict_simple_endpoint_rational_207733
         (Ncount T (2 * T) : ℝ) ≤ N0simple T (2 * T) := by
   intro outer houter
   obtain ⟨T₀, hT₀⟩ :=
-    zeta_wide_repair_strict_simple_endpoint_rational hcertificates
+    zeta_wide_repair_strict_simple_endpoint_rational_207677 hcertificates
       (outer / 2) (by linarith)
   refine ⟨T₀, fun T hT => ?_⟩
   have hmain := hT₀ T hT
