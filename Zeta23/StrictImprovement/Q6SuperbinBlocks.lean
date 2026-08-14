@@ -35,7 +35,12 @@ inductive Q6SuperbinBlockKind
   | fourLeft
   | fourRight
   | six
-  deriving DecidableEq, Fintype
+  deriving DecidableEq
+
+instance : Fintype Q6SuperbinBlockKind where
+  elems := {.fiveLeft, .fiveRight, .threeLeft, .threeRight,
+    .fourLeft, .fourRight, .six}
+  complete x := by cases x <;> simp
 
 def q6SuperbinLeftOccupancy
     {S B : Type*} [Fintype B]
@@ -106,6 +111,10 @@ theorem sum_q6SuperbinBlockReward_eq
       ∑ b, q6SuperbinPairReward
         (q6SuperbinLeftOccupancy E b)
         (q6SuperbinRightOccupancy E b) := by
+  change
+    (∑ q : (Σ bk : B × Q6SuperbinBlockKind,
+        Fin (q6SuperbinBlockCount E bk.1 bk.2)),
+      q6SuperbinBlockReward q) = _
   rw [Fintype.sum_sigma']
   rw [Fintype.sum_prod_type]
   apply Finset.sum_congr rfl
@@ -169,6 +178,7 @@ def q6SuperbinBlockCoordinate
           q6SuperbinRightOccupancy E b % 5 = 3 :=
         q6_condition_of_fin_ite u
       intro k
+      change Fin 6 at k
       by_cases hk : k.val < 3
       · exact ⟨(b, 0),
           wideRepairResidualSlot (q6SuperbinLeftOccupancy E b) 3 hcond.1
@@ -202,29 +212,35 @@ def q6SuperbinToWideRepairCoordinate
       have hcond : q6SuperbinLeftOccupancy E b % 5 = 3 ∧
           q6SuperbinRightOccupancy E b % 5 ≠ 3 :=
         q6_condition_of_fin_ite u
-      exact ⟨Sum.inr (Sum.inl ⟨(b, 0), ⟨0, by simp [hcond.1]⟩⟩), k⟩
+      exact ⟨Sum.inr (Sum.inl ⟨(b, 0),
+        ⟨0, by simp [q6SuperbinLeftOccupancy, hcond.1]⟩⟩), k⟩
   | threeRight =>
       have hcond : q6SuperbinRightOccupancy E b % 5 = 3 ∧
           q6SuperbinLeftOccupancy E b % 5 ≠ 3 :=
         q6_condition_of_fin_ite u
-      exact ⟨Sum.inr (Sum.inl ⟨(b, 1), ⟨0, by simp [hcond.1]⟩⟩), k⟩
+      exact ⟨Sum.inr (Sum.inl ⟨(b, 1),
+        ⟨0, by simp [q6SuperbinRightOccupancy, hcond.1]⟩⟩), k⟩
   | fourLeft =>
       have hcond : q6SuperbinLeftOccupancy E b % 5 = 4 :=
         q6_condition_of_fin_ite u
-      exact ⟨Sum.inr (Sum.inr ⟨(b, 0), ⟨0, by simp [hcond]⟩⟩), k⟩
+      exact ⟨Sum.inr (Sum.inr ⟨(b, 0),
+        ⟨0, by simp [q6SuperbinLeftOccupancy, hcond]⟩⟩), k⟩
   | fourRight =>
       have hcond : q6SuperbinRightOccupancy E b % 5 = 4 :=
         q6_condition_of_fin_ite u
-      exact ⟨Sum.inr (Sum.inr ⟨(b, 1), ⟨0, by simp [hcond]⟩⟩), k⟩
+      exact ⟨Sum.inr (Sum.inr ⟨(b, 1),
+        ⟨0, by simp [q6SuperbinRightOccupancy, hcond]⟩⟩), k⟩
   | six =>
       have hcond : q6SuperbinLeftOccupancy E b % 5 = 3 ∧
           q6SuperbinRightOccupancy E b % 5 = 3 :=
         q6_condition_of_fin_ite u
+      change Fin 6 at k
       by_cases hk : k.val < 3
       · exact ⟨Sum.inr (Sum.inl
-          ⟨(b, 0), ⟨0, by simp [hcond.1]⟩⟩), ⟨k.val, hk⟩⟩
+          ⟨(b, 0), ⟨0, by simp [q6SuperbinLeftOccupancy, hcond.1]⟩⟩),
+            ⟨k.val, hk⟩⟩
       · exact ⟨Sum.inr (Sum.inl
-          ⟨(b, 1), ⟨0, by simp [hcond.2]⟩⟩),
+          ⟨(b, 1), ⟨0, by simp [q6SuperbinRightOccupancy, hcond.2]⟩⟩),
             ⟨k.val - 3, by omega⟩⟩
 
 /-- Canonical inverse on the old selected inventory: a three-residue whose
@@ -238,23 +254,31 @@ def wideRepairToQ6SuperbinCoordinate
   cases q with
   | inl q =>
       rcases q with ⟨⟨b, half⟩, u⟩
-      fin_cases half
-      · exact ⟨⟨⟨b, .fiveLeft⟩, u⟩, k⟩
-      · exact ⟨⟨⟨b, .fiveRight⟩, u⟩, k⟩
+      by_cases hhalf : half.val = 0
+      · have : half = 0 := Fin.ext hhalf
+        subst half
+        exact ⟨⟨⟨b, .fiveLeft⟩, u⟩, k⟩
+      · have : half = 1 := Fin.ext (by omega)
+        subst half
+        exact ⟨⟨⟨b, .fiveRight⟩, u⟩, k⟩
   | inr q =>
       cases q with
       | inl q =>
           rcases q with ⟨⟨b, half⟩, z⟩
           have hmod := wideRepairThreeResidue_mod
             (E := E) ⟨(b, half), z⟩
-          fin_cases half
-          · by_cases hp : q6SuperbinRightOccupancy E b % 5 = 3
+          by_cases hhalf : half.val = 0
+          · have : half = 0 := Fin.ext hhalf
+            subst half
+            by_cases hp : q6SuperbinRightOccupancy E b % 5 = 3
             · exact ⟨⟨⟨b, .six⟩,
                 ⟨0, by simp [q6SuperbinBlockCount, hmod, hp]⟩⟩,
                   ⟨k.val, by omega⟩⟩
             · exact ⟨⟨⟨b, .threeLeft⟩,
                 ⟨0, by simp [q6SuperbinBlockCount, hmod, hp]⟩⟩, k⟩
-          · by_cases hp : q6SuperbinLeftOccupancy E b % 5 = 3
+          · have : half = 1 := Fin.ext (by omega)
+            subst half
+            by_cases hp : q6SuperbinLeftOccupancy E b % 5 = 3
             · exact ⟨⟨⟨b, .six⟩,
                 ⟨0, by simp [q6SuperbinBlockCount, hmod, hp]⟩⟩,
                   ⟨k.val + 3, by omega⟩⟩
@@ -264,10 +288,14 @@ def wideRepairToQ6SuperbinCoordinate
           rcases q with ⟨⟨b, half⟩, z⟩
           have hmod := wideRepairFourResidue_mod
             (E := E) ⟨(b, half), z⟩
-          fin_cases half
-          · exact ⟨⟨⟨b, .fourLeft⟩,
+          by_cases hhalf : half.val = 0
+          · have : half = 0 := Fin.ext hhalf
+            subst half
+            exact ⟨⟨⟨b, .fourLeft⟩,
               ⟨0, by simp [q6SuperbinBlockCount, hmod]⟩⟩, k⟩
-          · exact ⟨⟨⟨b, .fourRight⟩,
+          · have : half = 1 := Fin.ext (by omega)
+            subst half
+            exact ⟨⟨⟨b, .fourRight⟩,
               ⟨0, by simp [q6SuperbinBlockCount, hmod]⟩⟩, k⟩
 
 theorem wideRepairToQ6_leftInverse
