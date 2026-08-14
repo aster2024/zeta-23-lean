@@ -5,6 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 -/
 import Zeta23.StrictImprovement.Q6SuperbinLocal
 import Zeta23.StrictImprovement.ZetaFiniteCorrelation
+import Zeta23.StrictImprovement.CoreTripleEnergy
 
 /-!
 # Core geometry and finite/full transfer for q6 superbin blocks
@@ -111,18 +112,34 @@ theorem coreQ6SuperbinBlock_geometry
         q6_condition_of_fin_ite u
       constructor
       · intro i hi
-        simpa [coreQ6SuperbinBlockCoordinate, q6SuperbinBlockIndex,
-          q6SuperbinBlockCoordinate, E, hi] using
-          (coreQ6LeftEntry_bounds Z T C P hL hC b
-            (wideRepairResidualSlot (q6SuperbinLeftOccupancy E b) 3
-              hcond.1 ⟨i.val, hi⟩))
+        have hidx :
+            q6SuperbinBlockIndex E ⟨⟨b, .six⟩, u⟩ i =
+              E.entry (b, 0)
+                (wideRepairResidualSlot (q6SuperbinLeftOccupancy E b) 3
+                  hcond.1 ⟨i.val, hi⟩) := by
+          dsimp only [q6SuperbinBlockIndex, q6SuperbinBlockCoordinate, id]
+          rw [dif_pos hi]
+        dsimp only [coreQ6SuperbinBlockCoordinate]
+        rw [hidx]
+        have hb := coreQ6LeftEntry_bounds Z T C P hL hC b
+          (wideRepairResidualSlot (q6SuperbinLeftOccupancy E b) 3
+            hcond.1 ⟨i.val, hi⟩)
+        constructor <;> nlinarith [hb.1, hb.2]
       · intro i hi
         have hnot : ¬ i.val < 3 := by omega
-        simpa [coreQ6SuperbinBlockCoordinate, q6SuperbinBlockIndex,
-          q6SuperbinBlockCoordinate, E, hnot] using
-          (coreQ6RightEntry_bounds Z T C P hL hC b
-            (wideRepairResidualSlot (q6SuperbinRightOccupancy E b) 3
-              hcond.2 ⟨i.val - 3, by omega⟩))
+        have hidx :
+            q6SuperbinBlockIndex E ⟨⟨b, .six⟩, u⟩ i =
+              E.entry (b, 1)
+                (wideRepairResidualSlot (q6SuperbinRightOccupancy E b) 3
+                  hcond.2 ⟨i.val - 3, by omega⟩) := by
+          dsimp only [q6SuperbinBlockIndex, q6SuperbinBlockCoordinate, id]
+          rw [dif_neg hnot]
+        dsimp only [coreQ6SuperbinBlockCoordinate]
+        rw [hidx]
+        have hb := coreQ6RightEntry_bounds Z T C P hL hC b
+          (wideRepairResidualSlot (q6SuperbinRightOccupancy E b) 3
+            hcond.2 ⟨i.val - 3, by omega⟩)
+        constructor <;> nlinarith [hb.1, hb.2]
 
 private abbrev q6p (T : ℝ) (P : Params) : PrimeSide.Setting :=
   P.toSetting T
