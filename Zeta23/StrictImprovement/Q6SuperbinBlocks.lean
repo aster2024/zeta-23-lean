@@ -384,6 +384,7 @@ theorem wideRepairToQ6_leftInverse
       subst u
       simp [q6SuperbinToWideRepairCoordinate,
         wideRepairToQ6SuperbinCoordinate, hcond.1, hcond.2]
+      rfl
   | threeRight =>
       have hcond : q6SuperbinRightOccupancy E b % 5 = 3 ∧
           q6SuperbinLeftOccupancy E b % 5 ≠ 3 :=
@@ -397,6 +398,7 @@ theorem wideRepairToQ6_leftInverse
       subst u
       simp [q6SuperbinToWideRepairCoordinate,
         wideRepairToQ6SuperbinCoordinate, hcond.1, hcond.2]
+      rfl
   | fourLeft =>
       have hcond : q6SuperbinLeftOccupancy E b % 5 = 4 :=
         q6_condition_of_fin_ite u
@@ -434,6 +436,7 @@ theorem wideRepairToQ6_leftInverse
       by_cases hk : k.val < 3
       · simp [q6SuperbinToWideRepairCoordinate,
           wideRepairToQ6SuperbinCoordinate, hcond.1, hcond.2, hk]
+        rfl
       · have hk3 : 3 ≤ k.val := by omega
         simp [q6SuperbinToWideRepairCoordinate,
           wideRepairToQ6SuperbinCoordinate, hcond.1, hcond.2, hk]
